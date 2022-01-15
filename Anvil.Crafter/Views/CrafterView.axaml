@@ -1,0 +1,23 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="Anvil.Crafter.Views.CrafterView">
+
+	<TabControl Items="{Binding Tabs}" >
+		<TabControl.ItemTemplate>
+			<DataTemplate>
+				<TextBlock Text="{Binding Header}" FontSize="20"/>
+			</DataTemplate>
+		</TabControl.ItemTemplate>
+		<TabControl.ContentTemplate>
+			<DataTemplate>
+				<DataTemplate.Content>
+					<ContentPresenter Content="{Binding $parent.SelectedItem}"/>
+				</DataTemplate.Content>
+			</DataTemplate>
+		</TabControl.ContentTemplate>
+	</TabControl>
+
+</UserControl>

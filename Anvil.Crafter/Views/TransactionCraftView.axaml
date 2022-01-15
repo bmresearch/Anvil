@@ -1,0 +1,71 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="Anvil.Crafter.Views.TransactionCraftView">
+	<DockPanel LastChildFill="True">
+		<DockPanel DockPanel.Dock="Top">
+			<StackPanel Orientation="Vertical">
+				<StackPanel Orientation="Horizontal"
+							Margin="5">
+					<TextBlock Text="Source Account"
+							   TextAlignment="Left"
+							   VerticalAlignment="Center"
+							   HorizontalAlignment="Left"
+							   Margin="5"
+							   FontSize="12"
+							   Width="150"/>
+					<TextBox Text="{Binding SourceAccount}"
+							 Margin="5"
+							 Height="20"
+							 Width="350"/>
+				</StackPanel>
+				<StackPanel Orientation="Horizontal"
+						    Margin="5">
+					<TextBlock Text="Destination Account"
+							   TextAlignment="Left"
+							   VerticalAlignment="Center"
+							   HorizontalAlignment="Left"
+							   Margin="5"
+							   FontSize="12"
+							   Width="150"/>
+					<TextBox Text="{Binding DestinationAccount}"
+							 Margin="5"
+							 Height="20"
+							 Width="350"/>
+				</StackPanel>
+				<StackPanel Orientation="Horizontal"
+						    Margin="5">
+					<TextBlock Text="Asset"
+							   TextAlignment="Left"
+							   VerticalAlignment="Center"
+							   HorizontalAlignment="Left"
+							   Margin="5"
+							   FontSize="12"
+							   Width="150"/>
+					<DropDown Items="{Binding Assets}"
+							  SelectedItem="{Binding SelectedAsset}"
+							  SelectedIndex="{Binding SelectedAssetIndex}"
+							  Margin="5"
+							  Width="350">						
+					</DropDown>
+				</StackPanel>
+				<StackPanel Orientation="Horizontal"
+						    Margin="5">
+					<TextBlock Text="Asset Amount"
+							   TextAlignment="Left"
+							   VerticalAlignment="Center"
+							   HorizontalAlignment="Left"
+							   Margin="5"
+							   FontSize="12"
+							   Width="150"/>
+					<TextBox Text="{Binding AssetAmount}"
+							 Margin="5"
+							 Height="20"
+							 Width="350"/>
+				</StackPanel>
+			</StackPanel>
+		</DockPanel>
+	</DockPanel>
+</UserControl>

@@ -1,0 +1,84 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="Anvil.Views.Fields.RequiredPublicKeyView">
+	<StackPanel
+		Orientation="Vertical"
+		HorizontalAlignment="Stretch"
+		VerticalAlignment="Stretch">
+		<StackPanel
+			Orientation="Horizontal"
+			HorizontalAlignment="Stretch"
+			VerticalAlignment="Center">
+			<TextBox
+				Classes="Filled"
+				Text="{Binding PublicKeyString}"
+				VerticalAlignment="Center"
+				HorizontalAlignment="Left"
+				FontSize="10"
+				Width="450"/>
+			<Button
+				Classes="Flat"
+				ToolTip.Tip="Remove this signer"
+				VerticalAlignment="Center"
+				HorizontalAlignment="Right"
+				Height="32"
+				Width="32"
+				Margin="5"
+				Command="{Binding $parent[ItemsRepeater].DataContext.RemoveSigner}"
+				CommandParameter="{Binding}"
+				IsVisible="{Binding !IsRequired}">
+				<avalonia:MaterialIcon Kind="Remove" />
+			</Button>
+		</StackPanel>
+		<ContentPresenter
+			Name="IsValidContentPresenter">
+			<Interaction.Behaviors>
+				<DataTriggerBehavior
+					Binding="{Binding IsValid^, Mode=OneWay}"
+					ComparisonCondition="Equal"
+					Value="False">
+					<ChangePropertyAction
+						TargetObject="{Binding #IsValidContentPresenter}"
+						PropertyName="Content">
+						<ChangePropertyAction.Value>
+							<TextBlock
+								Text="Public key is invalid!"
+								TextAlignment="Left"
+								VerticalAlignment="Center"
+								HorizontalAlignment="Left"
+								Margin="5,-5,0,5"
+								FontSize="12"
+								Width="150"
+								Foreground="{DynamicResource ErrorAccent}"/>
+						</ChangePropertyAction.Value>
+					</ChangePropertyAction>
+				</DataTriggerBehavior>
+				<DataTriggerBehavior
+					Binding="{Binding IsValid^, Mode=OneWay}"
+					ComparisonCondition="Equal"
+					Value="True">
+					<ChangePropertyAction
+						TargetObject="{Binding #IsValidContentPresenter}"
+						PropertyName="Content">
+						<ChangePropertyAction.Value>
+							<TextBlock
+								Text="Public key is valid."
+								TextAlignment="Left"
+								VerticalAlignment="Center"
+								HorizontalAlignment="Left"
+								Margin="5,-5,0,5"
+								FontSize="12"
+								Width="150"
+								Foreground="{DynamicResource ValidatedAccent}"/>
+						</ChangePropertyAction.Value>
+					</ChangePropertyAction>
+				</DataTriggerBehavior>
+			</Interaction.Behaviors>
+		</ContentPresenter>
+
+	</StackPanel>
+</UserControl>

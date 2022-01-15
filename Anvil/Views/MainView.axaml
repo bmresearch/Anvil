@@ -1,0 +1,54 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+			 xmlns:styles="clr-namespace:Material.Styles;assembly=Material.Styles"
+			 xmlns:views="clr-namespace:Anvil.Views"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="Anvil.Views.MainView">
+
+	<ContentPresenter
+		Name="MainContentPresenter"
+		Background="{DynamicResource AppBackgroundColor}">
+		<Interaction.Behaviors>
+			<DataTriggerBehavior
+				Binding="{Binding WalletUnlocked, Mode=OneWay}"
+				ComparisonCondition="Equal"
+				Value="True">
+				<ChangePropertyAction
+					TargetObject="{Binding #PasswordContentPresenter}"
+					PropertyName="Content">
+					<ChangePropertyAction.Value>
+						<DockPanel LastChildFill="True">
+							<views:SideBarView DockPanel.Dock="Left"/>
+							<ContentPresenter>
+								<ContentPresenter.Content>
+									<ContentControl Content="{Binding CurrentView}"/>
+								</ContentPresenter.Content>
+							</ContentPresenter>
+						</DockPanel>
+					</ChangePropertyAction.Value>
+				</ChangePropertyAction>
+			</DataTriggerBehavior>
+			<DataTriggerBehavior
+				Binding="{Binding WalletUnlocked, Mode=OneWay}"
+				ComparisonCondition="Equal"
+				Value="False">
+				<ChangePropertyAction
+					TargetObject="{Binding #PasswordContentPresenter}"
+					PropertyName="Content">
+					<ChangePropertyAction.Value>
+						<DockPanel LastChildFill="True">
+							<ContentPresenter>
+								<ContentPresenter.Content>
+									<ContentControl Content="{Binding CurrentView}"/>
+								</ContentPresenter.Content>
+							</ContentPresenter>
+						</DockPanel>
+					</ChangePropertyAction.Value>
+				</ChangePropertyAction>
+			</DataTriggerBehavior>
+		</Interaction.Behaviors>
+	</ContentPresenter>
+
+</UserControl>

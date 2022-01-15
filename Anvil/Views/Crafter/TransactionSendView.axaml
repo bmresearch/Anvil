@@ -1,0 +1,87 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+			 xmlns:styles="clr-namespace:Material.Styles;assembly=Material.Styles"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="Anvil.Views.Crafter.TransactionSendView">
+
+	<DockPanel
+		Margin="5"
+		LastChildFill="True"
+		HorizontalAlignment="Stretch"
+		VerticalAlignment="Stretch">
+		<DockPanel
+			DockPanel.Dock="Bottom">
+			<styles:Card
+				Margin="5"
+				DockPanel.Dock="Top">
+				<Button
+					Classes="Filled"
+					Content="Send Transaction"
+					HorizontalAlignment="Center"
+					VerticalAlignment="Center"
+					IsEnabled="{Binding CanSendTransaction}"
+					Command="{Binding SendTransaction}"/>
+			</styles:Card>
+		</DockPanel>
+		<DockPanel
+			DockPanel.Dock="Left"
+			Margin="5"
+			VerticalAlignment="Stretch"
+			HorizontalAlignment="Stretch">
+			<StackPanel
+				DockPanel.Dock="Top"
+				Orientation="Vertical">
+				<TextBlock
+					Classes="Subtitle2"
+					Text="Payload"
+					TextAlignment="Left"
+					VerticalAlignment="Center"
+					HorizontalAlignment="Left"
+					Margin="5"/>
+				<TextBox
+					Classes="Filled"
+					Text="{Binding Payload}"
+					TextAlignment="Left"
+					VerticalAlignment="Center"
+					HorizontalAlignment="Left"
+					Margin="5"
+					Height="500"
+					Width="500"
+					TextWrapping="Wrap"/>
+			</StackPanel>
+		</DockPanel>
+		<DockPanel
+			DockPanel.Dock="Right"
+			Margin="5"
+			VerticalAlignment="Stretch"
+			HorizontalAlignment="Stretch">
+			<TextBlock
+				DockPanel.Dock="Top"
+				Classes="Subtitle2"
+				Text="Signatures"
+				TextAlignment="Left"
+				VerticalAlignment="Center"
+				HorizontalAlignment="Left"
+				Margin="5"/>
+			<ScrollViewer
+				DockPanel.Dock="Bottom"
+				HorizontalAlignment="Stretch">
+				<ItemsRepeater
+					DockPanel.Dock="Bottom"
+					Items="{Binding RequiredSignatures}"
+					HorizontalAlignment="Stretch"
+					VerticalAlignment="Stretch"
+					ScrollViewer.VerticalScrollBarVisibility="Visible">
+					<ItemsRepeater.ItemTemplate>
+						<DataTemplate>
+							<ContentControl Content="{Binding}"/>
+						</DataTemplate>
+					</ItemsRepeater.ItemTemplate>
+				</ItemsRepeater>
+			</ScrollViewer>
+		</DockPanel>
+	</DockPanel>
+
+</UserControl>

@@ -1,0 +1,57 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:styles="clr-namespace:Material.Styles;assembly=Material.Styles"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="Anvil.Views.UserControl1">
+  <UserControl.Styles>
+		<Style Selector="styles|Card">
+			<Setter Property="Background" Value="{DynamicResource CardBackgroundColor}" />
+		</Style>
+	</UserControl.Styles>
+
+	<UserControl.KeyBindings>
+		<KeyBinding Command="{Binding Confirm}" Gesture="Enter" x:CompileBindings="False" />
+	</UserControl.KeyBindings>
+
+	<styles:Card
+		Margin="75">
+		<DockPanel LastChildFill="True"
+				   HorizontalAlignment="Center"
+				   VerticalAlignment="Center">
+			<Button 
+				DockPanel.Dock="Bottom"
+				VerticalAlignment="Center"
+				HorizontalAlignment="Center"
+				Margin="20"
+				Content="Confirm"
+				Command="{Binding Confirm}"
+				Background="{DynamicResource ValidatedAccent}"/>
+			<DockPanel DockPanel.Dock="Bottom">
+				<StackPanel Orientation="Vertical">
+					<TextBlock
+						Text="Password"
+						TextAlignment="Left"
+						VerticalAlignment="Center"
+						HorizontalAlignment="Left"
+						Margin="5"
+						FontSize="12"
+						Width="150"
+						Foreground="{DynamicResource MainTextAccent}"/>
+					<TextBox
+						Classes="Filled"
+						Text="{Binding Password}"
+						VerticalAlignment="Center"
+						HorizontalAlignment="Left"
+						IsHitTestVisible="False"
+						Margin="5"
+						Height="50"
+						Width="750"/>
+				</StackPanel>
+			</DockPanel>
+
+		</DockPanel>
+
+	</styles:Card>
+</UserControl>

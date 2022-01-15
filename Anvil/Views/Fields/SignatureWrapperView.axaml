@@ -1,0 +1,112 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="Anvil.Views.Fields.SignatureWrapperView">
+	<StackPanel
+		  Orientation="Vertical"
+		  HorizontalAlignment="Stretch"
+		  VerticalAlignment="Stretch">
+		<StackPanel
+			Orientation="Vertical"
+			HorizontalAlignment="Stretch"
+			VerticalAlignment="Center">
+			<StackPanel
+				Orientation="Horizontal"
+				HorizontalAlignment="Stretch"
+				VerticalAlignment="Center">
+				<TextBlock
+					Classes="Body1"
+					Text="Signature from "
+					VerticalAlignment="Center"
+					HorizontalAlignment="Left"/>				
+				<TextBlock
+					Classes="Subtitle2"
+					Text="{Binding PublicKey.Key}"
+					VerticalAlignment="Center"
+					HorizontalAlignment="Right"
+					Width="450"/>
+			</StackPanel>
+			<TextBox
+				Classes="Filled"
+				Text="{Binding Signature}"
+				VerticalAlignment="Center"
+				HorizontalAlignment="Left"
+				FontSize="10"
+				Width="500"/>
+		</StackPanel>
+		<ContentPresenter
+			Name="InputContentPresenter">
+			<Interaction.Behaviors>
+				<DataTriggerBehavior
+					Binding="{Binding Input, Mode=OneWay}"
+					ComparisonCondition="Equal"
+					Value="False">
+					<ChangePropertyAction
+						TargetObject="{Binding #InputContentPresenter}"
+						PropertyName="Content">
+						<ChangePropertyAction.Value>
+							<TextBlock/>
+						</ChangePropertyAction.Value>
+					</ChangePropertyAction>
+				</DataTriggerBehavior>
+				<DataTriggerBehavior
+					Binding="{Binding Input, Mode=OneWay}"
+					ComparisonCondition="Equal"
+					Value="True">
+					<ChangePropertyAction
+						TargetObject="{Binding #InputContentPresenter}"
+						PropertyName="Content">
+						<ChangePropertyAction.Value>
+							<ContentPresenter
+								Name="VerifiedContentPresenter">
+								<Interaction.Behaviors>
+									<DataTriggerBehavior
+										Binding="{Binding Verified, Mode=OneWay}"
+										ComparisonCondition="Equal"
+										Value="False">
+										<ChangePropertyAction
+											TargetObject="{Binding #VerifiedContentPresenter}"
+											PropertyName="Content">
+											<ChangePropertyAction.Value>
+												<TextBlock
+													Classes="Body1"
+													Text="Signature does not match."
+													TextAlignment="Left"
+													VerticalAlignment="Center"
+													HorizontalAlignment="Left"
+													Margin="5,-5,0,5"
+													Foreground="{DynamicResource ErrorAccent}"/>
+											</ChangePropertyAction.Value>
+										</ChangePropertyAction>
+									</DataTriggerBehavior>
+									<DataTriggerBehavior
+										Binding="{Binding Verified, Mode=OneWay}"
+										ComparisonCondition="Equal"
+										Value="True">
+										<ChangePropertyAction
+											TargetObject="{Binding #VerifiedContentPresenter}"
+											PropertyName="Content">
+											<ChangePropertyAction.Value>
+												<TextBlock
+													Classes="Body1"
+													Text="Signature verified."
+													TextAlignment="Left"
+													VerticalAlignment="Center"
+													HorizontalAlignment="Left"
+													Margin="5,-5,0,5"
+													Foreground="{DynamicResource ValidatedAccent}"/>
+											</ChangePropertyAction.Value>
+										</ChangePropertyAction>
+									</DataTriggerBehavior>
+								</Interaction.Behaviors>
+							</ContentPresenter>
+						</ChangePropertyAction.Value>
+					</ChangePropertyAction>
+				</DataTriggerBehavior>
+			</Interaction.Behaviors>
+		</ContentPresenter>
+	</StackPanel>
+</UserControl>

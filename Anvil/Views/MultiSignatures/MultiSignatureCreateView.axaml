@@ -1,0 +1,197 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="Anvil.Views.MultiSignatures.MultiSignatureCreateView">
+	<DockPanel
+		LastChildFill="True"
+		HorizontalAlignment="Stretch"
+		VerticalAlignment="Stretch">
+		<DockPanel
+				DockPanel.Dock="Left"
+				HorizontalAlignment="Left"
+				VerticalAlignment="Stretch">
+			<StackPanel
+				DockPanel.Dock="Top"
+				Orientation="Horizontal"
+				VerticalAlignment="Center">
+				<TextBlock
+					Classes="Body1"
+					Text="Signers"
+					ToolTip.Tip="The list of public keys that can sign a transaction where the multi signature account is a signing account."
+					TextAlignment="Left"
+					VerticalAlignment="Center"
+					HorizontalAlignment="Left"
+					Margin="5"
+					Foreground="{DynamicResource MainTextAccent}"/>
+				<Button
+					Classes="Flat"
+					ToolTip.Tip="Add new signer."
+					VerticalAlignment="Center"
+					HorizontalAlignment="Right"
+					Height="32"
+					Width="32"
+					Margin="5"
+					Command="{Binding AddSigner}">
+					<avalonia:MaterialIcon Kind="Add" />
+				</Button>
+			</StackPanel>
+			<ScrollViewer
+				Width="500">
+				<ItemsRepeater
+					DockPanel.Dock="Bottom"
+					Items="{Binding Signers}"
+					VerticalAlignment="Stretch"
+					ScrollViewer.VerticalScrollBarVisibility="Visible">
+					<ItemsRepeater.ItemTemplate>
+						<DataTemplate>
+							<ContentControl Content="{Binding}"/>
+						</DataTemplate>
+					</ItemsRepeater.ItemTemplate>
+				</ItemsRepeater>
+			</ScrollViewer>
+		</DockPanel>
+		<DockPanel
+				DockPanel.Dock="Right"
+				HorizontalAlignment="Left"
+				VerticalAlignment="Stretch">
+			<StackPanel
+				DockPanel.Dock="Bottom"
+				Orientation="Vertical"
+				Margin="5"
+				HorizontalAlignment="Center"
+				VerticalAlignment="Top">
+				<Button
+					Classes="Filled"
+					VerticalAlignment="Center"
+					HorizontalAlignment="Center"
+					Margin="5"
+					Content="Create Multi Signature"
+					Background="{DynamicResource ButtonBackgroundColor}"/>
+			</StackPanel>
+			<StackPanel
+				DockPanel.Dock="Top"
+				Orientation="Vertical"
+				Margin="5"
+				HorizontalAlignment="Left"
+				VerticalAlignment="Top">
+				<StackPanel
+					Orientation="Vertical"
+					Margin="5"
+					HorizontalAlignment="Left"
+					VerticalAlignment="Top">
+					<TextBlock
+						Classes="Body1"
+						Text="Required Signers"
+						ToolTip.Tip="The number of signers required to validate a transaction where the multi signature account is a signing account."
+						TextAlignment="Left"
+						VerticalAlignment="Center"
+						HorizontalAlignment="Left"
+						Margin="5"
+						Foreground="{DynamicResource MainTextAccent}"/>
+					<TextBox
+						Classes="Filled"
+						Text="{Binding RequiredSigners}"
+						VerticalAlignment="Center"
+						HorizontalAlignment="Left"
+						Width="250"
+						Margin="5"/>
+				</StackPanel>
+				<StackPanel
+					Orientation="Vertical"
+					Margin="5"
+					HorizontalAlignment="Left"
+					VerticalAlignment="Top">
+					<StackPanel
+						Orientation="Horizontal"
+						HorizontalAlignment="Left"
+						VerticalAlignment="Center">
+						<TextBlock
+							Classes="Body1"
+							Text="Multi Signature Account"
+							ToolTip.Tip="The public key of the multi signature account."
+							TextAlignment="Left"
+							VerticalAlignment="Center"
+							HorizontalAlignment="Left"
+							Margin="5"
+							Foreground="{DynamicResource MainTextAccent}"/>
+						<Button
+							Classes="Flat"
+							ToolTip.Tip="Generate a new key."
+							VerticalAlignment="Center"
+							HorizontalAlignment="Right"
+							Height="32"
+							Width="32"
+							Margin="5"
+							Command="{Binding GenerateNewAccount}">
+							<avalonia:MaterialIcon Kind="Refresh" />
+						</Button>
+					</StackPanel>
+					<StackPanel
+						Orientation="Horizontal"
+						HorizontalAlignment="Left"
+						VerticalAlignment="Center">
+						<TextBlock
+							Classes="Body2"
+							Text="{Binding MultiSigAccount.PublicKey.Key}"
+							VerticalAlignment="Center"
+							HorizontalAlignment="Left"
+							Width="450"
+							Margin="5"/>
+						<Button
+							Classes="Flat"
+							ToolTip.Tip="Copy address to clipboard."
+							VerticalAlignment="Center"
+							HorizontalAlignment="Right"
+							Height="32"
+							Width="32"
+							Margin="5"
+							Command="{Binding GenerateNewAccount}">
+							<avalonia:MaterialIcon Kind="ContentCopy" />
+						</Button>
+					</StackPanel>
+				</StackPanel>
+				<StackPanel
+					Orientation="Vertical"
+					Margin="5"
+					HorizontalAlignment="Left"
+					VerticalAlignment="Top">
+					<TextBlock
+						Classes="Body1"
+						Text="Rent Cost"
+						ToolTip.Tip="The rent cost to create a multi signature account."
+						TextAlignment="Left"
+						VerticalAlignment="Center"
+						HorizontalAlignment="Left"
+						Margin="5"
+						Foreground="{DynamicResource MainTextAccent}"/>
+					<StackPanel
+						Orientation="Horizontal"
+						HorizontalAlignment="Left"
+						VerticalAlignment="Center">
+						<TextBlock
+							Classes="Body2"
+							VerticalAlignment="Top"
+							HorizontalAlignment="Center"
+							TextAlignment="Center"
+							Margin="5"
+							Foreground="{DynamicResource MainTextAccent}"
+							Text="{Binding MultiSigRent}">
+						</TextBlock>
+						<TextBlock
+							Classes="Body2"
+							VerticalAlignment="Top"
+							HorizontalAlignment="Center"
+							TextAlignment="Center"
+							Margin="5"
+							Foreground="{DynamicResource MainTextAccent}"
+							Text="SOL">
+						</TextBlock>
+					</StackPanel>
+				</StackPanel>
+			</StackPanel>
+		</DockPanel>
+	</DockPanel>
+</UserControl>

@@ -1,0 +1,151 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+			 xmlns:styles="clr-namespace:Material.Styles;assembly=Material.Styles"
+			 xmlns:fields="clr-namespace:Anvil.Views.Fields;assembly=Anvil"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="Anvil.Views.Crafter.TransactionCraftView">
+
+	<DockPanel 
+		Margin="5"
+		LastChildFill="True"
+		HorizontalAlignment="Stretch"
+		VerticalAlignment="Stretch">
+		<DockPanel
+			DockPanel.Dock="Bottom">
+			<StackPanel
+				Orientation="Vertical">
+				<StackPanel
+					Orientation="Horizontal"
+					HorizontalAlignment="Center"
+					Margin="5">
+					<Button
+						Classes="Filled"
+						Margin="5"
+						FontSize="12"
+						Content="Craft Transaction"
+						Width="150"
+						Background="{DynamicResource ButtonBackgroundColor}"
+						VerticalAlignment="Center"
+						HorizontalAlignment="Center"
+						HorizontalContentAlignment="Center"
+						VerticalContentAlignment="Center"/>
+				</StackPanel>
+				<TextBlock
+					Classes="Subtitle1"
+					Text="Destination File"
+					TextAlignment="Left"
+					VerticalAlignment="Center"
+					HorizontalAlignment="Left"
+					Margin="5"
+					Width="150"
+					Foreground="{DynamicResource MainTextAccent}"/>
+				<TextBox
+					Classes="Filled"
+					Text="{Binding PrivateKeyFilePath}"
+					VerticalAlignment="Center"
+					HorizontalAlignment="Left"
+					IsHitTestVisible="False"
+					Margin="5"
+					Height="50"
+					Width="500"/>
+				<StackPanel
+					Orientation="Horizontal"
+					VerticalAlignment="Center"
+					HorizontalAlignment="Center"
+					Margin="5">
+					<Button
+						VerticalAlignment="Center"
+						HorizontalAlignment="Center"
+						Margin="5"
+						Content="Select File"
+						Background="{DynamicResource ButtonBackgroundColor}"/>
+					<Button
+						VerticalAlignment="Center"
+						HorizontalAlignment="Center"
+						Margin="5"
+						Content="Save Transaction"
+						Background="{DynamicResource ButtonBackgroundColor}"/>
+					<Button
+						VerticalAlignment="Center"
+						HorizontalAlignment="Center"
+						Margin="5"
+						Content="Clear"
+						Background="{DynamicResource ButtonBackgroundColor}"/>
+				</StackPanel>
+			</StackPanel>
+		</DockPanel>
+		<DockPanel
+			DockPanel.Dock="Left">
+			<StackPanel
+				Orientation="Vertical">
+				<StackPanel
+					Orientation="Vertical"
+					HorizontalAlignment="Stretch"
+					VerticalAlignment="Stretch">
+					<TextBlock
+						Classes="Subtitle1"
+						Text="Source Account"
+						TextAlignment="Left"
+						VerticalAlignment="Top"
+						HorizontalAlignment="Left"
+						Margin="5"/>
+					<ContentControl Content="{Binding SourceAccount}"/>
+				</StackPanel>
+				<StackPanel
+					Orientation="Vertical"
+					HorizontalAlignment="Stretch"
+					VerticalAlignment="Stretch">
+					<TextBlock
+						Classes="Subtitle1"
+						Text="Destination Account"
+						TextAlignment="Left"
+						VerticalAlignment="Top"
+						HorizontalAlignment="Left"
+						Margin="5"/>
+					<ContentControl Content="{Binding DestinationAccount}"/>
+				</StackPanel>
+				<StackPanel
+					Orientation="Vertical"
+					HorizontalAlignment="Stretch"
+					VerticalAlignment="Stretch">
+					<TextBlock
+						Classes="Subtitle1"
+						Text="Asset"
+						TextAlignment="Left"
+						VerticalAlignment="Top"
+						HorizontalAlignment="Left"
+						Margin="5"/>
+					<DropDown
+						Items="{Binding Assets}"
+						SelectedItem="{Binding SelectedAsset}"
+						SelectedIndex="{Binding SelectedAssetIndex}"
+						VerticalAlignment="Bottom"
+						HorizontalAlignment="Left"
+						Width="500">
+					</DropDown>
+				</StackPanel>
+				<StackPanel
+					Orientation="Vertical"
+					HorizontalAlignment="Stretch"
+					VerticalAlignment="Stretch">
+					<TextBlock 
+						Classes="Subtitle1"
+						Text="Asset Amount"
+						TextAlignment="Left"
+						VerticalAlignment="Top"
+						HorizontalAlignment="Left"
+						Margin="5"/>
+					<TextBox 
+						Classes="Filled"
+						Text="{Binding AssetAmount}"
+						VerticalAlignment="Bottom"
+						HorizontalAlignment="Left"
+						FontSize="10"
+						Width="500"/>
+				</StackPanel>
+			</StackPanel>
+		</DockPanel>
+	</DockPanel>
+</UserControl>

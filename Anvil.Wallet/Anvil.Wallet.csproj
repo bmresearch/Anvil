@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+  <ItemGroup>
+    <Folder Include="Models\" />
+	<Folder Include="ViewModels\" />
+	<Folder Include="Views\" />
+	<Compile Update="**\*.axaml.cs">
+		<DependentUpon>%(Filename)</DependentUpon>
+	</Compile>
+	<EmbeddedResource Include="**\*.axaml">
+		<SubType>Designer</SubType>
+	</EmbeddedResource>
+    <None Remove=".gitignore" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Avalonia" Version="0.10.10" />
+    <PackageReference Include="Avalonia.Desktop" Version="0.10.10" />
+    <!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
+    <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="0.10.10" />
+    <PackageReference Include="Avalonia.ReactiveUI" Version="0.10.10" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Anvil.Core\Anvil.Core.csproj" />
+  </ItemGroup>
+</Project>

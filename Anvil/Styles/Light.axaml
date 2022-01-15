@@ -1,0 +1,34 @@
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+	<!-- Color Palette
+	
+	Oxford Blue - 0A2239
+	Crimson - D62839
+	Slate Gray - 72788D
+	Alice Blue - E7ECEF
+	Eerie Black - 131515
+	
+	-->
+
+	<Color x:Key="SideBarBackgroundColor">#FF131530</Color>
+	<Color x:Key="StatusBarBackgroundColor">#FF131530</Color>
+	<Color x:Key="AppBackgroundColor">#FF72788D</Color>
+
+	<Color x:Key="CardBackgroundColor">#FFE7ECEF</Color>
+	<Color x:Key="Card2BackgroundColor">#FF121428</Color>
+
+	<Color x:Key="ButtonBackgroundColor">#FFE7ECEF</Color>
+
+	<Color x:Key="SemiTransparentLightAccent">#502C3A59</Color>
+	<Color x:Key="LightAccent">#FF2C3A59</Color>
+	<Color x:Key="SemiTransparentDarkAccent">#750A0E17</Color>
+	<Color x:Key="DarkAccent">#FF0A0E17</Color>
+	<Color x:Key="SemiTransparentErrorAccent">#25E60002</Color>
+	<Color x:Key="ErrorAccent">#E60002</Color>
+	<Color x:Key="SemiTransparentValidatedAccent">#2500E607</Color>
+	<Color x:Key="ValidatedAccent">#0E8f12</Color>
+
+	<Color x:Key="MainTextAccent">#FF131515</Color>
+
+
+</ResourceDictionary>
