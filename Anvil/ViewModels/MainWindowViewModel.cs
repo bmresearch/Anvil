@@ -11,11 +11,15 @@ using Anvil.ViewModels.Wallet;
 using Anvil.Models;
 using Anvil.Services.Store;
 using Anvil.ViewModels.MultiSignatures;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Console;
+using Anvil.Services.Store.Config;
 
 namespace Anvil.ViewModels
 {
     public class MainWindowViewModel : ViewModelBase
     {
+        private ILogger _logger;
         private ApplicationState _appState;
         private InternetConnectionService _internetService;
         private KeyStoreService _keyStoreService;
@@ -33,11 +37,35 @@ namespace Anvil.ViewModels
 
         public MainWindowViewModel(ApplicationState appState)
         {
+            _logger = LoggerFactory.Create(x =>
+            {
+                x.AddDebug();
+                x.AddSimpleConsole(o =>
+                {
+                    o.UseUtcTimestamp = true;
+                    o.IncludeScopes = true;
+                    o.ColorBehavior = LoggerColorBehavior.Enabled;
+                    o.TimestampFormat = "HH:mm:ss ";
+                })
+                    .SetMinimumLevel(LogLevel.Trace);
+            }).CreateLogger<App>();
+            _logger.Log(LogLevel.Information, "Successfully attached logger, initializing modules.");
             _appState = appState;
             _rpcProvider = appState.RpcUrl != string.Empty ? new RpcClientProvider(appState.RpcUrl) : new RpcClientProvider(appState.Cluster);
             _walletService = new WalletService();
-            _nonceAccountMappingStore = new NonceAccountMappingStore();
-            _multisigAccountMappingStore = new MultiSignatureAccountMappingStore();
+
+            var nonceAccountMappingStoreConfig = new StoreConfig()
+            {
+                Directory = appState.StorePath,
+                Name = NonceAccountMappingStore.FileName 
+            };
+            _nonceAccountMappingStore = new NonceAccountMappingStore(_logger, nonceAccountMappingStoreConfig);
+            var multisigAccountMappingStoreConfig = new StoreConfig()
+            {
+                Directory = appState.StorePath,
+                Name = MultiSignatureAccountMappingStore.FileName
+            };
+            _multisigAccountMappingStore = new MultiSignatureAccountMappingStore(_logger, multisigAccountMappingStoreConfig);
 
             _keyStoreService = new KeyStoreService(_walletService);
 

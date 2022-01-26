@@ -15,12 +15,12 @@ namespace Anvil.Services.Store.Models
         /// <summary>
         /// The <see cref="PublicKey"/> of the <see cref="NonceAccount"/>'s authority.
         /// </summary>
-        public PublicKey Authority { get; }
+        public string Authority { get; set; }
 
 
         /// <summary>
         /// The <see cref="PublicKey"/> of the <see cref="NonceAccount"/>.
         /// </summary>
-        public PublicKey Account { get; }
+        public string Account { get; set; }
     }
 }

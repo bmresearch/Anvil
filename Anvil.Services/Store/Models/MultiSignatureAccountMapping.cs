@@ -11,16 +11,16 @@ namespace Anvil.Services.Store.Models
         /// <summary>
         /// The <see cref="PublicKey"/> of the multi signature account.
         /// </summary>
-        public PublicKey MultiSignature { get; }
+        public string MultiSignature { get; set; }
 
         /// <summary>
         /// The <see cref="PublicKey"/>s of the multi signature account signers.
         /// </summary>
-        public List<PublicKey> Signers { get; }
+        public List<string> Signers { get; set; }
 
         /// <summary>
         /// The minimum number of signers for the account.
         /// </summary>
-        public int MinimumSigners { get; }
+        public int MinimumSigners { get; set; }
     }
 }

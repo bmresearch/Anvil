@@ -57,7 +57,7 @@
 					Margin="10">
 					<StackPanel Orientation="Horizontal">
 						<TextBlock Classes="Body1" Text="{Binding PublicKey.Key}" Margin="0" VerticalAlignment="Center"/>
-						<Button Classes="Flat Accent" ToolTip.Tip="Copy address to clipboard" VerticalAlignment="Center" Command="{Binding CopyAddressToClipboard}" Height="24" Width="24" Padding="0">
+						<Button Classes="Flat" ToolTip.Tip="Copy address to clipboard" VerticalAlignment="Center" Command="{Binding CopyAddressToClipboard}" Height="24" Width="24" Padding="0">
 							<avalonia:MaterialIcon Kind="ContentCopy" />
 						</Button>
 					</StackPanel>

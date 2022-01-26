@@ -3,37 +3,127 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 			 xmlns:styles="clr-namespace:Material.Styles;assembly=Material.Styles"
+             xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Anvil.Views.Crafter.TransactionSendView">
 
 	<DockPanel
-		Margin="5"
 		LastChildFill="True"
 		HorizontalAlignment="Stretch"
 		VerticalAlignment="Stretch">
-		<DockPanel
+		<styles:Card
+			Margin="5"
 			DockPanel.Dock="Bottom">
-			<styles:Card
+			<DockPanel
 				Margin="5"
-				DockPanel.Dock="Top">
+				VerticalAlignment="Stretch"
+				HorizontalAlignment="Stretch">
 				<Button
+					DockPanel.Dock="Top"
 					Classes="Filled"
-					Content="Send Transaction"
 					HorizontalAlignment="Center"
 					VerticalAlignment="Center"
 					IsEnabled="{Binding CanSendTransaction}"
-					Command="{Binding SendTransaction}"/>
-			</styles:Card>
-		</DockPanel>
-		<DockPanel
-			DockPanel.Dock="Left"
-			Margin="5"
-			VerticalAlignment="Stretch"
-			HorizontalAlignment="Stretch">
-			<StackPanel
-				DockPanel.Dock="Top"
-				Orientation="Vertical">
+					Command="{Binding SendTransaction}">
+					<Grid>
+						<TextBlock
+							IsVisible="{Binding !SubmittingTransaction}"
+							VerticalAlignment="Center"
+							Grid.Column="0"
+							Grid.Row="0"
+							HorizontalAlignment="Center"
+							Text="Send Transaction"/>
+						<ProgressBar
+							VerticalAlignment="Center"
+							Grid.Column="0"
+							Grid.Row="0"
+							HorizontalAlignment="Center"
+							Classes="Circle"
+							IsIndeterminate="True"
+							IsVisible="{Binding SubmittingTransaction}"
+							Width="20"
+							Height="20"
+							MinWidth="20"/>
+					</Grid>
+				</Button>
 				<TextBlock
+					DockPanel.Dock="Top"
+					Classes="Subtitle2"
+					Text="{Binding Progress}"
+					TextAlignment="Center"
+					HorizontalAlignment="Center"
+					VerticalAlignment="Center"
+					Margin="5"
+					IsVisible="{Binding SubmittingTransaction}"
+					Foreground="{DynamicResource MainTextAccent}"/>
+				<TextBlock
+					DockPanel.Dock="Top"
+					Classes="Subtitle2"
+					Text="Transaction Error"
+					TextAlignment="Center"
+					HorizontalAlignment="Center"
+					VerticalAlignment="Center"
+					Margin="5"
+					IsVisible="{Binding TransactionError}"
+					Foreground="{DynamicResource MainTextAccent}"/>
+				<TextBlock
+					DockPanel.Dock="Top"
+					Classes="Body1"
+					Text="{Binding TransactionErrorMessage}"
+					TextAlignment="Center"
+					HorizontalAlignment="Center"
+					VerticalAlignment="Center"
+					Margin="5"
+					IsVisible="{Binding TransactionError}"
+					Foreground="{DynamicResource ErrorAccent}"/>
+				<TextBlock
+					DockPanel.Dock="Top"
+					Classes="Subtitle2"
+					Text="Transaction Hash"
+					TextAlignment="Center"
+					HorizontalAlignment="Center"
+					VerticalAlignment="Center"
+					Margin="5"
+					IsVisible="{Binding TransactionConfirmed}"
+					Foreground="{DynamicResource MainTextAccent}"/>
+				<StackPanel
+					DockPanel.Dock="Top"
+					Orientation="Horizontal"
+					HorizontalAlignment="Center"
+					VerticalAlignment="Center">
+					<TextBlock
+						Classes="Body1"
+						Text="{Binding TransactionHash}"
+						TextAlignment="Center"
+						HorizontalAlignment="Center"
+						VerticalAlignment="Center"
+						Margin="5"
+						IsVisible="{Binding TransactionConfirmed}"
+						Foreground="{DynamicResource ValidatedAccent}"/>
+					<Button
+						Classes="Flat"
+						ToolTip.Tip="Copy transaction hash to clipboard."
+						VerticalAlignment="Center"
+						HorizontalAlignment="Center"
+						Height="32"
+						Width="32"
+						Margin="5"
+						Command="{Binding CopyTransactionHashToClipboard}"
+						IsVisible="{Binding TransactionConfirmed}">
+						<avalonia:MaterialIcon Kind="ContentCopy" />
+					</Button>
+				</StackPanel>
+			</DockPanel>
+		</styles:Card>
+		<styles:Card
+			Margin="5"
+			DockPanel.Dock="Left">
+			<DockPanel
+				Margin="5"
+				VerticalAlignment="Stretch"
+				HorizontalAlignment="Stretch">
+				<TextBlock
+					DockPanel.Dock="Top"
 					Classes="Subtitle2"
 					Text="Payload"
 					TextAlignment="Left"
@@ -41,47 +131,59 @@
 					HorizontalAlignment="Left"
 					Margin="5"/>
 				<TextBox
+					DockPanel.Dock="Top"
 					Classes="Filled"
 					Text="{Binding Payload}"
 					TextAlignment="Left"
 					VerticalAlignment="Center"
 					HorizontalAlignment="Left"
-					Margin="5"
-					Height="500"
 					Width="500"
 					TextWrapping="Wrap"/>
-			</StackPanel>
-		</DockPanel>
-		<DockPanel
-			DockPanel.Dock="Right"
+				<TextBlock
+					DockPanel.Dock="Top"
+					Classes="Body1"
+					Text="Payload is not a valid base64 encoded message."
+					TextAlignment="Left"
+					HorizontalAlignment="Left"
+					Margin="5,-5,0,5"
+					IsVisible="{Binding InvalidPayload}"
+					Foreground="{DynamicResource ErrorAccent}"/>
+			</DockPanel>
+		</styles:Card>
+		<styles:Card
 			Margin="5"
-			VerticalAlignment="Stretch"
-			HorizontalAlignment="Stretch">
-			<TextBlock
-				DockPanel.Dock="Top"
-				Classes="Subtitle2"
-				Text="Signatures"
-				TextAlignment="Left"
-				VerticalAlignment="Center"
-				HorizontalAlignment="Left"
-				Margin="5"/>
-			<ScrollViewer
-				DockPanel.Dock="Bottom"
+			DockPanel.Dock="Right">
+			<DockPanel
+				Margin="5"
+				VerticalAlignment="Stretch"
 				HorizontalAlignment="Stretch">
-				<ItemsRepeater
+				<TextBlock
+					DockPanel.Dock="Top"
+					Classes="Subtitle2"
+					Text="Signatures"
+					TextAlignment="Left"
+					VerticalAlignment="Center"
+					HorizontalAlignment="Left"
+					Margin="5"/>
+				<ScrollViewer
+					Margin="5"
 					DockPanel.Dock="Bottom"
-					Items="{Binding RequiredSignatures}"
-					HorizontalAlignment="Stretch"
-					VerticalAlignment="Stretch"
-					ScrollViewer.VerticalScrollBarVisibility="Visible">
-					<ItemsRepeater.ItemTemplate>
-						<DataTemplate>
-							<ContentControl Content="{Binding}"/>
-						</DataTemplate>
-					</ItemsRepeater.ItemTemplate>
-				</ItemsRepeater>
-			</ScrollViewer>
-		</DockPanel>
+					HorizontalAlignment="Stretch">
+					<ItemsRepeater
+						DockPanel.Dock="Bottom"
+						Items="{Binding RequiredSignatures}"
+						HorizontalAlignment="Stretch"
+						VerticalAlignment="Stretch"
+						ScrollViewer.VerticalScrollBarVisibility="Visible">
+						<ItemsRepeater.ItemTemplate>
+							<DataTemplate>
+								<ContentControl Content="{Binding}"/>
+							</DataTemplate>
+						</ItemsRepeater.ItemTemplate>
+					</ItemsRepeater>
+				</ScrollViewer>
+			</DockPanel>
+		</styles:Card>
 	</DockPanel>
 
 </UserControl>

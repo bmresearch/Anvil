@@ -27,13 +27,6 @@ namespace Anvil.Services
         NonceAccountMapping GetMapping(PublicKey authority);
 
         /// <summary>
-        /// Gets <see cref="NonceAccountMapping"/>s by it's authority.
-        /// </summary>
-        /// <param name="authority">The <see cref="PublicKey"/> of the <see cref="NonceAccount"/> authority.</param>
-        /// <returns>The list of <see cref="NonceAccountMapping"/>.</returns>
-        List<NonceAccountMapping> GetMappings(PublicKey authority);
-
-        /// <summary>
         /// The existing <see cref="NonceAccountMapping"/>s.
         /// </summary>
         List<NonceAccountMapping> NonceAccountMappings { get; }

@@ -1,6 +1,9 @@
 ﻿using Anvil.Services.Rpc.Events;
 using Solnet.Rpc;
+using Solnet.Rpc.Models;
+using Solnet.Rpc.Types;
 using System;
+using System.Threading.Tasks;
 
 namespace Anvil.Services
 {
@@ -25,6 +28,14 @@ namespace Anvil.Services
         /// </summary>
         /// <param name="url">The RPC URL.</param>
         void Load(string url);
+
+        /// <summary>
+        /// Polls the rpc client until a transaction signature has been confirmed.
+        /// </summary>
+        /// <param name="signature">The first transaction signature.</param>
+        /// <param name="commitment">The commitment.</param>
+        /// <returns>The transaction.</returns>
+        Task<TransactionMetaSlotInfo> PollTxAsync(string signature, Commitment commitment);
 
         /// <summary>
         /// An event raised whenever the current <see cref="IRpcClient"/> instance changes.

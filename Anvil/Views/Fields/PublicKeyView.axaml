@@ -13,53 +13,77 @@
 			Text="{Binding PublicKeyString}"
 			VerticalAlignment="Bottom"
 			HorizontalAlignment="Left"
-			FontSize="10"
-			Width="450"/>
+			Width="500"/>
 		<ContentPresenter
-			Name="IsValidContentPresenter">
+			Name="InputContentPresenter">
 			<Interaction.Behaviors>
 				<DataTriggerBehavior
-					Binding="{Binding IsValid^, Mode=OneWay}"
+					Binding="{Binding Input, Mode=OneWay}"
 					ComparisonCondition="Equal"
 					Value="False">
 					<ChangePropertyAction
-						TargetObject="{Binding #IsValidContentPresenter}"
+						TargetObject="{Binding #InputContentPresenter}"
 						PropertyName="Content">
 						<ChangePropertyAction.Value>
-							<TextBlock
-								Text="Public key is invalid!"
-								TextAlignment="Left"
-								VerticalAlignment="Center"
-								HorizontalAlignment="Left"
-								Margin="5,-5,0,5"
-								FontSize="12"
-								Width="150"
-								Foreground="{DynamicResource ErrorAccent}"/>
+							<TextBlock/>
 						</ChangePropertyAction.Value>
 					</ChangePropertyAction>
 				</DataTriggerBehavior>
 				<DataTriggerBehavior
-					Binding="{Binding IsValid^, Mode=OneWay}"
+					Binding="{Binding Input, Mode=OneWay}"
 					ComparisonCondition="Equal"
 					Value="True">
 					<ChangePropertyAction
-						TargetObject="{Binding #IsValidContentPresenter}"
+						TargetObject="{Binding #InputContentPresenter}"
 						PropertyName="Content">
 						<ChangePropertyAction.Value>
-							<TextBlock
-								Text="Public key is valid."
-								TextAlignment="Left"
-								VerticalAlignment="Center"
-								HorizontalAlignment="Left"
-								Margin="5,-5,0,5"
-								FontSize="12"
-								Width="150"
-								Foreground="{DynamicResource ValidatedAccent}"/>
+							<ContentPresenter
+								Name="VerifiedContentPresenter">
+								<Interaction.Behaviors>
+									<DataTriggerBehavior
+										Binding="{Binding Verified, Mode=OneWay}"
+										ComparisonCondition="Equal"
+										Value="False">
+										<ChangePropertyAction
+											TargetObject="{Binding #VerifiedContentPresenter}"
+											PropertyName="Content">
+											<ChangePropertyAction.Value>
+												<TextBlock
+													Classes="Body1"
+													Text="Public key is invalid."
+													TextAlignment="Left"
+													VerticalAlignment="Center"
+													HorizontalAlignment="Left"
+													Margin="5,-5,0,5"
+													Foreground="{DynamicResource ErrorAccent}"/>
+											</ChangePropertyAction.Value>
+										</ChangePropertyAction>
+									</DataTriggerBehavior>
+									<DataTriggerBehavior
+										Binding="{Binding Verified, Mode=OneWay}"
+										ComparisonCondition="Equal"
+										Value="True">
+										<ChangePropertyAction
+											TargetObject="{Binding #VerifiedContentPresenter}"
+											PropertyName="Content">
+											<ChangePropertyAction.Value>
+												<TextBlock
+													Classes="Body1"
+													Text="Public key is valid."
+													TextAlignment="Left"
+													VerticalAlignment="Center"
+													HorizontalAlignment="Left"
+													Margin="5,-5,0,5"
+													Foreground="{DynamicResource ValidatedAccent}"/>
+											</ChangePropertyAction.Value>
+										</ChangePropertyAction>
+									</DataTriggerBehavior>
+								</Interaction.Behaviors>
+							</ContentPresenter>
 						</ChangePropertyAction.Value>
 					</ChangePropertyAction>
 				</DataTriggerBehavior>
 			</Interaction.Behaviors>
 		</ContentPresenter>
-
 	</StackPanel>
 </UserControl>

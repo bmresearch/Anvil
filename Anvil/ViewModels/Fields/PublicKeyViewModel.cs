@@ -15,15 +15,45 @@ namespace Anvil.ViewModels.Fields
     {
         public PublicKeyViewModel()
         {
-            IsValid = this.WhenAnyValue(
-                x => x.PublicKey,
-                y => y.PublicKeyString,
-                (x, y) => x != null && !string.IsNullOrEmpty(y));
+            this.WhenAnyValue(x => x.PublicKeyString)
+                .Subscribe(x => 
+                {
+                    if (PublicKey != null) PublicKey = null;
+                    Input = !string.IsNullOrEmpty(x);
+                    byte[] decoded;
+                    try
+                    {
+                        decoded = Encoders.Base58.DecodeData(x);
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"Exception trying to decode address: {ex.Message}");
+                        Verified = false;
+                        return;
+                    }
+                    if (decoded.Length == 0) return;
+                    Verified = Ed25519Extensions.IsOnCurve(decoded);
+                    if(Verified) PublicKey = new PublicKey(_publicKeyString);
+                });
         }
 
-        public IObservable<bool> IsValid 
+        public void Clear()
         {
-            get; init; 
+            PublicKeyString = string.Empty;
+        }
+
+        private bool _verified;
+        public bool Verified
+        {
+            get => _verified;
+            set => this.RaiseAndSetIfChanged(ref _verified, value);
+        }
+
+        private bool _input;
+        public bool Input
+        {
+            get => _input;
+            set => this.RaiseAndSetIfChanged(ref _input, value);
         }
 
         private PublicKey _publicKey;
@@ -37,26 +67,7 @@ namespace Anvil.ViewModels.Fields
         public string PublicKeyString
         {
             get => _publicKeyString;
-            set
-            {
-                if (_publicKey != null) PublicKey = null;
-                byte[] decoded;
-                try
-                {
-                    decoded = Encoders.Base58.DecodeData(value);
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine($"Exception trying to decode address: {ex.Message}");
-                    return;
-                }
-
-                if (Ed25519Extensions.IsOnCurve(decoded))
-                {
-                    PublicKey = new PublicKey(_publicKeyString);
-                }
-                this.RaiseAndSetIfChanged(ref _publicKeyString, value);
-            }
+            set => this.RaiseAndSetIfChanged(ref _publicKeyString, value);
         }
     }
 }

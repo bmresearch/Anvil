@@ -1,9 +1,13 @@
 ﻿using Anvil.Services.Rpc.Events;
 using Solnet.Rpc;
+using Solnet.Rpc.Core.Http;
+using Solnet.Rpc.Models;
+using Solnet.Rpc.Types;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Anvil.Services
@@ -37,6 +41,20 @@ namespace Anvil.Services
         {
             Client = ClientFactory.GetClient(url);
             OnClientChanged?.Invoke(this, new RpcClientChangedEventArgs(Client));
+        }
+
+        /// <inheritdoc cref="IRpcClientProvider.PollTxAsync(string,Commitment)"/>
+        public async Task<TransactionMetaSlotInfo> PollTxAsync(string signature, Commitment commitment)
+        {
+            RequestResult<TransactionMetaSlotInfo> txMeta = await Client.GetTransactionAsync(signature);
+            while (!txMeta.WasSuccessful)
+            {
+                await Task.Delay(1000);
+                txMeta = await Client.GetTransactionAsync(signature);
+                if (txMeta.WasSuccessful)
+                    return txMeta.Result;
+            }
+            return txMeta.Result;
         }
 
         /// <inheritdoc cref="IRpcClientProvider.Client"/>

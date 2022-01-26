@@ -60,6 +60,14 @@ namespace Anvil.Models
             set => this.RaiseAndSetIfChanged(ref _cluster, value);
         }
 
+        [DataMember]
+        private string _storePath = AppContext.BaseDirectory;
+        public string StorePath
+        {
+            get => _storePath;
+            set => this.RaiseAndSetIfChanged(ref _storePath, value);
+        }
+
         public bool WalletExists => PrivateKeyFilePath != string.Empty && MnemonicSaved;
     }
 }

@@ -27,7 +27,7 @@ namespace Anvil.ViewModels.Crafter
 
             Tabs = new List<ViewModelBase>()
             {
-                new TransactionCraftViewModel(rpcProvider, nonceAccountMappingStore),
+                new TransactionCraftViewModel(rpcProvider, walletService, nonceAccountMappingStore),
                 new TransactionSignViewModel(walletService),
                 new TransactionSendViewModel(rpcProvider)
             };

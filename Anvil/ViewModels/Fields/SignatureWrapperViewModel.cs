@@ -19,6 +19,29 @@ namespace Anvil.ViewModels.Fields
         {
             _message = message;
             PublicKey = publicKey;
+
+            this.WhenAnyValue(x => x.Signature)
+                .Subscribe(x =>
+                {
+                    Input = !string.IsNullOrEmpty(x);
+
+                    byte[] signature;
+                    try
+                    {
+                        signature = Convert.FromBase64String(x);
+                        if (signature.Length != 64)
+                        {
+                            Verified = false;
+                            return;
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        Verified = false;
+                        return;
+                    }
+                    Verified = PublicKey.Verify(_message, signature);
+                });
         }
 
         private bool _verified;
@@ -35,7 +58,6 @@ namespace Anvil.ViewModels.Fields
             set => this.RaiseAndSetIfChanged(ref _input, value);
         }
 
-
         private PublicKey _publicKey;
         public PublicKey PublicKey
         {
@@ -47,28 +69,7 @@ namespace Anvil.ViewModels.Fields
         public string Signature
         {
             get => _signature;
-            set
-            {
-                this.RaiseAndSetIfChanged(ref _signature, value);
-                Input = !string.IsNullOrEmpty(value);
-
-                byte[] signature;
-                try
-                {
-                    signature = Convert.FromBase64String(value);
-                    if(signature.Length != 64)
-                    {
-                        Verified = false;
-                        return;
-                    }
-                }
-                catch (Exception e)
-                {
-                    Verified = false;
-                    return;
-                }
-                Verified = PublicKey.Verify(_message, signature);
-            }
+            set => this.RaiseAndSetIfChanged(ref _signature, value);
         }
     }
 }

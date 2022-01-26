@@ -1,0 +1,95 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+			 xmlns:views="clr-namespace:Anvil.Views.Crafter"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="Anvil.Views.Crafter.MultiSignatureAccountView">
+	<DockPanel
+		HorizontalAlignment="Stretch"
+		VerticalAlignment="Stretch">
+		<views:AccountView
+			DockPanel.Dock="Top"/>
+		<TextBlock
+			DockPanel.Dock="Top"
+			Classes="Subtitle1"
+			Text="Source account is a multi signature account."
+			TextAlignment="Left"
+			VerticalAlignment="Center"
+			HorizontalAlignment="Center"
+			Margin="5"/>
+		<StackPanel
+			DockPanel.Dock="Top"
+			Orientation="Horizontal">
+			<TextBlock
+				Classes="Subtitle2"
+				Text="Minimum Signers"
+				TextAlignment="Left"
+				VerticalAlignment="Center"
+				HorizontalAlignment="Left"
+				Margin="5"/>
+			<avalonia:MaterialIcon
+				ToolTip.Tip="The minimum number of signers required for a transaction using this multi signature account to be validated."
+				Kind="InformationCircleOutline" />
+		</StackPanel>
+		<TextBlock
+			DockPanel.Dock="Top"
+			Classes="Body1"
+			Text="{Binding MinimumSigners} "
+			ToolTip.Tip="The minimum number of signers."
+			TextAlignment="Left"
+			VerticalAlignment="Center"
+			HorizontalAlignment="Left"
+			Margin="5"/>
+		<StackPanel
+			DockPanel.Dock="Top"
+			Orientation="Horizontal">
+			<TextBlock
+				Classes="Subtitle2"
+				Text="Signers"
+				TextAlignment="Left"
+				VerticalAlignment="Center"
+				HorizontalAlignment="Left"
+				Margin="5"/>
+			<avalonia:MaterialIcon
+				ToolTip.Tip="The public keys that can sign a transaction using this multi signature account, a number of signatures equal to the minimum signers must be present."
+				Kind="InformationCircleOutline" />
+		</StackPanel>
+		<ScrollViewer
+			DockPanel.Dock="Top"
+			HorizontalScrollBarVisibility="Auto"
+			HorizontalAlignment="Stretch"
+			VerticalAlignment="Stretch">
+			<ListBox
+				Items="{Binding Signers}"
+				SelectedItems="{Binding SelectedSigners}"
+				SelectionMode="Multiple,Toggle"
+				VerticalAlignment="Center"
+				HorizontalAlignment="Left"
+				Width="500"
+				Margin="5">
+				<ListBox.ItemTemplate>
+					<DataTemplate>
+						<DockPanel
+							HorizontalAlignment="Stretch"
+							VerticalAlignment="Stretch">
+							<CheckBox
+								DockPanel.Dock="Left"
+								IsChecked="{Binding $parent[ListBoxItem].IsSelected}"
+								IsHitTestVisible="False"/>
+							<TextBlock
+								DockPanel.Dock="Right"
+								Classes="Body1"
+								Text="{Binding}"
+								TextAlignment="Left"
+								VerticalAlignment="Center"
+								HorizontalAlignment="Left"
+								Margin="5"/>
+						</DockPanel>
+					</DataTemplate>
+				</ListBox.ItemTemplate>
+			</ListBox>
+		</ScrollViewer>
+	</DockPanel>
+</UserControl>

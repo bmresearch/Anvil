@@ -1,6 +1,7 @@
 ﻿using Anvil.Core.ViewModels;
 using Anvil.Services;
 using Anvil.Services.Wallets;
+using Avalonia;
 using ReactiveUI;
 using Solnet.Programs.Utilities;
 using Solnet.Rpc;
@@ -27,6 +28,11 @@ namespace Anvil.ViewModels.Wallet
             CurrentWallet = walletService.CurrentWallet;
 
             GetAccountBalance();
+        }
+
+        public void CopyAddressToClipboard()
+        {
+            Application.Current.Clipboard.SetTextAsync(_walletService.CurrentWallet.Wallet.Account.PublicKey.Key);
         }
 
         private void _rpcClientProvider_OnClientChanged(object? sender, Services.Rpc.Events.RpcClientChangedEventArgs e)

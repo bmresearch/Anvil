@@ -1,6 +1,7 @@
 using Anvil.Core.ViewModels;
 using Anvil.Services;
 using Anvil.ViewModels.Fields;
+using Avalonia;
 using ReactiveUI;
 using Solnet.Programs;
 using Solnet.Programs.Models;
@@ -28,27 +29,61 @@ namespace Anvil.ViewModels.Crafter
             _rpcProvider = rpcProvider;
 
             RequiredSignatures = new();
-            _observables = new();
+        }
+
+        public void CopyTransactionHashToClipboard()
+        {
+            Application.Current.Clipboard.SetTextAsync(TransactionHash);
         }
 
         public async void SendTransaction()
         {
-            var msg = Message.Deserialize(_payload);
+            SubmittingTransaction = true;
 
+            Progress = "Populating transaction with signatures.";
+            var msg = Message.Deserialize(Payload);
             var tx = Transaction.Populate(msg,
                 RequiredSignatures.Select(x => Convert.FromBase64String(x.Signature)).ToList());
 
+            Progress = "Submitting transaction..";
             var txSig = await _rpcClient.SendTransactionAsync(tx.Serialize());
 
+            if (txSig.WasSuccessful)
+            {
+                Progress = "Awaiting transaction confirmation...";
+                var res = await _rpcProvider.PollTxAsync(txSig.Result, Solnet.Rpc.Types.Commitment.Confirmed);
+                TransactionHash = txSig.Result;
+                TransactionConfirmed = true;
+                TransactionError = false;
+                SubmittingTransaction = false;
+            } else
+            {
+                TransactionError = true;
+                TransactionConfirmed = false;
+                TransactionErrorMessage = txSig.Reason;
+                SubmittingTransaction = false;
+            }
         }
 
         private void DecodeMessageFromPayload()
         {
             RequiredSignatures = new();
-            _observables = new();
+            TransactionConfirmed = false;
+            TransactionHash = string.Empty;
+            TransactionError = false;
+            TransactionErrorMessage = string.Empty;
 
-            var msg = Message.Deserialize(Payload);
-            // maybe do something about this
+            Message msg = null;
+            try
+            {
+                msg = Message.Deserialize(Payload);
+                InvalidPayload = false;
+            }
+            catch (Exception ex)
+            {
+                InvalidPayload = true;
+                return;
+            }
             if (msg == null) return;
 
             for (int i = 0; i < msg.Header.RequiredSignatures; i++)
@@ -60,7 +95,47 @@ namespace Anvil.ViewModels.Crafter
             }
         }
 
-        private ObservableCollection<IObservable<bool>> _observables;
+        private string _progress;
+        public string Progress
+        {
+            get => _progress;
+            set => this.RaiseAndSetIfChanged(ref _progress, value);
+        }
+
+        private bool _submittingTransaction;
+        public bool SubmittingTransaction
+        {
+            get => _submittingTransaction;
+            set => this.RaiseAndSetIfChanged(ref _submittingTransaction, value);
+        }
+
+        private bool _transactionError;
+        public bool TransactionError
+        {
+            get => _transactionError;
+            set => this.RaiseAndSetIfChanged(ref _transactionError, value);
+        }
+
+        private string _transactionErrorMessage;
+        public string TransactionErrorMessage
+        {
+            get => _transactionErrorMessage;
+            set => this.RaiseAndSetIfChanged(ref _transactionErrorMessage, value);
+        }
+
+        private bool _transactionConfirmed;
+        public bool TransactionConfirmed
+        {
+            get => _transactionConfirmed;
+            set => this.RaiseAndSetIfChanged(ref _transactionConfirmed, value);
+        }
+
+        private string _transactionHash;
+        public string TransactionHash
+        {
+            get => _transactionHash;
+            set => this.RaiseAndSetIfChanged(ref _transactionHash, value);
+        }
 
         private string _payload;
         public string Payload
@@ -72,6 +147,14 @@ namespace Anvil.ViewModels.Crafter
                 DecodeMessageFromPayload();
             }
         }
+
+        private bool _invalidPayload;
+        public bool InvalidPayload
+        {
+            get => _invalidPayload;
+            set => this.RaiseAndSetIfChanged(ref _invalidPayload, value);
+        }
+
 
         private ObservableCollection<SignatureWrapperViewModel> _requiredSignatures;
         public ObservableCollection<SignatureWrapperViewModel> RequiredSignatures

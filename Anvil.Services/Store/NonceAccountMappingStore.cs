@@ -1,4 +1,8 @@
-﻿using Anvil.Services.Store.Models;
+﻿using Anvil.Core.Modules;
+using Anvil.Services.Store.Config;
+using Anvil.Services.Store.Models;
+using Anvil.Services.Store.State;
+using Microsoft.Extensions.Logging;
 using Solnet.Wallet;
 using System;
 using System.Collections.Generic;
@@ -11,40 +15,50 @@ namespace Anvil.Services.Store
     /// <summary>
     /// Implements a store for <see cref="NonceAccountMapping"/>.
     /// </summary>
-    public class NonceAccountMappingStore : INonceAccountMappingStore
+    public class NonceAccountMappingStore : Store, INonceAccountMappingStore
     {
-        private List<NonceAccountMapping> _nonceAccountMappings;
+        private NonceAccountMappingState _state;
 
         /// <summary>
         /// 
         /// </summary>
-        public NonceAccountMappingStore()
+        public NonceAccountMappingStore(ILogger logger, StoreConfig config) : base(logger, config)
         {
-            _nonceAccountMappings = new();
+            _state = _persistenceDriver.LoadState<NonceAccountMappingState>();
+            _state.PropertyChanged += (s, a) => {
+                _persistenceDriver.SaveState(_state); 
+            };
+            if (_state.Value == null)
+            {
+                _state.Value = new();
+                _persistenceDriver.SaveState(_state);
+            }
+            _state.OnStateChanged += _state_OnStateChanged;
+        }
+
+        private void _state_OnStateChanged(object sender, Events.NonceAccountMappingStateChangedEventArgs e)
+        {
+            _persistenceDriver.SaveState(e.State);
         }
 
         /// <inheritdoc cref="INonceAccountMappingStore.AddMapping(NonceAccountMapping)"></inheritdoc>
         public void AddMapping(NonceAccountMapping mapping)
         {
-            _nonceAccountMappings.Add(mapping);
+            _state.AddMapping(mapping);
         }
 
         /// <inheritdoc cref="INonceAccountMappingStore.GetMapping(PublicKey)"></inheritdoc>
         public NonceAccountMapping GetMapping(PublicKey authority)
         {
-            return _nonceAccountMappings.FirstOrDefault(x => x.Authority.Key == authority.Key);
-        }
-
-        /// <inheritdoc cref="INonceAccountMappingStore.GetMappings(PublicKey)"></inheritdoc>
-        public List<NonceAccountMapping> GetMappings(PublicKey authority)
-        {
-            return _nonceAccountMappings.Where(x => x.Authority.Key == authority.Key).ToList();
+            return _state.GetMapping(authority);
         }
 
         /// <inheritdoc cref="INonceAccountMappingStore.NonceAccountMappings"></inheritdoc>
         public List<NonceAccountMapping> NonceAccountMappings 
         { 
-            get => _nonceAccountMappings;
+            get => _state.NonceAccountMappings;
         }
+
+        public const string FileName = "nonce_accounts.map";
     }
 }
