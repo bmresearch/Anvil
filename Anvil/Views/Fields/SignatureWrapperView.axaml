@@ -5,30 +5,43 @@
              xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Anvil.Views.Fields.SignatureWrapperView">
-	<StackPanel
-		  Orientation="Vertical"
-		  HorizontalAlignment="Stretch"
-		  VerticalAlignment="Stretch">
-		<StackPanel
-			Orientation="Vertical"
+	<DockPanel
+		LastChildFill="True"
+		HorizontalAlignment="Stretch"
+		VerticalAlignment="Stretch">
+		<DockPanel
+			DockPanel.Dock="Top"
 			HorizontalAlignment="Stretch"
 			VerticalAlignment="Center">
-			<StackPanel
-				Orientation="Horizontal"
+			<DockPanel
+				DockPanel.Dock="Top"
 				HorizontalAlignment="Stretch"
 				VerticalAlignment="Center">
 				<TextBlock
+					DockPanel.Dock="Left"
 					Classes="Body1"
 					Text="Signature from "
 					VerticalAlignment="Center"
 					HorizontalAlignment="Left"/>				
 				<TextBlock
-					Classes="Subtitle2"
-					Text="{Binding PublicKey.Key}"
+					DockPanel.Dock="Left"
+					Classes="Subtitle1"
+					Text="{Binding ShortenedPublicKey}"
+					VerticalAlignment="Center"
+					HorizontalAlignment="Center"/>
+				<Button
+					DockPanel.Dock="Left"
+					Classes="Flat"
+					ToolTip.Tip="Load signature from file."
 					VerticalAlignment="Center"
 					HorizontalAlignment="Right"
-					Width="450"/>
-			</StackPanel>
+					Height="32"
+					Width="32"
+					Margin="5"
+					Command="{Binding LoadSignatureFromFile}">
+					<avalonia:MaterialIcon Kind="FileUpload" />
+				</Button>
+			</DockPanel>
 			<TextBox
 				Classes="Filled"
 				Text="{Binding Signature}"
@@ -36,7 +49,7 @@
 				HorizontalAlignment="Left"
 				FontSize="10"
 				Width="500"/>
-		</StackPanel>
+		</DockPanel>
 		<ContentPresenter
 			Name="InputContentPresenter">
 			<Interaction.Behaviors>
@@ -108,5 +121,5 @@
 				</DataTriggerBehavior>
 			</Interaction.Behaviors>
 		</ContentPresenter>
-	</StackPanel>
+	</DockPanel>
 </UserControl>

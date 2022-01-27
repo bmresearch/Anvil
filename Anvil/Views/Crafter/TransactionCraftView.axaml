@@ -40,39 +40,12 @@
 				Margin="5"
 				HorizontalAlignment="Stretch"
 				VerticalAlignment="Stretch">
-				<TextBlock
-					DockPanel.Dock="Top"
-					Classes="Subtitle1"
-					Text="Destination File"
-					TextAlignment="Left"
-					VerticalAlignment="Center"
-					HorizontalAlignment="Left"
-					Margin="5"
-					Width="150"
-					Foreground="{DynamicResource MainTextAccent}"/>
-				<TextBox
-					DockPanel.Dock="Top"
-					Classes="Filled"
-					Text="{Binding PrivateKeyFilePath}"
-					VerticalAlignment="Center"
-					HorizontalAlignment="Left"
-					IsHitTestVisible="False"
-					Margin="5"
-					Height="50"
-					Width="500"/>
 				<StackPanel
 					DockPanel.Dock="Top"
 					Orientation="Horizontal"
 					VerticalAlignment="Center"
 					HorizontalAlignment="Center"
 					Margin="5">
-					<Button
-						Classes="Filled"
-						VerticalAlignment="Center"
-						HorizontalAlignment="Center"
-						Margin="5"
-						Content="Select Destination"
-						Command="{Binding SelectDestinationFile}"/>
 					<Button
 						Classes="Filled"
 						VerticalAlignment="Center"
@@ -315,20 +288,32 @@
 		</styles:Card>
 		<styles:Card
 			Margin="5"
-			DockPanel.Dock="Left"
+			DockPanel.Dock="Top"
 			IsVisible="{Binding TransactionCrafted}">
 			<DockPanel
 				Margin="5"
+				DockPanel.Dock="Top"
+				LastChildFill="False"
 				HorizontalAlignment="Stretch"
 				VerticalAlignment="Stretch">
-				<TextBlock
+				<DockPanel
 					DockPanel.Dock="Top"
-					Classes="Subtitle2"
-					Text="Payload"
-					TextAlignment="Left"
-					VerticalAlignment="Center"
-					HorizontalAlignment="Left"
-					Margin="5"/>
+					LastChildFill="False"
+					HorizontalAlignment="Stretch"
+					VerticalAlignment="Stretch">
+					<TextBlock
+						DockPanel.Dock="Left"
+						Classes="Subtitle2"
+						Text="Payload"
+						TextAlignment="Left"
+						VerticalAlignment="Center"
+						HorizontalAlignment="Left"
+						Margin="5"/>
+					<avalonia:MaterialIcon
+						DockPanel.Dock="Left"
+						ToolTip.Tip="The payload of the transaction, it specifies the instructions, accounts and which are required signers."
+						Kind="InformationCircleOutline" />
+				</DockPanel>
 				<TextBox
 					DockPanel.Dock="Top"
 					Classes="Filled"
@@ -336,8 +321,22 @@
 					IsReadOnly="True"
 					TextAlignment="Left"
 					VerticalAlignment="Center"
-					HorizontalAlignment="Left"
-					TextWrapping="Wrap"/>
+					HorizontalAlignment="Center"
+					TextWrapping="Wrap"
+					Margin="5"/>
+				<Button
+					DockPanel.Dock="Top"
+					Classes="Flat"
+					ToolTip.Tip="Copy transaction to clipboard."
+					VerticalAlignment="Center"
+					HorizontalAlignment="Center"
+					Height="32"
+					Width="32"
+					Margin="5"
+					Command="{Binding CopyTransactionToClipboard}"
+					IsVisible="{Binding TransactionCrafted}">
+					<avalonia:MaterialIcon Kind="ContentCopy" />
+				</Button>
 			</DockPanel>
 		</styles:Card>
 	</DockPanel>

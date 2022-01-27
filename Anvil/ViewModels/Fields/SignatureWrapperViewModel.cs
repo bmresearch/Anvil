@@ -1,7 +1,11 @@
 ﻿using Anvil.Core.ViewModels;
+using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Controls.ApplicationLifetimes;
 using ReactiveUI;
 using Solnet.Wallet;
 using System;
+using System.IO;
 
 namespace Anvil.ViewModels.Fields
 {
@@ -44,6 +48,34 @@ namespace Anvil.ViewModels.Fields
                 });
         }
 
+        public async void LoadSignatureFromFile()
+        {
+            var ofd = new OpenFileDialog()
+            {
+                AllowMultiple = false,
+                Title = "Select Signature File",
+                Filters = new()
+                {
+                    new FileDialogFilter()
+                    {
+                        Name = "*",
+                        Extensions = new() { "sig" }
+                    }
+                }
+            };
+            if (Application.Current.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+            {
+                var selected = await ofd.ShowAsync(desktop.MainWindow);
+                if (selected == null) return;
+                if (selected.Length > 0)
+                {
+                    if (!File.Exists(selected[0])) return;
+
+                    Signature = await File.ReadAllTextAsync(selected[0]);
+                }
+            }
+        }
+
         private bool _verified;
         public bool Verified
         {
@@ -70,6 +102,11 @@ namespace Anvil.ViewModels.Fields
         {
             get => _signature;
             set => this.RaiseAndSetIfChanged(ref _signature, value);
+        }
+
+        public string ShortenedPublicKey
+        {
+            get => _publicKey.Key[..6] + "..." + _publicKey.Key[^6..];
         }
     }
 }

@@ -122,14 +122,35 @@
 				Margin="5"
 				VerticalAlignment="Stretch"
 				HorizontalAlignment="Stretch">
-				<TextBlock
+				<DockPanel
 					DockPanel.Dock="Top"
-					Classes="Subtitle2"
-					Text="Payload"
-					TextAlignment="Left"
-					VerticalAlignment="Center"
-					HorizontalAlignment="Left"
-					Margin="5"/>
+					VerticalAlignment="Stretch"
+					HorizontalAlignment="Stretch">
+					<TextBlock
+						DockPanel.Dock="Left"
+						Classes="Subtitle2"
+						Text="Payload"
+						TextAlignment="Left"
+						VerticalAlignment="Center"
+						HorizontalAlignment="Left"
+						Margin="5"/>
+					<avalonia:MaterialIcon
+						DockPanel.Dock="Left"
+						ToolTip.Tip="The payload of the transaction, it specifies the instructions, accounts and which are required signers."
+						Kind="InformationCircleOutline" />
+					<Button
+						DockPanel.Dock="Right"
+						Classes="Flat"
+						ToolTip.Tip="Load transaction payload from file."
+						VerticalAlignment="Center"
+						HorizontalAlignment="Right"
+						Height="32"
+						Width="32"
+						Margin="5"
+						Command="{Binding LoadPayloadFromFile}">
+						<avalonia:MaterialIcon Kind="FileUpload" />
+					</Button>
+				</DockPanel>
 				<TextBox
 					DockPanel.Dock="Top"
 					Classes="Filled"
@@ -157,14 +178,24 @@
 				Margin="5"
 				VerticalAlignment="Stretch"
 				HorizontalAlignment="Stretch">
-				<TextBlock
+				<DockPanel
 					DockPanel.Dock="Top"
-					Classes="Subtitle2"
-					Text="Signatures"
-					TextAlignment="Left"
-					VerticalAlignment="Center"
-					HorizontalAlignment="Left"
-					Margin="5"/>
+					LastChildFill="False"
+					VerticalAlignment="Stretch"
+					HorizontalAlignment="Stretch">
+					<TextBlock
+						DockPanel.Dock="Left"
+						Classes="Subtitle2"
+						Text="Signatures"
+						TextAlignment="Left"
+						VerticalAlignment="Center"
+						HorizontalAlignment="Left"
+						Margin="5"/>
+					<avalonia:MaterialIcon
+						DockPanel.Dock="Left"
+						ToolTip.Tip="The required signatures for the transaction."
+						Kind="InformationCircleOutline" />
+				</DockPanel>
 				<ScrollViewer
 					Margin="5"
 					DockPanel.Dock="Bottom"

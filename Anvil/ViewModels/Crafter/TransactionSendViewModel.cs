@@ -2,6 +2,8 @@ using Anvil.Core.ViewModels;
 using Anvil.Services;
 using Anvil.ViewModels.Fields;
 using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Controls.ApplicationLifetimes;
 using ReactiveUI;
 using Solnet.Programs;
 using Solnet.Programs.Models;
@@ -11,6 +13,7 @@ using Solnet.Wallet;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
 using System.Reactive.Linq;
 using System.Text;
@@ -29,6 +32,33 @@ namespace Anvil.ViewModels.Crafter
             _rpcProvider = rpcProvider;
 
             RequiredSignatures = new();
+        }
+        public async void LoadPayloadFromFile()
+        {
+            var ofd = new OpenFileDialog()
+            {
+                AllowMultiple = false,
+                Title = "Select Payload File",
+                Filters = new()
+                {
+                    new FileDialogFilter()
+                    {
+                        Name = "*",
+                        Extensions = new() { "tx" }
+                    }
+                }
+            };
+            if (Application.Current.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+            {
+                var selected = await ofd.ShowAsync(desktop.MainWindow);
+                if (selected == null) return;
+                if (selected.Length > 0)
+                {
+                    if (!File.Exists(selected[0])) return;
+
+                    Payload = await File.ReadAllTextAsync(selected[0]);
+                }
+            }
         }
 
         public void CopyTransactionHashToClipboard()

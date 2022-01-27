@@ -17,21 +17,33 @@
 				Margin="5"
 				VerticalAlignment="Stretch"
 				HorizontalAlignment="Stretch">
-				<StackPanel
+				<DockPanel
 					DockPanel.Dock="Top"
-					Orientation="Vertical">
-					<TextBlock
-						Classes="Subtitle2"
-						Text="Signature"
-						TextAlignment="Left"
-						VerticalAlignment="Center"
-						HorizontalAlignment="Center"
-						Margin="5"/>
-					<StackPanel
-						Orientation="Horizontal"
-						VerticalAlignment="Center"
+					VerticalAlignment="Stretch"
+					HorizontalAlignment="Center">
+					<DockPanel
+						DockPanel.Dock="Top"
+						VerticalAlignment="Stretch"
+						HorizontalAlignment="Center">
+						<TextBlock
+							DockPanel.Dock="Left"
+							Classes="Subtitle2"
+							Text="Signature"
+							TextAlignment="Left"
+							VerticalAlignment="Center"
+							HorizontalAlignment="Center"
+							Margin="5"/>
+						<avalonia:MaterialIcon
+							DockPanel.Dock="Left"
+							ToolTip.Tip="The signature of the payload."
+							Kind="InformationCircleOutline" />
+					</DockPanel>
+					<DockPanel
+						DockPanel.Dock="Top"
+						VerticalAlignment="Stretch"
 						HorizontalAlignment="Center">
 						<TextBox
+							DockPanel.Dock="Left"
 							Classes="Filled"
 							Text="{Binding Signature}"
 							TextAlignment="Left"
@@ -43,6 +55,7 @@
 							TextWrapping="Wrap"
 							IsReadOnly="True"/>
 						<Button
+							DockPanel.Dock="Right"
 							Classes="Flat"
 							ToolTip.Tip="Copy signature to clipboard."
 							VerticalAlignment="Center"
@@ -54,34 +67,39 @@
 							IsVisible="{Binding Signed}">
 							<avalonia:MaterialIcon Kind="ContentCopy" />
 						</Button>
-					</StackPanel>
-					<StackPanel
-						Orientation="Horizontal"
-						HorizontalAlignment="Center"
-						Margin="5">
+					</DockPanel>
+					<DockPanel
+						DockPanel.Dock="Top"
+						VerticalAlignment="Stretch"
+						HorizontalAlignment="Center">
 						<Button
+							DockPanel.Dock="Left"
 							Classes="Filled"
 							Margin="5"
 							FontSize="12"
 							Content="Sign Payload"
 							Command="{Binding SignPayload}"
+							IsEnabled="{Binding PayloadInput}"
 							Width="150"
 							VerticalAlignment="Center"
 							HorizontalAlignment="Center"
 							HorizontalContentAlignment="Center"
 							VerticalContentAlignment="Center"/>
 						<Button
+							DockPanel.Dock="Right"
 							Classes="Filled"
 							Margin="5"
 							FontSize="12"
 							Content="Save Signature"
+							Command="{Binding SaveSignatureToFile}"
+							IsEnabled="{Binding Signed}"
 							Width="150"
 							VerticalAlignment="Center"
 							HorizontalAlignment="Center"
 							HorizontalContentAlignment="Center"
 							VerticalContentAlignment="Center"/>
-					</StackPanel>
-				</StackPanel>
+					</DockPanel>
+				</DockPanel>
 			</DockPanel>
 		</styles:Card>
 		<styles:Card
@@ -91,14 +109,35 @@
 				Margin="5"
 				HorizontalAlignment="Stretch"
 				VerticalAlignment="Stretch">
-				<TextBlock
+				<DockPanel
 					DockPanel.Dock="Top"
-					Classes="Subtitle2"
-					Text="Payload"
-					TextAlignment="Left"
-					VerticalAlignment="Center"
-					HorizontalAlignment="Left"
-					Margin="5"/>
+					VerticalAlignment="Stretch"
+					HorizontalAlignment="Stretch">
+					<TextBlock
+						DockPanel.Dock="Left"
+						Classes="Subtitle2"
+						Text="Payload"
+						TextAlignment="Left"
+						VerticalAlignment="Center"
+						HorizontalAlignment="Left"
+						Margin="5"/>
+					<avalonia:MaterialIcon
+						DockPanel.Dock="Left"
+						ToolTip.Tip="The payload of the transaction, it specifies the instructions, accounts and which are required signers."
+						Kind="InformationCircleOutline" />
+					<Button
+						DockPanel.Dock="Right"
+						Classes="Flat"
+						ToolTip.Tip="Load transaction payload from file."
+						VerticalAlignment="Center"
+						HorizontalAlignment="Right"
+						Height="32"
+						Width="32"
+						Margin="5"
+						Command="{Binding LoadPayloadFromFile}">
+						<avalonia:MaterialIcon Kind="FileUpload" />
+					</Button>
+				</DockPanel>
 				<TextBox
 					DockPanel.Dock="Top"
 					Classes="Filled"
@@ -123,15 +162,27 @@
 			Margin="5"
 			DockPanel.Dock="Right">
 			<DockPanel
-				Margin="5">
-				<TextBlock
+				Margin="5"
+				VerticalAlignment="Stretch"
+				HorizontalAlignment="Stretch">
+				<DockPanel
+					LastChildFill="False"
 					DockPanel.Dock="Top"
-					Classes="Subtitle2"
-					Text="Decoded Instructions"
-					TextAlignment="Left"
-					VerticalAlignment="Center"
-					HorizontalAlignment="Left"
-					Margin="5"/>
+					VerticalAlignment="Stretch"
+					HorizontalAlignment="Stretch">
+					<TextBlock
+						DockPanel.Dock="Left"
+						Classes="Subtitle2"
+						Text="Decoded Instructions"
+						TextAlignment="Left"
+						VerticalAlignment="Center"
+						HorizontalAlignment="Left"
+						Margin="5"/>
+					<avalonia:MaterialIcon
+						DockPanel.Dock="Left"
+						ToolTip.Tip="The instructions present in the transaction, decoded from the payload."
+						Kind="InformationCircleOutline" />
+				</DockPanel>
 				<ScrollViewer
 					DockPanel.Dock="Top"
 					HorizontalAlignment="Stretch">

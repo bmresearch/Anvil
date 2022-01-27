@@ -1,12 +1,15 @@
 using Anvil.Core.ViewModels;
 using Anvil.Services;
 using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Controls.ApplicationLifetimes;
 using ReactiveUI;
 using Solnet.Programs;
 using Solnet.Rpc.Models;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 
 namespace Anvil.ViewModels.Crafter
 {
@@ -32,6 +35,50 @@ namespace Anvil.ViewModels.Crafter
         public void CopySignatureToClipboard()
         {
             Application.Current.Clipboard.SetTextAsync(Signature);
+        }
+
+        public async void LoadPayloadFromFile()
+        {
+            var ofd = new OpenFileDialog()
+            {
+                AllowMultiple = false,
+                Title = "Select Payload File",
+                Filters = new()
+                {
+                    new FileDialogFilter()
+                    {
+                        Name = "*",
+                        Extensions = new() { "tx" }
+                    }
+                }
+            };
+            if (Application.Current.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+            {
+                var selected = await ofd.ShowAsync(desktop.MainWindow);
+                if (selected == null) return;
+                if (selected.Length > 0)
+                {
+                    if (!File.Exists(selected[0])) return;
+
+                    Payload = await File.ReadAllTextAsync(selected[0]);
+                }
+            }
+        }
+
+        public async void SaveSignatureToFile()
+        {
+            var ofd = new SaveFileDialog()
+            {
+                Title = "Save Signature To File",
+                DefaultExtension = "sig"
+            };
+            if (Application.Current.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+            {
+                var selected = await ofd.ShowAsync(desktop.MainWindow);
+                if (selected == null) return;
+                
+                await File.WriteAllTextAsync(selected, Signature);
+            }
         }
 
         private void DecodeMessageFromPayload()
@@ -78,11 +125,20 @@ namespace Anvil.ViewModels.Crafter
                 {
                     DecodedInstructions = new();
                     Signed = false;
+                    PayloadInput = false;
                 }else
                 {
                     DecodeMessageFromPayload();
+                    PayloadInput = true;
                 }
             }
+        }
+
+        private bool _payloadInput;
+        public bool PayloadInput
+        {
+            get => _payloadInput;
+            set => this.RaiseAndSetIfChanged(ref _payloadInput, value);
         }
 
         private bool _invalidPayload;

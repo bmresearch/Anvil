@@ -2,6 +2,9 @@ using Anvil.Core.ViewModels;
 using Anvil.Services;
 using Anvil.Services.Store.Models;
 using Anvil.ViewModels.Fields;
+using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Controls.ApplicationLifetimes;
 using ReactiveUI;
 using Solnet.Extensions;
 using Solnet.Programs;
@@ -16,6 +19,7 @@ using Solnet.Wallet.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Threading.Tasks;
 
 namespace Anvil.ViewModels.Crafter
@@ -141,16 +145,27 @@ namespace Anvil.ViewModels.Crafter
                     }
                     this.RaisePropertyChanged("CanCraftTransaction");
                 });
+        }        
+        
+        public void CopyTransactionToClipboard()
+        {
+            Application.Current.Clipboard.SetTextAsync(Payload);
         }
 
-        public void SelectDestinationFile()
+        public async void SaveTransaction()
         {
+            var ofd = new SaveFileDialog()
+            {
+                Title = "Save Transaction To File",
+                DefaultExtension = "tx"
+            };
+            if (Application.Current.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+            {
+                var selected = await ofd.ShowAsync(desktop.MainWindow);
+                if (selected == null) return;
 
-        }
-
-        public void SaveTransaction()
-        {
-
+                await File.WriteAllTextAsync(selected, Payload);
+            }
         }
 
         public void EditTransaction()
