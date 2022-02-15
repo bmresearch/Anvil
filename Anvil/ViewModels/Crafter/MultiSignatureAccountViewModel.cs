@@ -1,13 +1,7 @@
-﻿using Anvil.Core.ViewModels;
-using ReactiveUI;
-using Solnet.Programs.Models;
+﻿using ReactiveUI;
+using Solnet.Programs.Models.TokenProgram;
 using Solnet.Wallet;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Anvil.ViewModels.Crafter
 {

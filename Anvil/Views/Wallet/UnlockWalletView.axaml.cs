@@ -1,12 +1,11 @@
-using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 
-namespace Anvil.Views
+namespace Anvil.Views.Wallet
 {
-    public partial class UserControl1 : UserControl
+    public partial class UnlockWalletView : UserControl
     {
-        public UserControl1()
+        public UnlockWalletView()
         {
             InitializeComponent();
         }

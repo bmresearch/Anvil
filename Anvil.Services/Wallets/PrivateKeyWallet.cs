@@ -1,32 +1,23 @@
-﻿using Solnet.Wallet;
-using System;
-
-namespace Anvil.Services.Wallets
+﻿namespace Anvil.Services.Wallets
 {
     /// <summary>
-    /// 
+    /// Represents a private key file based wallet.
     /// </summary>
     public class PrivateKeyWallet : IPrivateKeyWallet
     {
-        private Wallet _wallet;
-
-        public PrivateKeyWallet(Wallet wallet)
+        /// <summary>
+        /// Initialize the private key file based wallet with the given path.
+        /// </summary>
+        /// <param name="path">The path to the private key file.</param>
+        public PrivateKeyWallet(string path)
         {
-            _wallet = wallet;
+            Path = path;
         }
 
+        /// <inheritdoc cref="IPrivateKeyWallet.Path"/>
         public string Path { get; init; }
 
-        public PublicKey Address 
-        { 
-            get => _wallet.Account.PublicKey;
-        }
-
-        public Wallet Wallet => _wallet;
-
-        public byte[] Sign(byte[] data)
-        {
-            return _wallet.Account.Sign(data);
-        }
+        /// <inheritdoc cref="IAliasedWallet.Alias"/>
+        public string Alias { get; set; } = string.Empty;
     }
 }

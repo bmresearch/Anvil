@@ -27,7 +27,7 @@ namespace Anvil.ViewModels.Crafter
         public void SignPayload()
         {
             var msgBytes = Convert.FromBase64String(Payload);
-            var signature = _walletService.CurrentWallet.Wallet.Account.Sign(msgBytes);
+            var signature = _walletService.CurrentWallet.Sign(msgBytes);
             Signature = Convert.ToBase64String(signature);
             Signed = true;
         }

@@ -6,7 +6,7 @@ using Avalonia.Controls.ApplicationLifetimes;
 using ReactiveUI;
 using System.Reactive;
 
-namespace Anvil.ViewModels
+namespace Anvil.ViewModels.Wallet
 {
     public class ImportWalletViewModel : ViewModelBase
     {
@@ -19,7 +19,9 @@ namespace Anvil.ViewModels
             var canConfirm = this.WhenAny(
                 x => x.Mnemonic,
                 y => y.PrivateKeyFilePath,
-                (x,y) => !string.IsNullOrEmpty(x.Value) || !string.IsNullOrEmpty(y.Value));
+                w => w.Password,
+                z => z.ConfirmPassword,
+                (x,y,w,z) => (!string.IsNullOrEmpty(x.Value) && w.Value == z.Value) || !string.IsNullOrEmpty(y.Value));
 
             Confirm = ReactiveCommand.Create(
                 () =>
@@ -28,8 +30,6 @@ namespace Anvil.ViewModels
                     {
                         Mnemonic = Mnemonic,
                         PrivateKeyFilePath = PrivateKeyFilePath,
-                        SaveMnemonic = SaveMnemonic,
-                        MnemonicStorePath = MnemonicStorePath,
                         Password = Password
                     };
                 }, canConfirm);
@@ -58,47 +58,11 @@ namespace Anvil.ViewModels
             }
         }
 
-        public async void OpenStorePathSelection()
-        {
-            var ofd = new OpenFolderDialog()
-            {
-                Title = "Select Key Store Path"
-            };
-            if (Application.Current.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
-            {
-                var selected = await ofd.ShowAsync(desktop.MainWindow);
-                if (selected == null) return;
-                MnemonicStorePath = selected;
-            }
-        }
-
-        private string _mnemonicStorePath;
-        public string MnemonicStorePath
-        {
-            get => _mnemonicStorePath;
-            set => this.RaiseAndSetIfChanged(ref _mnemonicStorePath, value);
-        }
-
         private string _privateKeyFilePath;
         public string PrivateKeyFilePath
         {
             get => _privateKeyFilePath;
             set => this.RaiseAndSetIfChanged(ref _privateKeyFilePath, value);
-        }
-
-        private bool _saveMnemonic = false;
-        public bool SaveMnemonic
-        {
-            get => _saveMnemonic;
-            set 
-            {
-                this.RaiseAndSetIfChanged(ref _saveMnemonic, value);
-                if (!value)
-                {
-                    MnemonicStorePath = string.Empty;
-                    Password = string.Empty;
-                }
-            }
         }
 
         private string _mnemonic;
@@ -113,6 +77,14 @@ namespace Anvil.ViewModels
         {
             get => _password;
             set => this.RaiseAndSetIfChanged(ref _password, value);
+        }
+        
+
+        private string _confirmPassword;
+        public string ConfirmPassword
+        {
+            get => _confirmPassword;
+            set => this.RaiseAndSetIfChanged(ref _confirmPassword, value);
         }
 
         /// <summary>

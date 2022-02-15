@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Anvil.Services.Wallets.Events
 {
@@ -17,9 +13,9 @@ namespace Anvil.Services.Wallets.Events
         public IWallet Wallet { get; init; }
 
         /// <summary>
-        /// 
+        /// Initialize the <see cref="CurrentWalletChangedEventArgs"/> with the given <see cref="IWallet"/>.
         /// </summary>
-        /// <param name="wallet"></param>
+        /// <param name="wallet">The new current wallet.</param>
         public CurrentWalletChangedEventArgs(IWallet wallet)
         {
             Wallet = wallet;

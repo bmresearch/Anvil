@@ -1,41 +1,43 @@
-﻿using Anvil.Core.Modules;
-using Anvil.Services.Store.Config;
+﻿using Anvil.Services.Store.Config;
 using Anvil.Services.Store.Models;
 using Anvil.Services.Store.State;
 using Microsoft.Extensions.Logging;
 using Solnet.Wallet;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Anvil.Services.Store
 {
     /// <summary>
     /// Implements a store for <see cref="NonceAccountMapping"/>.
     /// </summary>
-    public class NonceAccountMappingStore : Store, INonceAccountMappingStore
+    public class NonceAccountMappingStore : Abstract.Store, INonceAccountMappingStore
     {
+        /// <summary>
+        /// The state of the nonce account mapping store.
+        /// </summary>
         private NonceAccountMappingState _state;
 
         /// <summary>
-        /// 
+        /// Initialize the <see cref="NonceAccountMappingStore"/> with the given <see cref="ILogger"/> and <see cref="StoreConfig"/>.
         /// </summary>
+        /// <param name="logger"></param>
+        /// <param name="config"></param>
         public NonceAccountMappingStore(ILogger logger, StoreConfig config) : base(logger, config)
         {
             _state = _persistenceDriver.LoadState<NonceAccountMappingState>();
-            _state.PropertyChanged += (s, a) => {
-                _persistenceDriver.SaveState(_state); 
-            };
-            if (_state.Value == null)
+            if (_state.NonceAccountMappings == null)
             {
-                _state.Value = new();
+                _state.NonceAccountMappings = new();
                 _persistenceDriver.SaveState(_state);
             }
             _state.OnStateChanged += _state_OnStateChanged;
         }
 
+        /// <summary>
+        /// Handle changes to the state.
+        /// </summary>
+        /// <param name="sender">The sender.</param>
+        /// <param name="e">The event.</param>
         private void _state_OnStateChanged(object sender, Events.NonceAccountMappingStateChangedEventArgs e)
         {
             _persistenceDriver.SaveState(e.State);
@@ -59,6 +61,6 @@ namespace Anvil.Services.Store
             get => _state.NonceAccountMappings;
         }
 
-        public const string FileName = "nonce_accounts.map";
+        public const string FileName = "nonceaccount.store";
     }
 }

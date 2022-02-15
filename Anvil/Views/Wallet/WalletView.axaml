@@ -11,7 +11,10 @@
 		<styles:Card
 			Margin="5,5,0,5"
 			DockPanel.Dock="Left">
-			<DockPanel>
+			<DockPanel
+				LastChildFill="False"
+				HorizontalAlignment="Stretch"
+				VerticalAlignment="Stretch">
 				<StackPanel
 					Orientation="Horizontal"
 					DockPanel.Dock="Bottom"
@@ -22,7 +25,15 @@
 						VerticalAlignment="Center"
 						HorizontalAlignment="Center"
 						Background="{DynamicResource ButtonBackgroundColor}"
+						Command="{Binding DeriveWallet}"
 						Content="Derive Wallet"/>
+					<Button
+						Margin="5"
+						VerticalAlignment="Center"
+						HorizontalAlignment="Center"
+						Background="{DynamicResource ButtonBackgroundColor}"
+						Command="{Binding ImportPrivateKey}"
+						Content="Import Private Key"/>
 				</StackPanel>
 				<TextBlock
 					Classes="Headline5 Subheadline2"
@@ -33,8 +44,86 @@
 					Foreground="{DynamicResource MainTextAccent}"
 					Text="Wallets">
 				</TextBlock>
-				<ListBox>
-				</ListBox>
+				<Expander
+					DockPanel.Dock="Top"
+					Margin="5"
+					HorizontalAlignment="Stretch"
+					VerticalAlignment="Stretch"
+					HorizontalContentAlignment="Stretch"
+					VerticalContentAlignment="Stretch">
+					<Expander.Header>
+						<TextBlock
+							Classes="Subtitle2"
+							Margin="5"
+							Text="Derivation Wallets"
+							TextAlignment="Center"
+							VerticalAlignment="Center"
+							HorizontalAlignment="Left"/>
+					</Expander.Header>
+					<Expander.Content>
+						<ListBox SelectionMode="Single" SelectedItem="{Binding CurrentWallet}" Items="{Binding DerivationWalletsColleciton}">
+							<ListBox.Template>
+							</ListBox.Template>
+							<ListBox.ItemTemplate>
+								<DataTemplate>
+									<DockPanel>
+										<TextBlock
+											DockPanel.Dock="Left"
+											Margin="5"
+											Classes="Body2"
+											Text="{Binding Alias}"/>
+										<Separator />									
+										<TextBlock
+											DockPanel.Dock="Right"
+											Margin="5"
+											Classes="Body2"
+											Text="{Binding ShortenedAddress}"/>
+									</DockPanel>
+								</DataTemplate>
+							</ListBox.ItemTemplate>
+						</ListBox>
+					</Expander.Content>
+				</Expander>
+				<Expander
+					DockPanel.Dock="Top"
+					Margin="5"
+					HorizontalAlignment="Stretch"
+					VerticalAlignment="Stretch"
+					HorizontalContentAlignment="Stretch"
+					VerticalContentAlignment="Stretch">
+					<Expander.Header>
+						<TextBlock
+							Classes="Subtitle2"
+							Margin="5"
+							Text="Private Key Wallets"
+							TextAlignment="Center"
+							VerticalAlignment="Center"
+							HorizontalAlignment="Left"/>
+					</Expander.Header>
+					<Expander.Content>
+						<ListBox SelectionMode="Single" SelectedItem="{Binding CurrentWallet}" Items="{Binding PrivateKeyWalletsCollection}">
+							<ListBox.Template>
+							</ListBox.Template>
+							<ListBox.ItemTemplate>
+								<DataTemplate>
+									<DockPanel>
+										<TextBlock
+											DockPanel.Dock="Left"
+											Margin="5"
+											Classes="Body2"
+											Text="{Binding Alias}"/>
+										<Separator />
+										<TextBlock
+											DockPanel.Dock="Right"
+											Margin="5"
+											Classes="Body2"
+											Text="{Binding ShortenedAddress}"/>
+									</DockPanel>
+								</DataTemplate>
+							</ListBox.ItemTemplate>
+						</ListBox>
+					</Expander.Content>
+				</Expander>
 			</DockPanel>
 		</styles:Card>
 		<styles:Card
@@ -56,7 +145,7 @@
 					HorizontalAlignment="Center"
 					Margin="10">
 					<StackPanel Orientation="Horizontal">
-						<TextBlock Classes="Body1" Text="{Binding PublicKey.Key}" Margin="0" VerticalAlignment="Center"/>
+						<TextBlock Classes="Body1" Text="{Binding CurrentWallet.Address}" Margin="0" VerticalAlignment="Center"/>
 						<Button Classes="Flat" ToolTip.Tip="Copy address to clipboard" VerticalAlignment="Center" Command="{Binding CopyAddressToClipboard}" Height="24" Width="24" Padding="0">
 							<avalonia:MaterialIcon Kind="ContentCopy" />
 						</Button>
@@ -176,7 +265,7 @@
 
 						</ItemsControl>
 					</ScrollViewer>
-					
+
 				</StackPanel>
 			</DockPanel>
 		</styles:Card>

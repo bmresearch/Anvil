@@ -1,39 +1,43 @@
-﻿using Anvil.Core.Modules;
-using Anvil.Services.Store.Config;
+﻿using Anvil.Services.Store.Config;
 using Anvil.Services.Store.Models;
 using Anvil.Services.Store.State;
 using Microsoft.Extensions.Logging;
 using Solnet.Wallet;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Anvil.Services.Store
 {
     /// <summary>
-    /// Implements a store for <see cref="MultiSignatureMapping"/>.
+    /// Implements a store for <see cref="MultiSignatureAccountMapping"/>.
     /// </summary>
-    public class MultiSignatureAccountMappingStore : Store, IMultiSignatureAccountMappingStore
+    public class MultiSignatureAccountMappingStore : Abstract.Store, IMultiSignatureAccountMappingStore
     {
+        /// <summary>
+        /// The store's state.
+        /// </summary>
         private MultiSignatureAccountMappingState _state;
 
         /// <summary>
-        /// 
+        /// Initialize the <see cref="MultiSignatureAccountMappingStore"/> with the given <see cref="ILogger"/> and <see cref="StoreConfig"/>.
         /// </summary>
+        /// <param name="logger">The logger.</param>
+        /// <param name="config">The config.</param>
         public MultiSignatureAccountMappingStore(ILogger logger, StoreConfig config) : base(logger, config)
         {
             _state = _persistenceDriver.LoadState<MultiSignatureAccountMappingState>();
-            _state.PropertyChanged += (s, a) => { _persistenceDriver.SaveState(_state); };
-            if(_state.Value == null)
+            if(_state.MultiSignatureAccountMappings == null)
             {
-                _state.Value = new();
+                _state.MultiSignatureAccountMappings = new();
                 _persistenceDriver.SaveState(_state);
             }
             _state.OnStateChanged += _state_OnStateChanged;
         }
 
+        /// <summary>
+        /// Handle changes to the state.
+        /// </summary>
+        /// <param name="sender">The sender.</param>
+        /// <param name="e">The event.</param>
         private void _state_OnStateChanged(object sender, Events.MultiSignatureAccountMappingStateChangedEventArgs e)
         {
             _persistenceDriver.SaveState(e.State);
@@ -57,6 +61,9 @@ namespace Anvil.Services.Store
             get => _state.MultiSignatureAccountMappings; 
         }
 
-        public const string FileName = "multisig_accounts.map";
+        /// <summary>
+        /// The store file name.
+        /// </summary>
+        public const string FileName = "multisigaccount.store";
     }
 }

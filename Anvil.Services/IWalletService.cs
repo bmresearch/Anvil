@@ -30,20 +30,31 @@ namespace Anvil.Services
         void ChangeWallet(IWallet wallet);
 
         /// <summary>
+        /// Add the main wallet.
+        /// </summary>
+        /// <param name="wallet">The main wallet.</param>
+        IWallet AddWallet(IWalletStore wallet);
+
+        /// <summary>
         /// Add a new wallet from private key.
         /// </summary>
         /// <param name="pkWallet">The private key based wallet.</param>
-        void AddWallet(IPrivateKeyWallet pkWallet);
+        IWallet AddWallet(PrivateKeyWallet pkWallet);
 
         /// <summary>
         /// Addd a new wallet from derivation index.
         /// </summary>
         /// <param name="derivationWallet">The derivation index based wallet.</param>
-        void AddWallet(IDerivationPathWallet derivationWallet);
+        IWallet AddWallet(DerivationIndexWallet derivationWallet);
 
         /// <summary>
         /// An event raised whenever the current wallet changes.
         /// </summary>
         event EventHandler<CurrentWalletChangedEventArgs> OnCurrentWalletChanged;
+
+        /// <summary>
+        /// An event raised whenever the wallet service state changes.
+        /// </summary>
+        event EventHandler<WalletServiceStateChangedEventArgs> OnWalletServiceStateChanged;
     }
 }

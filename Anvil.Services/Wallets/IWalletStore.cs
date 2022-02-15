@@ -1,29 +1,43 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace Anvil.Services.Wallets
 {
     /// <summary>
-    /// The wallet store for <see cref="IDerivationPathWallet"/> and <see cref="IPrivateKeyWallet"/>s.
+    /// Specifies functionality for the wallet store.
     /// </summary>
     public interface IWalletStore
     {
         /// <summary>
-        /// The mnemonic.
+        /// The mnemonic used to generate derivation index based wallets.
         /// </summary>
         public string Mnemonic { get; }
 
         /// <summary>
-        /// The list of derivation path based wallets.
+        /// The list of derivation index based wallets.
         /// </summary>
-        public List<IDerivationPathWallet> DerivationPathWallets { get; }
+        public List<DerivationIndexWallet> DerivationIndexWallets { get; }
 
         /// <summary>
-        /// The list of private key file based wallets.
+        /// The list of imported private key file based wallets.
         /// </summary>
-        public List<IPrivateKeyWallet> PrivateKeyWallets { get; }
+        public List<PrivateKeyWallet> PrivateKeyWallets { get; }
+
+        /// <summary>
+        /// Add a wallet by derivation index.
+        /// </summary>
+        /// <param name="derivationIndexWallet">The derivation index wallet.</param>
+        void AddWallet(DerivationIndexWallet derivationIndexWallet);
+
+        /// <summary>
+        /// Add a wallet by private key.
+        /// </summary>
+        /// <param name="privateKeyWallet">The private key wallet.</param>
+        void AddWallet(PrivateKeyWallet privateKeyWallet);
+
+        /// <summary>
+        /// Add a wallet by mnemonic. 
+        /// </summary>
+        /// <param name="mnemonic">The mnemonic.</param>
+        void AddWallet(string mnemonic);
     }
 }

@@ -14,19 +14,22 @@ using Anvil.ViewModels.MultiSignatures;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Console;
 using Anvil.Services.Store.Config;
+using System.Threading.Tasks;
 
 namespace Anvil.ViewModels
 {
     public class MainWindowViewModel : ViewModelBase
     {
         private ILogger _logger;
-        private ApplicationState _appState;
-        private InternetConnectionService _internetService;
-        private KeyStoreService _keyStoreService;
+        private IKeyStore _keyStore;
         private IWalletService _walletService;
         private INonceAccountMappingStore _nonceAccountMappingStore;
         private IMultiSignatureAccountMappingStore _multisigAccountMappingStore;
         private IRpcClientProvider _rpcProvider;
+
+        private ApplicationState _appState;
+        private InternetConnectionService _internetService;
+        private KeyStoreService _keyStoreService;
 
         private CrafterViewModel _crafterViewModel;
         private MultiSignaturesViewModel _multisigsViewModel;
@@ -52,82 +55,113 @@ namespace Anvil.ViewModels
             _logger.Log(LogLevel.Information, "Successfully attached logger, initializing modules.");
             _appState = appState;
             _rpcProvider = appState.RpcUrl != string.Empty ? new RpcClientProvider(appState.RpcUrl) : new RpcClientProvider(appState.Cluster);
-            _walletService = new WalletService();
+            
 
             var nonceAccountMappingStoreConfig = new StoreConfig()
             {
                 Directory = appState.StorePath,
                 Name = NonceAccountMappingStore.FileName 
             };
+
             _nonceAccountMappingStore = new NonceAccountMappingStore(_logger, nonceAccountMappingStoreConfig);
             var multisigAccountMappingStoreConfig = new StoreConfig()
             {
                 Directory = appState.StorePath,
                 Name = MultiSignatureAccountMappingStore.FileName
             };
-            _multisigAccountMappingStore = new MultiSignatureAccountMappingStore(_logger, multisigAccountMappingStoreConfig);
 
-            _keyStoreService = new KeyStoreService(_walletService);
+            _multisigAccountMappingStore = new MultiSignatureAccountMappingStore(_logger, multisigAccountMappingStoreConfig);
+            var keyStoreConfig = new StoreConfig()
+            {
+                Directory = appState.StorePath,
+                Name = KeyStore.FileName
+            };
+
+            _keyStore = new KeyStore(_logger, keyStoreConfig);
+            _walletService = new WalletService(_keyStore);
+            _keyStoreService = new KeyStoreService(_logger, _walletService, _keyStore);
+            _keyStoreService.OnStartupStateChanged += _keyStoreService_OnStartupStateChanged;
 
             _internetService = new InternetConnectionService();
             _internetService.Start();
             _internetService.OnNetworkConnectionChanged += InternetService_OnNetworkConnectionChanged;
 
-            if(!_appState.MnemonicSaved && _appState.PrivateKeyFilePath == string.Empty)
+            if(!_keyStore.WalletExists)
             {
-                // neither mnemonic is saved nor private key file path has been set so need to import
+                // neither mnemonic is saved nor private key file has been imported so need to setup
                 _importWalletViewModel ??= new ImportWalletViewModel(appState);
                 CurrentView = _importWalletViewModel;
                 _importWalletViewModel.Confirm.Subscribe(OnWalletImport);
-            } else
+            } else if (_keyStore.IsEncrypted)
             {
-                if(_appState.PrivateKeyFilePath != string.Empty)
-                {
-                    // import private key file
-                    _keyStoreService.ImportPrivateKeyFile(_appState.PrivateKeyFilePath);
-
-                    _walletViewModel ??= new WalletViewModel(_walletService, _rpcProvider);
-                    CurrentView = _walletViewModel;
-
-                    WalletUnlocked = true;
-
-                } else if (appState.IsEncrypted)
-                {
-                    // unlock mnemonic keystore
-                    _unlockWalletViewModel ??= new UnlockWalletViewModel();
-                    CurrentView = _unlockWalletViewModel;
-                } else
-                {
-                    // TODO: instantiate wallet and stuff
-                    _walletViewModel ??= new WalletViewModel(_walletService, _rpcProvider);
-                    CurrentView = _walletViewModel;
-                }
+                // unlock wallet
+                _unlockWalletViewModel ??= new UnlockWalletViewModel();
+                _unlockWalletViewModel.Confirm.Subscribe(OnWalletUnlock);
+                CurrentView = _unlockWalletViewModel;
+            }
+            else
+            {
+                // instantiate wallet vm
+                _walletViewModel ??= new WalletViewModel(_walletService, _rpcProvider, _keyStoreService);
+                CurrentView = _walletViewModel;
+                WalletUnlocked = true;
             }
         }
 
-        private void OnWalletImport(WalletImport walletImport)
+        private void _keyStoreService_OnStartupStateChanged(object? sender, Services.Wallets.Events.KeyStoreServiceStateChangedEventArgs e)
+        {
+            if (_keyStore.IsEncrypted && _unlockWalletViewModel != null)
+            {
+                _unlockWalletViewModel.ProgressStatus = e.Message;
+            }
+
+            if(!_keyStoreService.IsProcessing && e.State == Services.Wallets.Enums.KeyStoreServiceState.Done)
+            {
+                _walletViewModel ??= new WalletViewModel(_walletService, _rpcProvider, _keyStoreService);
+                CurrentView = _walletViewModel;
+                WalletUnlocked = true;
+            }
+        }
+
+        private async void OnWalletUnlock(WalletUnlock walletUnlock)
+        {
+            _unlockWalletViewModel.IsProcessing = true;
+            var success = await _keyStoreService.DecryptKeyStoreAndInitializeWallets(walletUnlock.Password);
+            if (success)
+            {
+                _unlockWalletViewModel.ProgressStatus = "Wallet unlocked.";
+                await Task.Delay(1000);
+                _walletViewModel ??= new WalletViewModel(_walletService, _rpcProvider, _keyStoreService);
+                CurrentView = _walletViewModel;
+                WalletUnlocked = true;
+
+            } else
+            {
+                _unlockWalletViewModel.ProgressStatus = "Wrong password.";
+                _unlockWalletViewModel.IsProcessing = false;
+            }
+        }
+
+        private async void OnWalletImport(WalletImport walletImport)
         {
             if(walletImport.PrivateKeyFilePath != string.Empty && walletImport.PrivateKeyFilePath != null)
             {
                 // private key import
-                _appState.PrivateKeyFilePath = walletImport.PrivateKeyFilePath;
-                _keyStoreService.ImportPrivateKeyFile(_appState.PrivateKeyFilePath);
+                _keyStoreService.ImportPrivateKeyFile(walletImport.PrivateKeyFilePath);
 
-                _walletViewModel ??= new WalletViewModel(_walletService, _rpcProvider);
+                _walletViewModel ??= new WalletViewModel(_walletService, _rpcProvider, _keyStoreService);
                 CurrentView = _walletViewModel;
 
                 WalletUnlocked = true;
             } else
             {
                 // mnemonic import
-                _appState.MnemonicStoreFilePath = walletImport.MnemonicStorePath;
-                _appState.MnemonicSaved = walletImport.SaveMnemonic;
+                await _keyStoreService.InitializeWallet(walletImport.Mnemonic, walletImport.Password);
 
-                _walletViewModel ??= new WalletViewModel(_walletService, _rpcProvider);
+                _walletViewModel ??= new WalletViewModel(_walletService, _rpcProvider, _keyStoreService);
                 CurrentView = _walletViewModel;
                 WalletUnlocked = true;
             }
-
         }
 
         private void InternetService_OnNetworkConnectionChanged(object? sender, NetworkConnectionChangedEventArgs e)
@@ -142,7 +176,7 @@ namespace Anvil.ViewModels
             switch (view)
             {
                 case "Wallet":
-                    _walletViewModel ??= new WalletViewModel(_walletService, _rpcProvider);
+                    _walletViewModel ??= new WalletViewModel(_walletService, _rpcProvider, _keyStoreService);
                     CurrentView = _walletViewModel;
                     break;
                 case "Crafter":

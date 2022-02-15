@@ -9,6 +9,7 @@
 
 	<Application.Styles>
 		<StyleInclude Source="avares://Anvil/Styles/ThemeLight.axaml"/>
+		<StyleInclude Source="avares://Material.Icons.Avalonia/App.xaml"/>
 		<StyleInclude Source="avares://Material.Avalonia/Material.Avalonia.Templates.xaml" />
 	</Application.Styles>
 	<Application.Resources>

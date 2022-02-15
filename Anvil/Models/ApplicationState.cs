@@ -13,35 +13,11 @@ namespace Anvil.Models
     public class ApplicationState : ReactiveObject
     {
         [DataMember]
-        private bool _isEncrypted;
-        public bool IsEncrypted
-        {
-            get => _isEncrypted;
-            set => this.RaiseAndSetIfChanged(ref _isEncrypted, value);
-        }
-
-        [DataMember]
-        private bool _mnemonicSaved;
-        public bool MnemonicSaved 
+        private string _keyStoreFilePath = AppContext.BaseDirectory;
+        public string KeyStoreFilePath 
         { 
-            get => _mnemonicSaved;
-            set => this.RaiseAndSetIfChanged(ref _mnemonicSaved, value);
-        }
-
-        [DataMember]
-        private string _mnemonicStoreFilePath = string.Empty;
-        public string MnemonicStoreFilePath
-        {
-            get => _mnemonicStoreFilePath;
-            set => this.RaiseAndSetIfChanged(ref _mnemonicStoreFilePath, value);
-        }
-
-        [DataMember]
-        private string _privateKeyFilePath = string.Empty;
-        public string PrivateKeyFilePath 
-        { 
-            get => _privateKeyFilePath;
-            set => this.RaiseAndSetIfChanged(ref _privateKeyFilePath, value); 
+            get => _keyStoreFilePath;
+            set => this.RaiseAndSetIfChanged(ref _keyStoreFilePath, value); 
         }
 
         [DataMember]
@@ -67,7 +43,5 @@ namespace Anvil.Models
             get => _storePath;
             set => this.RaiseAndSetIfChanged(ref _storePath, value);
         }
-
-        public bool WalletExists => PrivateKeyFilePath != string.Empty && MnemonicSaved;
     }
 }

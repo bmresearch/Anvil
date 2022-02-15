@@ -4,6 +4,7 @@ using Anvil.ViewModels.Fields;
 using ReactiveUI;
 using Solnet.Programs;
 using Solnet.Programs.Models;
+using Solnet.Programs.Models.TokenProgram;
 using Solnet.Programs.Utilities;
 using Solnet.Rpc;
 using Solnet.Rpc.Builders;
@@ -62,11 +63,11 @@ namespace Anvil.ViewModels.MultiSignatures
             var success = int.TryParse(RequiredSigners, out int minSigners);
             if (!success) return;
 
-            var tx = new TransactionBuilder()
+            var txBuilder = new TransactionBuilder()
                 .SetRecentBlockHash(blockHash.Result.Value.Blockhash)
-                .SetFeePayer(_walletService.CurrentWallet.Wallet.Account.PublicKey)
+                .SetFeePayer(_walletService.CurrentWallet.Address)
                 .AddInstruction(SystemProgram.CreateAccount(
-                    _walletService.CurrentWallet.Wallet.Account.PublicKey,
+                    _walletService.CurrentWallet.Address,
                     MultiSigAccount.PublicKey,
                     _rentExemptionLamports,
                     MultiSignatureAccount.Layout.Length,
@@ -74,11 +75,14 @@ namespace Anvil.ViewModels.MultiSignatures
                 .AddInstruction(TokenProgram.InitializeMultiSignature(
                     MultiSigAccount.PublicKey,
                     Signers.Select(x => x.PublicKey),
-                    minSigners))
-                .Build(new List<Account> { _walletService.CurrentWallet.Wallet.Account, MultiSigAccount });
+                    minSigners));
 
+            var msgBytes = txBuilder.CompileMessage();
 
-            var txSig = await _rpcClient.SendTransactionAsync(tx);
+            txBuilder.AddSignature(_walletService.CurrentWallet.Sign(msgBytes));
+            txBuilder.AddSignature(MultiSigAccount.Sign(msgBytes));
+
+            var txSig = await _rpcClient.SendTransactionAsync(txBuilder.Serialize());
 
             if (txSig.WasSuccessful)
             {

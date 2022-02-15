@@ -9,6 +9,7 @@ using ReactiveUI;
 using Solnet.Extensions;
 using Solnet.Programs;
 using Solnet.Programs.Models;
+using Solnet.Programs.Models.TokenProgram;
 using Solnet.Programs.Utilities;
 using Solnet.Rpc;
 using Solnet.Rpc.Builders;
@@ -224,23 +225,26 @@ namespace Anvil.ViewModels.Crafter
             var rentExemption = await _rpcClient.GetMinimumBalanceForRentExemptionAsync(NonceAccount.AccountDataSize);
 
             var newNonceAccount = new Account();
-            PublicKey authority = AccountContent is MultiSignatureAccountViewModel multiSigVm ? _walletService.CurrentWallet.Wallet.Account.PublicKey : SourceAccount.PublicKey;
+            PublicKey authority = AccountContent is MultiSignatureAccountViewModel multiSigVm ? _walletService.CurrentWallet.Address : SourceAccount.PublicKey;
 
-            var txBytes = new TransactionBuilder()
-                .SetFeePayer(_walletService.CurrentWallet.Wallet.Account)
+            var txBuilder = new TransactionBuilder()
+                .SetFeePayer(_walletService.CurrentWallet.Address)
                 .SetRecentBlockHash(blockHash.Result.Value.Blockhash)
                 .AddInstruction(SystemProgram.CreateAccount(
-                    _walletService.CurrentWallet.Wallet.Account,
+                    _walletService.CurrentWallet.Address,
                     newNonceAccount,
                     rentExemption.Result,
                     NonceAccount.AccountDataSize,
                     SystemProgram.ProgramIdKey
                 ))
-                .AddInstruction(SystemProgram.InitializeNonceAccount(newNonceAccount, authority))
-                .Build(new List<Account> { _walletService.CurrentWallet.Wallet.Account, newNonceAccount });
+                .AddInstruction(SystemProgram.InitializeNonceAccount(newNonceAccount, authority));
+            var msgBytes = txBuilder.CompileMessage();
+
+            txBuilder.AddSignature(_walletService.CurrentWallet.Sign(msgBytes));
+            txBuilder.AddSignature(newNonceAccount.Sign(msgBytes));
 
             // submit create nonce and poll confirmation
-            var txSign = await _rpcClient.SendTransactionAsync(txBytes);
+            var txSign = await _rpcClient.SendTransactionAsync(txBuilder.Serialize());
 
             if (txSign.WasSuccessful)
             {
@@ -278,14 +282,16 @@ namespace Anvil.ViewModels.Crafter
         {
             var blockHash = await _rpcClient.GetRecentBlockHashAsync();
 
-            var txBytes = new TransactionBuilder()
-                .SetFeePayer(_walletService.CurrentWallet.Wallet.Account)
+            var txBuilder = new TransactionBuilder()
+                .SetFeePayer(_walletService.CurrentWallet.Address)
                 .SetRecentBlockHash(blockHash.Result.Value.Blockhash)
-                .AddInstruction(AssociatedTokenAccountProgram.CreateAssociatedTokenAccount(_walletService.CurrentWallet.Wallet.Account, owner, mint))
-                .Build(new List<Account> { _walletService.CurrentWallet.Wallet.Account });
+                .AddInstruction(AssociatedTokenAccountProgram.CreateAssociatedTokenAccount(_walletService.CurrentWallet.Address, owner, mint));
+            var msgBytes = txBuilder.CompileMessage();
+
+            txBuilder.AddSignature(_walletService.CurrentWallet.Sign(msgBytes));
 
             // submit transaction to create nonce
-            var txSign = await _rpcClient.SendTransactionAsync(txBytes);
+            var txSign = await _rpcClient.SendTransactionAsync(txBuilder.Serialize());
 
             CreatingTokenAccount = true;
 
@@ -403,7 +409,7 @@ namespace Anvil.ViewModels.Crafter
                     if (_multiSigAccount != null)
                     {
                         // because the source is multi sig the current wallet needs to sign to advance the nonce
-                        _mapping = _nonceAccountMappingStore.GetMapping(_walletService.CurrentWallet.Wallet.Account.PublicKey);
+                        _mapping = _nonceAccountMappingStore.GetMapping(_walletService.CurrentWallet.Address);
                         AccountContent = new MultiSignatureAccountViewModel(assets, _multiSigAccount);
                         AccountContent.PropertyChanged += AccountContent_PropertyChanged;
                     }

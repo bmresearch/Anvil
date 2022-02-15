@@ -13,8 +13,25 @@ namespace Anvil.Services.Wallets
     public interface IWallet
     {
         /// <summary>
-        /// The wallet.
+        /// The sub wallet type.
         /// </summary>
-        Wallet Wallet { get; }
+        public SubWalletType SubWalletType { get; }
+
+        /// <summary>
+        /// The wallet address.
+        /// </summary>
+        public PublicKey Address { get; }
+
+        /// <summary>
+        /// The wallet's shortened address.
+        /// </summary>
+        public string ShortenedAddress { get; }
+
+        /// <summary>
+        /// Request a signature of the given data.
+        /// </summary>
+        /// <param name="data">The data to sign.</param>
+        /// <returns>The signature.</returns>
+        public byte[] Sign(byte[] data);
     }
 }

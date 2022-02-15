@@ -7,25 +7,42 @@ using System.Linq;
 
 namespace Anvil.Services.Store.State
 {
-    public class MultiSignatureAccountMappingState : State<List<MultiSignatureAccountMapping>>
+    /// <summary>
+    /// The <see cref="MultiSignatureAccountMappingState"/> state.
+    /// </summary>
+    public class MultiSignatureAccountMappingState
     {
+        /// <summary>
+        /// Add a new mapping.
+        /// </summary>
+        /// <param name="mapping">The mapping to add.</param>
         public void AddMapping(MultiSignatureAccountMapping mapping)
         {
-            Value.Add(mapping);
+            MultiSignatureAccountMappings.Add(mapping);
             OnStateChanged?.Invoke(this, new MultiSignatureAccountMappingStateChangedEventArgs(this));
         }
 
+        /// <summary>
+        /// Get a mapping for the given multi signature account.
+        /// </summary>
+        /// <param name="account">The multi signature account.</param>
+        /// <returns>The mapping.</returns>
         public MultiSignatureAccountMapping GetMapping(PublicKey account)
         {
-            return Value.FirstOrDefault(x => x.MultiSignature == account.Key);
+            return MultiSignatureAccountMappings.FirstOrDefault(x => x.MultiSignature == account.Key);
         }
 
+        /// <summary>
+        /// The mappings.
+        /// </summary>
         public List<MultiSignatureAccountMapping> MultiSignatureAccountMappings
         {
-            get => Value;
+            get; set;
         }
 
-
+        /// <summary>
+        /// An event raised whenever the state changes.
+        /// </summary>
         public event EventHandler<MultiSignatureAccountMappingStateChangedEventArgs> OnStateChanged;
     }
 }

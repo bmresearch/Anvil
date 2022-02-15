@@ -1,0 +1,175 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:styles="clr-namespace:Material.Styles;assembly=Material.Styles"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="Anvil.Views.Wallet.ImportWalletView">
+
+	<UserControl.Styles>
+		<Style Selector="styles|Card">
+			<Setter Property="Background" Value="{DynamicResource CardBackgroundColor}" />
+		</Style>
+	</UserControl.Styles>
+
+	<UserControl.KeyBindings>
+		<KeyBinding Command="{Binding Confirm}" Gesture="Enter" x:CompileBindings="False" />
+	</UserControl.KeyBindings>
+
+	<styles:Card
+		Margin="75">
+		<DockPanel LastChildFill="True"
+				   HorizontalAlignment="Center"
+				   VerticalAlignment="Center">
+			<Button
+				DockPanel.Dock="Bottom"
+				VerticalAlignment="Center"
+				HorizontalAlignment="Center"
+				Margin="20"
+				Content="Confirm"
+				Command="{Binding Confirm}"
+				Background="{DynamicResource ValidatedAccent}"/>
+			<TextBlock
+				Classes="Headline5"
+				DockPanel.Dock="Top"
+				VerticalAlignment="Center"
+				HorizontalAlignment="Center"
+				Margin="20"
+				TextAlignment="Center"
+				Text="Import Wallet"
+				Foreground="{DynamicResource MainTextAccent}"/>
+			<styles:Card
+				DockPanel.Dock="Top"
+				Margin="5">
+				<TabControl
+					Margin="5"
+					Classes="Scrollable">
+					<TabItem>
+						<TabItem.Header>
+							<TextBlock
+								Text="Import Private Key File"
+								Classes="Headline6 Subheadline2 Centered"
+								Foreground="{DynamicResource MainTextAccent}"/>
+						</TabItem.Header>
+						<DockPanel
+							Margin="10"
+							VerticalAlignment="Stretch"
+							HorizontalAlignment="Stretch">
+							<StackPanel
+								DockPanel.Dock="Top"
+								Orientation="Vertical">
+								<TextBlock
+									Classes="Subtitle2"
+									Text="Select Private Key File"
+									TextAlignment="Left"
+									VerticalAlignment="Center"
+									HorizontalAlignment="Left"
+									Margin="5"
+									Width="150"
+									Foreground="{DynamicResource MainTextAccent}"/>
+								<TextBox
+									Classes="Filled"
+									Text="{Binding PrivateKeyFilePath}"
+									VerticalAlignment="Center"
+									HorizontalAlignment="Left"
+									IsHitTestVisible="False"
+									Margin="5"
+									Height="50"
+									Width="750"/>
+								<StackPanel
+									Orientation="Horizontal"
+									VerticalAlignment="Center"
+									HorizontalAlignment="Center">
+									<Button
+										VerticalAlignment="Center"
+										HorizontalAlignment="Center"
+										Margin="5"
+										Content="Select File"
+										Command="{Binding OpenPrivateKeyFileSelection}"
+										Background="{DynamicResource ButtonBackgroundColor}"/>
+									<Button
+										VerticalAlignment="Center"
+										HorizontalAlignment="Center"
+										Margin="5"
+										Content="Clear"
+										Command="{Binding ClearPrivateKeyFilePath}"
+										Background="{DynamicResource ButtonBackgroundColor}"/>
+								</StackPanel>
+							</StackPanel>
+						</DockPanel>
+					</TabItem>
+					<TabItem>
+						<TabItem.Header>
+							<TextBlock
+								Text="Import Mnemonic"
+								Classes="Headline6 Subheadline2 Centered"
+								Foreground="{DynamicResource MainTextAccent}"/>
+						</TabItem.Header>
+						<DockPanel
+							Margin="10"
+							VerticalAlignment="Stretch"
+							HorizontalAlignment="Stretch">
+							<StackPanel
+								DockPanel.Dock="Top"
+								Orientation="Vertical">
+								<TextBlock
+									Classes="Subtitle2"
+									Text="Import Mnemonic"
+									TextAlignment="Left"
+									VerticalAlignment="Center"
+									HorizontalAlignment="Left"
+									Margin="5"
+									Width="150"
+									Foreground="{DynamicResource MainTextAccent}"/>
+								<TextBox
+									Classes="Filled"
+									Text="{Binding Mnemonic}"
+									VerticalAlignment="Center"
+									HorizontalAlignment="Left"
+									Margin="5"
+									Height="50"
+									Width="750"/>
+								<TextBlock
+									Classes="Subtitle2"
+									Text="Password"
+									TextAlignment="Left"
+									VerticalAlignment="Center"
+									HorizontalAlignment="Left"
+									Margin="5"
+									Width="150"
+									Foreground="{DynamicResource MainTextAccent}"/>
+								<TextBox
+									Classes="Filled"
+									PasswordChar="*"
+									Text="{Binding Password}"
+									VerticalAlignment="Center"
+									HorizontalAlignment="Left"
+									Margin="5"
+									Height="50"
+									Width="750"/>
+								<TextBlock
+									Classes="Subtitle2"
+									Text="Confirm Password"
+									TextAlignment="Left"
+									VerticalAlignment="Center"
+									HorizontalAlignment="Left"
+									Margin="5"
+									Width="150"
+									Foreground="{DynamicResource MainTextAccent}"/>
+								<TextBox
+									Classes="Filled"
+									PasswordChar="*"
+									Text="{Binding ConfirmPassword}"
+									VerticalAlignment="Center"
+									HorizontalAlignment="Left"
+									Margin="5"
+									Height="50"
+									Width="750"/>
+							</StackPanel>
+						</DockPanel>
+					</TabItem>
+				</TabControl>
+			</styles:Card>
+		</DockPanel>
+	</styles:Card>
+</UserControl>

@@ -1,5 +1,4 @@
-﻿using Solnet.Wallet;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,13 +7,13 @@ using System.Threading.Tasks;
 namespace Anvil.Services.Wallets
 {
     /// <summary>
-    /// A private key based wallet.
+    /// Specifies functionality for an aliased wallet.
     /// </summary>
-    public interface IPrivateKeyWallet : IAliasedWallet
+    public interface IAliasedWallet
     {
         /// <summary>
-        /// The path to the keystore.
+        /// The wallet's alias.
         /// </summary>
-        string Path { get; }
+        public string Alias { get; set; }
     }
 }
