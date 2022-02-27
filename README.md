@@ -34,6 +34,7 @@ View the [demo](https://youtu.be/Hu2u83XXcOk).
 
 ## Planned
 
+- Improving the codebase
 - Cashmere Wallet integration
 - Ledger support
 

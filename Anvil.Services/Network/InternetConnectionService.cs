@@ -17,7 +17,7 @@ namespace Anvil.Services.Network
         /// <summary>
         /// The host to ping.
         /// </summary>
-        private static readonly string Host = "www.google.com";
+        private static readonly string Host = "1.1.1.1";
 
         /// <summary>
         /// The cancellation token source for the periodic task.
