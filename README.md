@@ -16,6 +16,8 @@
 
 Anvil is a simplistic cross-platform desktop wallet aimed at making offline signing and multisig usage easier within the Solana ecosystem.
 
+View the [demo](https://youtu.be/Hu2u83XXcOk).
+
 </p>
 
 </div>
@@ -30,11 +32,58 @@ Anvil is a simplistic cross-platform desktop wallet aimed at making offline sign
 - Creating multisig accounts
 - Creating nonce accounts
 
-## Requirements
+## Planned
+
+- Cashmere Wallet integration
+- Ledger support
 
 ## Dependencies
 
-## Setup
+- .NET 6
+- Solnet v6.0.0
+
+## Build
+
+To build Anvil you will need to have the [.NET Runtime 6.0.0](https://dotnet.microsoft.com/en-us/download/dotnet/6.0) installed.
+
+If you wish to build and publish the application for use within the same machine you can run the following command:
+
+```
+dotnet publish -c Release -o ./publish
+```
+
+The output binaries and executable will be inside `./publish/`
+
+
+If you wish to publish the application to be executed in an airgapped machine you will need to build the application as self-contained,
+ the following examples will do that for the different architectures.
+
+#### Windows
+
+```
+dotnet publish -c Release -o ./publish --runtime win-x64 --self-contained true
+```
+
+#### macOS x64
+
+```
+dotnet publish -c Release -o ./publish --runtime osx.12-x64 --self-contained true
+```
+
+#### macOS arm64
+
+```
+dotnet publish -c Release -o ./publish --runtime osx.12-arm64 --self-contained true
+```
+
+#### Linux x64
+
+```
+dotnet publish -c Release -o ./publish --runtime linux-x64 --self-contained true
+```
+
+If you wish to publish the application for another runtime, check out the list of available [runtime identifiers](https://docs.microsoft.com/en-us/dotnet/core/rid-catalog#using-rids).
+
 
 ## Contribution
 
