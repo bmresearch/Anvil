@@ -8,12 +8,12 @@ namespace Anvil.Models
 {
     public class WalletImport
     {
-        public string? Mnemonic { get; set; }
+        public string Mnemonic { get; set; }
 
-        public string? Alias { get; set; }
+        public string Alias { get; set; }
 
-        public string? Password { get; set; }
+        public string Password { get; set; }
 
-        public string? PrivateKeyFilePath { get; set; }
+        public string PrivateKeyFilePath { get; set; }
     }
 }

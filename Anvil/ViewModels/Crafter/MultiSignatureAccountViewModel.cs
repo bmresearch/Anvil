@@ -18,9 +18,9 @@ namespace Anvil.ViewModels.Crafter
             Signers = new(multiSig.Signers);
         }
 
-        private void SelectedSigners_CollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        private void SelectedSigners_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
-            this.RaisePropertyChanged("Validated");
+            this.RaisePropertyChanged(nameof(Validated));
         }
 
         private int _mininumSigners;

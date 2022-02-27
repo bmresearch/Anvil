@@ -108,9 +108,9 @@ namespace Anvil.ViewModels.Crafter
                 });
         }
 
-        private async void _walletService_OnCurrentWalletChanged(object? sender, Services.Wallets.Events.CurrentWalletChangedEventArgs e)
+        private async void _walletService_OnCurrentWalletChanged(object sender, Services.Wallets.Events.CurrentWalletChangedEventArgs e)
         {
-            PublicKey? authority = AccountContent is MultiSignatureAccountViewModel multiSigVm ? _walletService.CurrentWallet.Address : SourceAccount.PublicKey;
+            PublicKey authority = AccountContent is MultiSignatureAccountViewModel multiSigVm ? _walletService.CurrentWallet.Address : SourceAccount.PublicKey;
             if (authority == null) return;
             if (authority.Equals(e.Wallet.Address))
             {
@@ -134,7 +134,7 @@ namespace Anvil.ViewModels.Crafter
             }
         }
 
-        private void OnNetworkConnectionChanged(object? sender, Services.Network.Events.NetworkConnectionChangedEventArgs e)
+        private void OnNetworkConnectionChanged(object sender, Services.Network.Events.NetworkConnectionChangedEventArgs e)
         {
             NoConnection = !e.Connected;
         }
@@ -453,7 +453,7 @@ namespace Anvil.ViewModels.Crafter
         /// </summary>
         /// <param name="ata">The associated token account.</param>
         /// <returns>A task which performs the action and may return the token account.</returns>
-        private async Task<TokenAccountInfo?> GetTokenAccount(PublicKey ata)
+        private async Task<TokenAccountInfo> GetTokenAccount(PublicKey ata)
         {
             var tokenAccount = await _rpcClient.GetTokenAccountInfoAsync(ata, Solnet.Rpc.Types.Commitment.Confirmed);
             if (tokenAccount.WasSuccessful)
@@ -469,7 +469,7 @@ namespace Anvil.ViewModels.Crafter
         /// </summary>
         /// <param name="accountKey">The account public key.</param>
         /// <returns>A task which performs the action and may return the nonce account.</returns>
-        private async Task<NonceAccount?> GetNonceAccount(string accountKey)
+        private async Task<NonceAccount> GetNonceAccount(string accountKey)
         {
             var nonceAccountInfo = await _rpcClient.GetAccountInfoAsync(accountKey, Solnet.Rpc.Types.Commitment.Confirmed);
             if (nonceAccountInfo.WasSuccessful)
@@ -495,8 +495,8 @@ namespace Anvil.ViewModels.Crafter
             {
                 if (account.Result != null)
                 {
-                    MultiSignatureAccount? _multiSigAccount = null;
-                    NonceAccountMapping? _mapping = null;
+                    MultiSignatureAccount _multiSigAccount = null;
+                    NonceAccountMapping _mapping = null;
 
                     // attempt to deserialize the account data into the multisig account structure
                     var _sourceAccountData = account.Result.Data[0];
@@ -563,7 +563,7 @@ namespace Anvil.ViewModels.Crafter
             {
                 if (account.Result != null)
                 {
-                    MultiSignatureAccount? _multiSigAccount = null;
+                    MultiSignatureAccount _multiSigAccount = null;
 
                     // attempt to deserialize the account data into the multisig account structure
                     var _destAccountData = account.Result.Data[0];
@@ -598,7 +598,7 @@ namespace Anvil.ViewModels.Crafter
         /// </summary>
         /// <param name="sender">The sender.</param>
         /// <param name="e">The event args.</param>
-        private void AccountContent_PropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
+        private void AccountContent_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             if (e.PropertyName == null) return;
             if (e.PropertyName.Contains("Validated"))
@@ -611,12 +611,12 @@ namespace Anvil.ViewModels.Crafter
         /// <param name="accountKey">The token accounts owner's public key.</param>
         /// <param name="isMultiSig">Whether the token accounts owner is a multisig or not.</param>
         /// <returns>A task which performs the action and may return a collection of token wallet balances.</returns>
-        private async Task<ObservableCollection<TokenWalletBalanceWrapper>?> GetTokenAccounts(PublicKey accountKey, bool isMultiSig = false)
+        private async Task<ObservableCollection<TokenWalletBalanceWrapper>> GetTokenAccounts(PublicKey accountKey, bool isMultiSig = false)
         {
             _tokenMintResolver ??= await TokenMintResolver.LoadAsync();
             _tokenWallet = await TokenWallet.LoadAsync(_rpcClient, _tokenMintResolver, accountKey);
 
-            TokenWalletBalanceWrapper? solanaTokenWrapper = null;
+            TokenWalletBalanceWrapper solanaTokenWrapper = null;
 
             if (isMultiSig)
             {
@@ -680,7 +680,7 @@ namespace Anvil.ViewModels.Crafter
         /// </summary>
         /// <param name="accountKey">The account public key.</param>
         /// <returns>A task which performs the action and may return the account info.</returns>
-        private async Task<AccountInfo?> GetAccountInfo(string accountKey)
+        private async Task<AccountInfo> GetAccountInfo(string accountKey)
         {
             var account = await _rpcClient.GetAccountInfoAsync(accountKey, Solnet.Rpc.Types.Commitment.Confirmed);
             if (account.WasSuccessful)
@@ -803,15 +803,15 @@ namespace Anvil.ViewModels.Crafter
             set => this.RaiseAndSetIfChanged(ref _errorCreatingAccountMessage, value);
         }
 
-        private AccountViewModel? _accountContent;
-        public AccountViewModel? AccountContent
+        private AccountViewModel _accountContent;
+        public AccountViewModel AccountContent
         {
             get => _accountContent;
             set => this.RaiseAndSetIfChanged(ref _accountContent, value);
         }
 
-        private NonceAccountViewModel? _nonceAccountViewModel;
-        public NonceAccountViewModel? NonceAccountViewModel
+        private NonceAccountViewModel _nonceAccountViewModel;
+        public NonceAccountViewModel NonceAccountViewModel
         {
             get => _nonceAccountViewModel;
             set => this.RaiseAndSetIfChanged(ref _nonceAccountViewModel, value);

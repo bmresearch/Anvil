@@ -42,7 +42,7 @@ namespace Anvil.ViewModels.Crafter
             NoConnection = !_internetConnectionService.IsConnected;
         }
 
-        private void OnNetworkConnectionChanged(object? sender, Services.Network.Events.NetworkConnectionChangedEventArgs e)
+        private void OnNetworkConnectionChanged(object sender, Services.Network.Events.NetworkConnectionChangedEventArgs e)
         {
             NoConnection = !e.Connected;
         }
@@ -115,7 +115,7 @@ namespace Anvil.ViewModels.Crafter
             TransactionError = false;
             TransactionErrorMessage = string.Empty;
 
-            Message? msg = null;
+            Message msg = null;
             try
             {
                 msg = Message.Deserialize(Payload);

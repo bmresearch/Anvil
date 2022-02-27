@@ -31,7 +31,7 @@ namespace Anvil.ViewModels.Dialogs
         /// <summary>
         /// The address book service.
         /// </summary>
-        public AddressBookService? AddressBookService { get; init; }
+        public AddressBookService AddressBookService { get; init; }
 
         /// <summary>
         /// Adds a new signer.
@@ -111,7 +111,7 @@ namespace Anvil.ViewModels.Dialogs
         /// <summary>
         /// The collection of signers.
         /// </summary>
-        private ObservableCollection<RequiredPublicKeyViewModel>? _signers;
+        private ObservableCollection<RequiredPublicKeyViewModel> _signers;
         public ObservableCollection<RequiredPublicKeyViewModel> Signers
         {
             get => _signers;
@@ -154,7 +154,7 @@ namespace Anvil.ViewModels.Dialogs
         /// <summary>
         /// The required signers input.
         /// </summary>
-        private string? _requiredSigners;
+        private string _requiredSigners;
         public string RequiredSigners
         {
             get => _requiredSigners;
@@ -174,7 +174,7 @@ namespace Anvil.ViewModels.Dialogs
         /// <summary>
         /// The required signers input.
         /// </summary>
-        private string? _alias;
+        private string _alias;
         public string Alias
         {
             get => _alias;

@@ -32,7 +32,7 @@ namespace Anvil.Views.Common
             AddressBookItems.SelectionChanged += AddressBookItems_SelectionChanged;
         }
 
-        private void AddressBookItems_SelectionChanged(object? sender, SelectionChangedEventArgs e)
+        private void AddressBookItems_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (e.AddedItems != null && e.AddedItems.Count > 0)
             {

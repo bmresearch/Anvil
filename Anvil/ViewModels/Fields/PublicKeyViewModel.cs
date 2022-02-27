@@ -58,8 +58,8 @@ namespace Anvil.ViewModels.Fields
             set => this.RaiseAndSetIfChanged(ref _input, value);
         }
 
-        private PublicKey? _publicKey;
-        public PublicKey? PublicKey
+        private PublicKey _publicKey;
+        public PublicKey PublicKey
         {
             get => _publicKey;
             set => this.RaiseAndSetIfChanged(ref _publicKey, value);

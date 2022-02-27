@@ -22,27 +22,27 @@ namespace Anvil
         /// <summary>
         /// The application's logger.
         /// </summary>
-        private ILogger? Logger { get; set; }
+        private ILogger Logger { get; set; }
 
         /// <summary>
         /// The app lifetime.
         /// </summary>
-        private IClassicDesktopStyleApplicationLifetime? AppLifetime { get; set; }
+        private IClassicDesktopStyleApplicationLifetime AppLifetime { get; set; }
 
         /// <summary>
         /// The avalonia dependency resolver.
         /// </summary>
-        private IAvaloniaDependencyResolver? DependencyResolver { get; set; }
+        private IAvaloniaDependencyResolver DependencyResolver { get; set; }
 
         /// <summary>
         /// The main window view model.
         /// </summary>
-        private MainWindowViewModel? MainWindowViewModel { get; set; }
+        private MainWindowViewModel MainWindowViewModel { get; set; }
 
         /// <summary>
         /// The main window.
         /// </summary>
-        private MainWindow? MainWindow { get; set; }
+        private MainWindow MainWindow { get; set; }
 
         /// <summary>
         /// Avalonia configuration, don't remove; also used by visual designer.

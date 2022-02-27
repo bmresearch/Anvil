@@ -41,7 +41,7 @@ namespace Anvil.ViewModels
 
         #region Framework 
 
-        private IAssetLoader? _assetLoader;
+        private IAssetLoader _assetLoader;
         private IClassicDesktopStyleApplicationLifetime _appLifetime;
         private IAvaloniaDependencyResolver _resolver;
 
@@ -195,7 +195,7 @@ namespace Anvil.ViewModels
         /// </summary>
         /// <param name="sender">The sender.</param>
         /// <param name="e">The event args.</param>
-        private async void _keyStoreService_OnLoadingError(object? sender, Services.Events.KeyStoreLoadingErrorEventArgs e)
+        private async void _keyStoreService_OnLoadingError(object sender, Services.Events.KeyStoreLoadingErrorEventArgs e)
         {
             var msg = "One or more private key wallet(s) could not be loaded:\n";
 
@@ -242,7 +242,7 @@ namespace Anvil.ViewModels
         /// </summary>
         /// <param name="sender">The sender.</param>
         /// <param name="e">The event args.</param>
-        private void _walletService_OnWalletServiceStateChanged(object? sender, Services.Events.WalletServiceStateChangedEventArgs e)
+        private void _walletService_OnWalletServiceStateChanged(object sender, Services.Events.WalletServiceStateChangedEventArgs e)
         {
             if (KeyStoreServiceState != KeyStoreServiceState.Done) return;
 
@@ -296,7 +296,7 @@ namespace Anvil.ViewModels
         /// </summary>
         /// <param name="sender">The sender.</param>
         /// <param name="e">The event args.</param>
-        private void _walletService_OnCurrentWalletChanged(object? sender, Services.Wallets.Events.CurrentWalletChangedEventArgs e)
+        private void _walletService_OnCurrentWalletChanged(object sender, Services.Wallets.Events.CurrentWalletChangedEventArgs e)
         {
             if (KeyStoreServiceState != KeyStoreServiceState.Done) return;
             if (e.Wallet != null && e.Wallet != CurrentWallet)
@@ -308,7 +308,7 @@ namespace Anvil.ViewModels
         /// </summary>
         /// <param name="sender">The sender.</param>
         /// <param name="e">The event args.</param>
-        private void _keyStoreService_OnStartupStateChanged(object? sender, Services.Events.KeyStoreServiceStateChangedEventArgs e)
+        private void _keyStoreService_OnStartupStateChanged(object sender, Services.Events.KeyStoreServiceStateChangedEventArgs e)
         {
             KeyStoreServiceState = e.State;
 
@@ -378,7 +378,7 @@ namespace Anvil.ViewModels
         /// </summary>
         /// <param name="sender">The sender.</param>
         /// <param name="e">The event args.</param>
-        private void InternetService_OnNetworkConnectionChanged(object? sender, NetworkConnectionChangedEventArgs e)
+        private void InternetService_OnNetworkConnectionChanged(object sender, NetworkConnectionChangedEventArgs e)
         {
             NetworkConnected = e.Connected;
             NetworkConnectionStatus = NetworkConnected ? "Online" : "Offline";
@@ -445,8 +445,8 @@ namespace Anvil.ViewModels
             set => this.RaiseAndSetIfChanged(ref _networkConnected, value);
         }
 
-        private IWallet? _currentWallet;
-        public IWallet? CurrentWallet
+        private IWallet _currentWallet;
+        public IWallet CurrentWallet
         {
             get => _currentWallet;
             set

@@ -43,12 +43,12 @@ namespace Anvil.ViewModels.WatchOnly
             HandleStoreSnapshot();
         }
 
-        private void OnNetworkConnectionChanged(object? sender, Services.Network.Events.NetworkConnectionChangedEventArgs e)
+        private void OnNetworkConnectionChanged(object sender, Services.Network.Events.NetworkConnectionChangedEventArgs e)
         {
             NoConnection = !e.Connected;
         }
 
-        private void OnClientChanged(object? sender, Services.Rpc.Events.RpcClientChangedEventArgs e)
+        private void OnClientChanged(object sender, Services.Rpc.Events.RpcClientChangedEventArgs e)
         {
             Task.Run(GetAccountHoldings);
         }

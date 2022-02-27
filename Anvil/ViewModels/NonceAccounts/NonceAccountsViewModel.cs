@@ -56,12 +56,12 @@ namespace Anvil.ViewModels.NonceAccounts
             HandleStoreSnapshot();
         }
 
-        private void OnNetworkConnectionChanged(object? sender, Services.Network.Events.NetworkConnectionChangedEventArgs e)
+        private void OnNetworkConnectionChanged(object sender, Services.Network.Events.NetworkConnectionChangedEventArgs e)
         {
             NoConnection = !e.Connected;
         }
 
-        private void OnStateChanged(object? sender, Services.Store.Events.NonceAccountMappingStateChangedEventArgs e)
+        private void OnStateChanged(object sender, Services.Store.Events.NonceAccountMappingStateChangedEventArgs e)
         {
             HandleStoreSnapshot();
         }
@@ -117,7 +117,7 @@ namespace Anvil.ViewModels.NonceAccounts
             }
         }
 
-        private async Task<CreateNonceAccountDialogViewModel?> GetNonceAccountInfo()
+        private async Task<CreateNonceAccountDialogViewModel> GetNonceAccountInfo()
         {
             var rent = await _rpcClient.GetMinimumBalanceForRentExemptionAsync(NonceAccount.AccountDataSize);
 
@@ -217,7 +217,7 @@ namespace Anvil.ViewModels.NonceAccounts
                 CurrentNonceAccountMapping = NonceAccounts.First();
         }
 
-        private async Task<NonceAccount?> GetNonceAccount(string? account = null)
+        private async Task<NonceAccount> GetNonceAccount(string account = null)
         {
             FetchingNonceAccount = true;
             ErrorFetchingNonceAccount = false;

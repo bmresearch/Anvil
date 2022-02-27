@@ -85,7 +85,7 @@ namespace Anvil.ViewModels.Wallet
             RestoreFromWalletSnapshot(false);
         }
 
-        private void OnNetworkConnectionChanged(object? sender, Services.Network.Events.NetworkConnectionChangedEventArgs e)
+        private void OnNetworkConnectionChanged(object sender, Services.Network.Events.NetworkConnectionChangedEventArgs e)
         {
             NoConnection = !e.Connected;
         }
@@ -329,7 +329,7 @@ namespace Anvil.ViewModels.Wallet
         /// Requests the mnemonic from the user.
         /// </summary>
         /// <returns>The mnemonic or null in case the operation is cancelled.</returns>
-        private async Task<string?> GetMnemonicInfo()
+        private async Task<string> GetMnemonicInfo()
         {
             var dialog = DialogHelper.CreateTextFieldDialog(new TextFieldDialogBuilderParams()
             {
@@ -389,7 +389,7 @@ namespace Anvil.ViewModels.Wallet
         /// Gets a private key file's path from user input.
         /// </summary>
         /// <returns>The path or null in case the operation is cancelled.</returns>
-        private async Task<string?> GetPrivateKeyFilePath()
+        private async Task<string> GetPrivateKeyFilePath()
         {
             var ofd = new OpenFileDialog()
             {
@@ -436,7 +436,7 @@ namespace Anvil.ViewModels.Wallet
         /// Gets an alias for a private key wallet from user input.
         /// </summary>
         /// <returns>The alias or null in case the operation is cancelled.</returns>
-        private async Task<string?> ChooseAnAlias()
+        private async Task<string> ChooseAnAlias()
         {
             var dialog = DialogHelper.CreateTextFieldDialog(new TextFieldDialogBuilderParams()
             {
@@ -511,7 +511,7 @@ namespace Anvil.ViewModels.Wallet
         /// </summary>
         /// <param name="sender">The sender.</param>
         /// <param name="e">The event args.</param>
-        private void OnClientChanged(object? sender, Services.Rpc.Events.RpcClientChangedEventArgs e)
+        private void OnClientChanged(object sender, Services.Rpc.Events.RpcClientChangedEventArgs e)
         {
             Task.Run(GetAccountHoldings);
         }
@@ -521,7 +521,7 @@ namespace Anvil.ViewModels.Wallet
         /// </summary>
         /// <param name="sender">The sender.</param>
         /// <param name="e">The event args.</param>
-        private void OnCurrentWalletChanged(object? sender, Services.Wallets.Events.CurrentWalletChangedEventArgs e)
+        private void OnCurrentWalletChanged(object sender, Services.Wallets.Events.CurrentWalletChangedEventArgs e)
         {
             if (e.Wallet != CurrentWallet)
             {
@@ -535,7 +535,7 @@ namespace Anvil.ViewModels.Wallet
         /// </summary>
         /// <param name="sender">The sender.</param>
         /// <param name="e">The event args.</param>
-        private void OnWalletServiceStateChanged(object? sender, Services.Events.WalletServiceStateChangedEventArgs e)
+        private void OnWalletServiceStateChanged(object sender, Services.Events.WalletServiceStateChangedEventArgs e)
         {
             if (e.StateChange == Services.Enums.WalletServiceStateChange.Addition)
             {

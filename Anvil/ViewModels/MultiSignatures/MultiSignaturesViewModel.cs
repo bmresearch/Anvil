@@ -62,12 +62,12 @@ namespace Anvil.ViewModels.MultiSignatures
             await Application.Current.Clipboard.SetTextAsync(CurrentMultiSigAccountMapping.Address);
         }
 
-        private void OnNetworkConnectionChanged(object? sender, Services.Network.Events.NetworkConnectionChangedEventArgs e)
+        private void OnNetworkConnectionChanged(object sender, Services.Network.Events.NetworkConnectionChangedEventArgs e)
         {
             NoConnection = !e.Connected;
         }
 
-        private void _multiSigAccountMappingStore_OnStateChanged(object? sender, Services.Store.Events.MultiSignatureAccountMappingStateChangedEventArgs e)
+        private void _multiSigAccountMappingStore_OnStateChanged(object sender, Services.Store.Events.MultiSignatureAccountMappingStateChangedEventArgs e)
         {
             HandleStoreSnapshot();
         }
@@ -76,7 +76,7 @@ namespace Anvil.ViewModels.MultiSignatures
         /// Gets the multi signature account info necessary to create it from user input.
         /// </summary>
         /// <returns>A task which performs the action.</returns>
-        private async Task<CreateMultiSignatureAccountDialogViewModel?> GetMultiSignatureAccountInfo()
+        private async Task<CreateMultiSignatureAccountDialogViewModel> GetMultiSignatureAccountInfo()
         {
             var rent = await _rpcClient.GetMinimumBalanceForRentExemptionAsync(MultiSignatureAccount.Layout.Length);
 
@@ -215,7 +215,7 @@ namespace Anvil.ViewModels.MultiSignatures
         /// Gets an alias for a private key wallet from user input.
         /// </summary>
         /// <returns>The alias or null in case the operation is cancelled.</returns>
-        private async Task<string?> ChooseAnAlias()
+        private async Task<string> ChooseAnAlias()
         {
             var dialog = DialogHelper.CreateTextFieldDialog(new TextFieldDialogBuilderParams()
             {
@@ -376,7 +376,7 @@ namespace Anvil.ViewModels.MultiSignatures
         /// </summary>
         /// <param name="account"></param>
         /// <returns></returns>
-        private async Task<MultiSignatureAccount?> GetMultiSignatureAccount(string? account = null)
+        private async Task<MultiSignatureAccount> GetMultiSignatureAccount(string account = null)
         {
             FetchingMultiSigAccount = true;
             ErrorFetchingMultiSigAccount = false;
@@ -501,8 +501,8 @@ namespace Anvil.ViewModels.MultiSignatures
             set => this.RaiseAndSetIfChanged(ref _errorFetchingMultiSigAccount, value);
         }
 
-        private MultiSignatureAccountMapping? _currentMultiSigAccountMapping;
-        public MultiSignatureAccountMapping? CurrentMultiSigAccountMapping
+        private MultiSignatureAccountMapping _currentMultiSigAccountMapping;
+        public MultiSignatureAccountMapping CurrentMultiSigAccountMapping
         {
             get => _currentMultiSigAccountMapping;
             set
@@ -523,8 +523,8 @@ namespace Anvil.ViewModels.MultiSignatures
             }
         }
 
-        private MultiSignatureAccount? _currentMultiSigAccount;
-        public MultiSignatureAccount? CurrentMultiSigAccount
+        private MultiSignatureAccount _currentMultiSigAccount;
+        public MultiSignatureAccount CurrentMultiSigAccount
         {
             get => _currentMultiSigAccount;
             set => this.RaiseAndSetIfChanged(ref _currentMultiSigAccount, value);
