@@ -92,7 +92,7 @@ namespace Anvil
                 AppLifetime = desktopLifetime;
             }
 
-            if(AppLifetime == null)
+            if (AppLifetime == null)
             {
                 Log(new Exception("Something went wrong during framework initialization."));
                 return;
@@ -129,7 +129,7 @@ namespace Anvil
                 DataContext = MainWindowViewModel,
             };
             AppLifetime.MainWindow = MainWindow;
-            
+
             // TODO: Add support for the app to remain in the tray
             // Likely will need to rewrite/refactor a bunch of services because of the way the wallets are unlocked/initialized
             // AppLifetime.ShutdownRequested += AppLifetime_ShutdownRequested;

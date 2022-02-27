@@ -72,6 +72,6 @@ namespace Anvil.Services.Store
         /// <summary>
         /// An event thrown whenever the keystore has had an update.
         /// </summary>
-        event EventHandler<KeyStoreUpdateEventArgs> OnUpdate; 
+        event EventHandler<KeyStoreUpdateEventArgs> OnUpdate;
     }
 }

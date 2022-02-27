@@ -73,8 +73,8 @@ namespace Anvil.Services
         public IAliasedWallet AliasedWallet { get; }
 
         /// <inheritdoc cref="IWallet.Alias"/>
-        public string Alias 
-        { 
+        public string Alias
+        {
             get => AliasedWallet.Alias;
             set => AliasedWallet.Alias = value;
         }

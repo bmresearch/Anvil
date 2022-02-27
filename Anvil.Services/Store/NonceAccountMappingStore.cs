@@ -59,8 +59,8 @@ namespace Anvil.Services.Store
         }
 
         /// <inheritdoc cref="INonceAccountMappingStore.NonceAccountMappings"></inheritdoc>
-        public List<NonceAccountMapping> NonceAccountMappings 
-        { 
+        public List<NonceAccountMapping> NonceAccountMappings
+        {
             get => _state.NonceAccountMappings;
         }
 

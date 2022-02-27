@@ -13,7 +13,7 @@ namespace Anvil.Services
         public string Address { get; set; }
 
         public string Alias { get; set; }
-        public string ShortenedAddress 
+        public string ShortenedAddress
         {
             get => Address[..6] + "..." + Address[^6..];
         }
@@ -45,7 +45,7 @@ namespace Anvil.Services
         /// <param name="walletService">The wallet service.</param>
         /// <param name="multiSignatureAccountMappingStore">The multisig account store.</param>
         /// <param name="watchOnlyAccountStore">The watch-only account store.</param>
-        public AddressBookService(IWalletService walletService, 
+        public AddressBookService(IWalletService walletService,
             IMultiSignatureAccountMappingStore multiSignatureAccountMappingStore,
             IWatchOnlyAccountStore watchOnlyAccountStore)
         {
@@ -58,7 +58,8 @@ namespace Anvil.Services
         {
             var items = new List<AddressBookItem>();
 
-            items.AddRange(_walletService.Wallets.Select(x => new AddressBookItem { 
+            items.AddRange(_walletService.Wallets.Select(x => new AddressBookItem
+            {
                 Address = x.Address,
                 Alias = x.Alias
             }));

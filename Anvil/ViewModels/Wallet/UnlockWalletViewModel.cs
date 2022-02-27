@@ -65,7 +65,8 @@ namespace Anvil.ViewModels.Wallet
                 if (value.Contains("Wrong"))
                 {
                     WrongPassword = true;
-                } else
+                }
+                else
                 {
                     WrongPassword = false;
                 }

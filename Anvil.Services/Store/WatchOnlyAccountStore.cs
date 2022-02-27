@@ -46,8 +46,8 @@ namespace Anvil.Services.Store
         }
 
         /// <inheritdoc cref="IWatchOnlyAccountStore.WatchOnlyAccounts"/>
-        public List<WatchOnlyAccount> WatchOnlyAccounts 
-        { 
+        public List<WatchOnlyAccount> WatchOnlyAccounts
+        {
             get => _state.WatchOnlyAccounts;
         }
 

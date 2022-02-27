@@ -81,10 +81,10 @@ namespace Anvil.ViewModels.Dialogs
         public decimal Amount
         {
             get => _amount;
-            set 
-            { 
-                this.RaiseAndSetIfChanged(ref _amount, value); 
-                ValidateAmountDecimal(); 
+            set
+            {
+                this.RaiseAndSetIfChanged(ref _amount, value);
+                ValidateAmountDecimal();
             }
         }
 

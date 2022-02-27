@@ -28,7 +28,7 @@ namespace Anvil.ViewModels.WatchOnly
         private InternetConnectionService _internetConnectionService;
 
         public WatchOnlyViewModel(IClassicDesktopStyleApplicationLifetime appLifetime,
-            InternetConnectionService internetConnectionService, 
+            InternetConnectionService internetConnectionService,
             IRpcClientProvider rpcClientProvider, IWatchOnlyAccountStore watchOnlyAccountStore)
         {
             _appLifetime = appLifetime;
@@ -53,7 +53,7 @@ namespace Anvil.ViewModels.WatchOnly
             Task.Run(GetAccountHoldings);
         }
 
-        private async Task GetAccountHoldings()
+        public async Task GetAccountHoldings()
         {
             FetchingBalance = true;
             FetchingTokenBalances = true;
@@ -72,14 +72,16 @@ namespace Anvil.ViewModels.WatchOnly
 
         private async Task GetAccountBalance()
         {
+            if (CurrentAccount == null) return;
             var balance = await _rpcClient.GetBalanceAsync(CurrentAccount.Address);
 
             if (balance.WasRequestSuccessfullyHandled)
-                CurrentBalance = (double)balance.Result.Value / SolHelper.LAMPORTS_PER_SOL;
+                CurrentBalance = SolHelper.ConvertToSol(balance.Result.Value);
         }
 
         private async Task GetTokenBalances()
         {
+            if (CurrentAccount == null) return;
             var tokenWallet = await TokenWallet.LoadAsync(_rpcClient, _resolver, new(CurrentAccount.Address));
 
             TokenBalances = new ObservableCollection<TokenWalletBalance>();
@@ -197,7 +199,7 @@ namespace Anvil.ViewModels.WatchOnly
         {
             var dialog = DialogHelper.CreateTextFieldDialog(new TextFieldDialogBuilderParams()
             {
-                ContentHeader = "Import Mnemonic",
+                ContentHeader = "Add Watch Only Account",
                 StartupLocation = WindowStartupLocation.CenterOwner,
                 Width = 500,
                 Borderless = true,
@@ -270,8 +272,8 @@ namespace Anvil.ViewModels.WatchOnly
             set => this.RaiseAndSetIfChanged(ref _noConnection, value);
         }
 
-        private double _currentBalance;
-        public double CurrentBalance
+        private decimal _currentBalance;
+        public decimal CurrentBalance
         {
             get => _currentBalance;
             set => this.RaiseAndSetIfChanged(ref _currentBalance, value);

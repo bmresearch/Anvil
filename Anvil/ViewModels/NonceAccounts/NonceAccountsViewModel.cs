@@ -279,7 +279,7 @@ namespace Anvil.ViewModels.NonceAccounts
             get => _fetchingNonceAccount;
             set => this.RaiseAndSetIfChanged(ref _fetchingNonceAccount, value);
         }
-        
+
         private bool _noAccountsFound;
         public bool NoAccountsFound
         {

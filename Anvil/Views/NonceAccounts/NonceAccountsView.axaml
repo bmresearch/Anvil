@@ -103,7 +103,7 @@
 					TextAlignment="Center"
 					IsVisible="{Binding NoAccountsFound}"
 					Foreground="{DynamicResource MainTextAccent}"
-					Text="You have not added a multisig account yet!"/>
+					Text="You have not added a nonce account yet!"/>
 				<DockPanel
 					Margin="20"
 					DockPanel.Dock="Bottom">
@@ -159,31 +159,71 @@
 				</DockPanel>
 				<DockPanel
 					DockPanel.Dock="Top"
-					IsVisible="{Binding !NoConnection}">
+					IsVisible="{Binding !NoAccountsFound}">
 					<DockPanel
 						DockPanel.Dock="Top"
-						Margin="15"
-						IsVisible="{Binding !FetchingNonceAccount}">
+						IsVisible="{Binding !NoConnection}">
+						<DockPanel
+							DockPanel.Dock="Top"
+							Margin="15"
+							IsVisible="{Binding !FetchingNonceAccount}">
+							<TextBlock
+								Classes="Subtitle2"
+								Margin="5"
+								DockPanel.Dock="Top"
+								VerticalAlignment="Center"
+								HorizontalAlignment="Left"
+								TextAlignment="Center"
+								IsVisible="{Binding !ErrorFetchingNonceAccount}"
+								Foreground="{DynamicResource MainTextAccent}"
+								Text="Nonce"/>
+							<TextBlock
+								Classes="Body2"
+								Margin="5"
+								DockPanel.Dock="Top"
+								VerticalAlignment="Center"
+								HorizontalAlignment="Left"
+								TextAlignment="Center"
+								IsVisible="{Binding !ErrorFetchingNonceAccount}"
+								Foreground="{DynamicResource MainTextAccent}"
+								Text="{Binding CurrentNonce}"/>
+						</DockPanel>
 						<TextBlock
 							Classes="Subtitle2"
 							Margin="5"
 							DockPanel.Dock="Top"
 							VerticalAlignment="Center"
-							HorizontalAlignment="Left"
+							HorizontalAlignment="Center"
 							TextAlignment="Center"
-							IsVisible="{Binding !ErrorFetchingNonceAccount}"
-							Foreground="{DynamicResource MainTextAccent}"
-							Text="Nonce"/>
-						<TextBlock
-							Classes="Body2"
-							Margin="5"
+							Foreground="{DynamicResource ErrorAccent}"
+							Text="There was an error fetching this nonce account."
+							IsVisible="{Binding ErrorFetchingNonceAccount}"/>
+						<DockPanel
 							DockPanel.Dock="Top"
 							VerticalAlignment="Center"
-							HorizontalAlignment="Left"
-							TextAlignment="Center"
-							IsVisible="{Binding !ErrorFetchingNonceAccount}"
-							Foreground="{DynamicResource MainTextAccent}"
-							Text="{Binding CurrentNonce}"/>
+							HorizontalAlignment="Center"
+							Margin="15">
+							<TextBlock
+								Classes="Subtitle2"
+								Margin="5"
+								DockPanel.Dock="Top"
+								VerticalAlignment="Center"
+								HorizontalAlignment="Center"
+								TextAlignment="Center"
+								IsVisible="{Binding FetchingNonceAccount}"
+								Foreground="{DynamicResource MainTextAccent}"
+								Text="Fetching nonce account.."/>
+							<ProgressBar
+								DockPanel.Dock="Top"
+								VerticalAlignment="Center"
+								HorizontalAlignment="Center"
+								Classes="Circle"
+								IsIndeterminate="True"
+								IsVisible="{Binding FetchingNonceAccount}"
+								Width="20"
+								Height="20"
+								MinWidth="20"/>
+						</DockPanel>
 					</DockPanel>
 					<TextBlock
 						Classes="Subtitle2"
@@ -192,46 +232,10 @@
 						VerticalAlignment="Center"
 						HorizontalAlignment="Center"
 						TextAlignment="Center"
+						IsVisible="{Binding NoConnection}"
 						Foreground="{DynamicResource ErrorAccent}"
-						Text="There was an error fetching this nonce account."
-						IsVisible="{Binding ErrorFetchingNonceAccount}"/>
-					<DockPanel
-						DockPanel.Dock="Top"
-						VerticalAlignment="Center"
-						HorizontalAlignment="Center"
-						Margin="15">
-						<TextBlock
-							Classes="Subtitle2"
-							Margin="5"
-							DockPanel.Dock="Top"
-							VerticalAlignment="Center"
-							HorizontalAlignment="Center"
-							TextAlignment="Center"
-							IsVisible="{Binding FetchingNonceAccount}"
-							Foreground="{DynamicResource MainTextAccent}"
-							Text="Fetching nonce account.."/>
-						<ProgressBar
-							DockPanel.Dock="Top"
-							VerticalAlignment="Center"
-							HorizontalAlignment="Center"
-							Classes="Circle"
-							IsIndeterminate="True"
-							IsVisible="{Binding FetchingNonceAccount}"
-							Width="20"
-							Height="20"
-							MinWidth="20"/>
-					</DockPanel>
+						Text="Cannot fetch nonces and new nonce accounts without a network connection."/>
 				</DockPanel>
-				<TextBlock
-					Classes="Subtitle2"
-					Margin="5"
-					DockPanel.Dock="Top"
-					VerticalAlignment="Center"
-					HorizontalAlignment="Center"
-					TextAlignment="Center"
-					IsVisible="{Binding NoConnection}"
-					Foreground="{DynamicResource ErrorAccent}"
-					Text="Cannot fetch nonces and new nonce accounts without a network connection."/>
 			</DockPanel>
 		</styles:Card>
 	</DockPanel>

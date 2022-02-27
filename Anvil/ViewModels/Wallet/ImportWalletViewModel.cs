@@ -23,7 +23,7 @@ namespace Anvil.ViewModels.Wallet
                 y => y.PrivateKeyFilePath,
                 w => w.Password,
                 z => z.ConfirmPassword,
-                (x,y,w,z) => (x.Value != null || !string.IsNullOrEmpty(y.Value)) && w.Value == z.Value);
+                (x, y, w, z) => (x.Value != null || !string.IsNullOrEmpty(y.Value)) && w.Value == z.Value);
 
             Confirm = ReactiveCommand.Create(
                 () =>
@@ -45,11 +45,11 @@ namespace Anvil.ViewModels.Wallet
 
         public async void OpenPrivateKeyFileSelection()
         {
-            var ofd = new OpenFileDialog() 
-            { 
+            var ofd = new OpenFileDialog()
+            {
                 AllowMultiple = false,
                 Title = "Select Private Key File"
-            }; 
+            };
             if (Application.Current.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
             {
                 var selected = await ofd.ShowAsync(desktop.MainWindow);
@@ -63,10 +63,10 @@ namespace Anvil.ViewModels.Wallet
 
         private void ValidateMnemonicString()
         {
-            if (string.IsNullOrEmpty(_mnemonicString)) 
+            if (string.IsNullOrEmpty(_mnemonicString))
             {
                 MnemonicValidationError = false;
-                return; 
+                return;
             }
             try
             {
@@ -76,7 +76,8 @@ namespace Anvil.ViewModels.Wallet
                     MnemonicValidationError = false;
                     return;
                 }
-            } catch(Exception)
+            }
+            catch (Exception)
             {
                 MnemonicValidationError = true;
             }
@@ -107,7 +108,7 @@ namespace Anvil.ViewModels.Wallet
         public string MnemonicString
         {
             get => _mnemonicString;
-            set 
+            set
             {
                 this.RaiseAndSetIfChanged(ref _mnemonicString, value);
                 ValidateMnemonicString();
@@ -127,7 +128,7 @@ namespace Anvil.ViewModels.Wallet
             get => _password;
             set => this.RaiseAndSetIfChanged(ref _password, value);
         }
-        
+
 
         private string _confirmPassword = string.Empty;
         public string ConfirmPassword

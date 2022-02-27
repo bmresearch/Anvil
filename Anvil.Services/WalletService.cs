@@ -48,7 +48,7 @@ namespace Anvil.Services
         public void AddWallet(string mnemonic)
         {
             /// Sanity check mnemonic string
-            if(string.IsNullOrEmpty(mnemonic)) return;
+            if (string.IsNullOrEmpty(mnemonic)) return;
 
             /// Check if the mnemonic has already been added to the wallet service
             if (_mnemonic != null) return;
@@ -56,7 +56,7 @@ namespace Anvil.Services
             PropertyChanged?.Invoke(this, new(nameof(MnemonicImported)));
 
             /// Check if the mnemonic has already been added to the key store
-            if(!string.IsNullOrEmpty(KeyStore.Wallet.Mnemonic)) return;
+            if (!string.IsNullOrEmpty(KeyStore.Wallet.Mnemonic)) return;
             KeyStore.AddWallet(_mnemonic);
         }
 
@@ -64,7 +64,7 @@ namespace Anvil.Services
         public IWallet AddWallet(PrivateKeyWallet pkWallet)
         {
             /// Check if this private key wallet has already been added to the wallet service.
-            if (_privateKeyWallets.Any(x => x.Path == pkWallet.Path)) return null;               
+            if (_privateKeyWallets.Any(x => x.Path == pkWallet.Path)) return null;
             _privateKeyWallets.Add(pkWallet);
 
             SolanaWalletService solanaWalletService = new(pkWallet);
@@ -110,7 +110,7 @@ namespace Anvil.Services
         {
             int idx = KeyStore.Wallet.DerivationIndexWallets.Select(w => w.DerivationIndex).DefaultIfEmpty(0).Max() + 1;
 
-            DerivationIndexWallet derivationWallet = new ()
+            DerivationIndexWallet derivationWallet = new()
             {
                 DerivationIndex = idx,
             };

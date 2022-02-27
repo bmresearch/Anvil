@@ -184,8 +184,7 @@
 								Margin="5"
 								IsVisible="{Binding !FetchingBalance}"
 								Foreground="{DynamicResource MainTextAccent}"
-								Text="{Binding CurrentBalance}">
-							</TextBlock>
+								Text="{Binding CurrentBalance}"/>
 							<TextBlock
 								Classes="Body1"
 								VerticalAlignment="Top"
@@ -194,8 +193,17 @@
 								Margin="5"
 								IsVisible="{Binding !FetchingBalance}"
 								Foreground="{DynamicResource MainTextAccent}"
-								Text="SOL">
-							</TextBlock>
+								Text="SOL"/>
+							<Button
+								Classes="Flat"
+								ToolTip.Tip="Copy address to clipboard"
+								VerticalAlignment="Center"
+								Command="{Binding GetAccountHoldings}"
+								Height="24"
+								Width="24"
+								Padding="0">
+								<avalonia:MaterialIcon Kind="Refresh" />
+							</Button>
 						</StackPanel>
 					</DockPanel>
 				</DockPanel>

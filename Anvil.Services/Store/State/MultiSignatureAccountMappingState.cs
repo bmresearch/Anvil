@@ -40,7 +40,7 @@ namespace Anvil.Services.Store.State
         public void EditAlias(string account, string newAlias)
         {
             var multiSig = MultiSignatureAccountMappings.FirstOrDefault(x => x.Address == account);
-            
+
             if (multiSig != null)
             {
                 multiSig.Alias = newAlias;

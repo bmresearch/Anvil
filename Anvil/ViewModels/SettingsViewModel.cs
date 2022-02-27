@@ -90,7 +90,8 @@ namespace Anvil.ViewModels
                 if (c.WasRequestSuccessfullyHandled)
                 {
                     SolanaClusterNodes = c.Result.Count;
-                } else
+                }
+                else
                 {
                     SolanaClusterNodes = 0;
                 }
@@ -101,7 +102,7 @@ namespace Anvil.ViewModels
             }
         }
 
-        public async void ApplyChanges()
+        public void ApplyChanges()
         {
             switch (SelectedClusterOption)
             {
@@ -184,7 +185,7 @@ namespace Anvil.ViewModels
         public string SolanaCoreVersion
         {
             get => _solanaCoreVersion;
-            set => this.RaiseAndSetIfChanged(ref _solanaCoreVersion, value); 
+            set => this.RaiseAndSetIfChanged(ref _solanaCoreVersion, value);
         }
 
         private ulong _solanaFeatureSet;

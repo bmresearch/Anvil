@@ -203,7 +203,7 @@ namespace Anvil.Services
 
             RaiseEvent("Generating keys.", KeyStoreServiceState.Initializing);
 
-            var pkWallet = new PrivateKeyWallet() { Path = path, Alias = alias};
+            var pkWallet = new PrivateKeyWallet() { Path = path, Alias = alias };
             var ws = _walletService.AddWallet(pkWallet);
 
             RaiseEvent("Preparing key store...", KeyStoreServiceState.Initializing);
@@ -265,7 +265,8 @@ namespace Anvil.Services
                 if (File.Exists(store.Path))
                 {
                     _walletService.AddWallet(store);
-                } else
+                }
+                else
                 {
                     tmp.Add(store);
                     unloaded.Add(store.Path);
@@ -315,7 +316,7 @@ namespace Anvil.Services
                     unloaded.Add(store.Path);
                 }
             }
-            if(unloaded.Count > 0)
+            if (unloaded.Count > 0)
             {
                 _keyStore.RemoveWallets(tmp);
                 OnLoadingError?.Invoke(this, new(unloaded));

@@ -45,7 +45,8 @@ namespace Anvil.Services.Store
             if (_state.IsEncrypted)
             {
                 OnUpdate?.Invoke(this, new());
-            } else
+            }
+            else
             {
                 _persistenceDriver.SaveState(_state);
             }
@@ -84,10 +85,11 @@ namespace Anvil.Services.Store
         /// <inheritdoc cref="IKeyStore.EditAlias(IAliasedWallet, string)"/>
         public void EditAlias(IAliasedWallet aliasedWallet, string newAlias)
         {
-            if(aliasedWallet is DerivationIndexWallet derivationIndexWallet)
+            if (aliasedWallet is DerivationIndexWallet derivationIndexWallet)
             {
                 _state.EditAlias(derivationIndexWallet, newAlias);
-            } else if(aliasedWallet is PrivateKeyWallet privateKeyWallet)
+            }
+            else if (aliasedWallet is PrivateKeyWallet privateKeyWallet)
             {
                 _state.EditAlias(privateKeyWallet, newAlias);
             }

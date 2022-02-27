@@ -77,7 +77,7 @@ namespace Anvil.ViewModels.Wallet
             NoConnection = !_internetConnectionService.IsConnected;
             TransactionSubmission = TransactionSubmissionViewModel.NoShow();
             TransactionSubmission.WhenAnyValue(x => x.SubmittingTransaction)
-                .Subscribe(x => 
+                .Subscribe(x =>
                 {
                     CanSubmitTransaction = !x;
                 });
@@ -117,8 +117,8 @@ namespace Anvil.ViewModels.Wallet
                 SelectedToken = TokenBalances.First(),
                 AddressBookService = _addressBookService,
             };
-            var dialog = DialogHelper.CreateCustomDialog(new CustomDialogBuilderParams 
-            { 
+            var dialog = DialogHelper.CreateCustomDialog(new CustomDialogBuilderParams
+            {
                 Borderless = true,
                 Content = vm,
                 StartupLocation = WindowStartupLocation.CenterOwner,
@@ -166,7 +166,8 @@ namespace Anvil.ViewModels.Wallet
                 await GetAccountHoldings();
                 await Task.Delay(15000);
                 TransactionSubmission = TransactionSubmissionViewModel.NoShow();
-            } else
+            }
+            else
             {
                 await Task.Delay(15000);
                 TransactionSubmission = TransactionSubmissionViewModel.NoShow();
@@ -203,12 +204,13 @@ namespace Anvil.ViewModels.Wallet
 
             if (destinationTokenAccount.WasSuccessful)
             {
-                if(destinationTokenAccount.Result.Value == null)
+                if (destinationTokenAccount.Result.Value == null)
                     txBuilder.AddInstruction(AssociatedTokenAccountProgram.CreateAssociatedTokenAccount(
                         CurrentWallet.Address,
                         vm.Destination.PublicKey,
                         new(vm.SelectedToken.TokenMint)));
-            } else
+            }
+            else
             {
                 TransactionSubmission.CraftingError();
                 await Task.Delay(15000);
@@ -421,7 +423,7 @@ namespace Anvil.ViewModels.Wallet
             if (!File.Exists(path)) return;
 
             var alias = await ChooseAnAlias();
-            if(string.IsNullOrEmpty(alias)) return;
+            if (string.IsNullOrEmpty(alias)) return;
 
             _walletService.AddWallet(new PrivateKeyWallet
             {
@@ -521,7 +523,7 @@ namespace Anvil.ViewModels.Wallet
         /// <param name="e">The event args.</param>
         private void OnCurrentWalletChanged(object? sender, Services.Wallets.Events.CurrentWalletChangedEventArgs e)
         {
-            if(e.Wallet != CurrentWallet)
+            if (e.Wallet != CurrentWallet)
             {
                 CurrentWallet = e.Wallet;
                 CurrentWalletAlias = e.Wallet.Alias;
@@ -650,7 +652,7 @@ namespace Anvil.ViewModels.Wallet
                 TokenBalances.Add(tokenBalance);
             }
 
-            if(tokenBalances.Length > 0)
+            if (tokenBalances.Length > 0)
                 CanSendTokens = true;
 
             if (tokenBalances.Length == 0)
@@ -682,8 +684,8 @@ namespace Anvil.ViewModels.Wallet
         }
 
         private bool _canSubmitTransaction;
-        public bool CanSubmitTransaction 
-        { 
+        public bool CanSubmitTransaction
+        {
             get => _canSubmitTransaction;
             set => this.RaiseAndSetIfChanged(ref _canSubmitTransaction, value);
         }
@@ -765,7 +767,7 @@ namespace Anvil.ViewModels.Wallet
             get => _currentWalletAlias;
             set => this.RaiseAndSetIfChanged(ref _currentWalletAlias, value);
         }
-        
+
         private IWallet _currentWallet;
         public IWallet CurrentWallet
         {
@@ -818,8 +820,8 @@ namespace Anvil.ViewModels.Wallet
         }
 
         private bool _canSendTokens;
-        public bool CanSendTokens 
-        { 
+        public bool CanSendTokens
+        {
             get => _canSendTokens;
             set => this.RaiseAndSetIfChanged(ref _canSendTokens, value);
         }

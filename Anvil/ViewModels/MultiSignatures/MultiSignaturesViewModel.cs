@@ -15,6 +15,7 @@ using Solnet.Rpc;
 using Solnet.Rpc.Builders;
 using Solnet.Wallet;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
@@ -53,6 +54,14 @@ namespace Anvil.ViewModels.MultiSignatures
             HandleStoreSnapshot();
         }
 
+        /// <summary>
+        /// Adds the current wallet's address to the clipboard.
+        /// </summary>
+        public async void CopyAddressToClipboard()
+        {
+            await Application.Current.Clipboard.SetTextAsync(CurrentMultiSigAccountMapping.Address);
+        }
+
         private void OnNetworkConnectionChanged(object? sender, Services.Network.Events.NetworkConnectionChangedEventArgs e)
         {
             NoConnection = !e.Connected;
@@ -81,6 +90,15 @@ namespace Anvil.ViewModels.MultiSignatures
                     new Fields.RequiredPublicKeyViewModel(true, _addressBookService),
                 }
             };
+
+            foreach (var signer in vm.Signers)
+            {
+                signer.WhenAnyValue(x => x.PublicKey)
+                .Subscribe(x =>
+                {
+                    vm.CheckDuplicateSigners();
+                });
+            }
 
             var dialog = DialogHelper.CreateCustomDialog(new CustomDialogBuilderParams
             {
@@ -253,6 +271,7 @@ namespace Anvil.ViewModels.MultiSignatures
                 };
                 _multiSigAccountMappingStore.AddMapping(mapping);
                 CurrentMultiSigAccountMapping = mapping;
+                HandleStoreSnapshot();
             }
             else
             {
@@ -311,6 +330,18 @@ namespace Anvil.ViewModels.MultiSignatures
             if (success)
             {
                 await TransactionSubmission.PollConfirmation();
+                var multisig = await GetMultiSignatureAccount(vm.Account.PublicKey);
+                // once confirmed add to local storage
+                var mapping = new MultiSignatureAccountMapping
+                {
+                    Alias = vm.Alias,
+                    Address = vm.Account.PublicKey,
+                    MinimumSigners = multisig.MinimumSigners,
+                    Signers = multisig.Signers.Select(x => x.Key).ToList(),
+                };
+                _multiSigAccountMappingStore.AddMapping(mapping);
+                CurrentMultiSigAccountMapping = mapping;
+                HandleStoreSnapshot();
                 await Task.Delay(15000);
                 TransactionSubmission = TransactionSubmissionViewModel.NoShow();
             }

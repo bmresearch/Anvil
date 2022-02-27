@@ -9,7 +9,7 @@ namespace Anvil.ViewModels.Crafter
     public class MultiSignatureAccountViewModel : AccountViewModel
     {
 
-        public MultiSignatureAccountViewModel(ObservableCollection<TokenWalletBalanceWrapper> assets, MultiSignatureAccount multiSig) 
+        public MultiSignatureAccountViewModel(ObservableCollection<TokenWalletBalanceWrapper> assets, MultiSignatureAccount multiSig)
             : base(assets)
         {
             SelectedSigners = new();

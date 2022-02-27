@@ -77,9 +77,9 @@ namespace Anvil.ViewModels.Dialogs
         /// The authority of the account.
         /// </summary>
         private PublicKeyViewModel _authority = new();
-        public PublicKeyViewModel Authority 
-        { 
-            get => _authority; 
+        public PublicKeyViewModel Authority
+        {
+            get => _authority;
             set => this.RaiseAndSetIfChanged(ref _authority, value);
         }
 

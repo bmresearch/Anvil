@@ -68,6 +68,7 @@ namespace Anvil.ViewModels.Common
             }
             else
             {
+                SubmittingTransaction = false;
                 TransactionError = true;
                 TransactionErrorMessage = txSig.Reason;
 
@@ -83,7 +84,7 @@ namespace Anvil.ViewModels.Common
         {
             Progress = "Awaiting transaction confirmation...";
             _ = await _rpcClientProvider.PollTxAsync(TransactionHash, Solnet.Rpc.Types.Commitment.Confirmed);
-            TransactionConfirmed = true; 
+            TransactionConfirmed = true;
             SubmittingTransaction = false;
         }
 

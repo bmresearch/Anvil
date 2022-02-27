@@ -21,10 +21,11 @@ namespace Anvil.ViewModels.Dialogs
             this.WhenAnyValue(x => x.Destination.PublicKey)
                 .Subscribe(x =>
                 {
-                    if(x != null)
+                    if (x != null)
                     {
                         _isDestinationValid = true;
-                    } else
+                    }
+                    else
                     {
                         _isDestinationValid = false;
                     }
@@ -77,10 +78,10 @@ namespace Anvil.ViewModels.Dialogs
         public decimal Amount
         {
             get => _amount;
-            set 
-            { 
-                this.RaiseAndSetIfChanged(ref _amount, value); 
-                ValidateAmountDecimal(); 
+            set
+            {
+                this.RaiseAndSetIfChanged(ref _amount, value);
+                ValidateAmountDecimal();
             }
         }
 

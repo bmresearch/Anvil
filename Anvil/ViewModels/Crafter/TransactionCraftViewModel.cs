@@ -31,7 +31,7 @@ namespace Anvil.ViewModels.Crafter
     /// </summary>
     public class TransactionCraftViewModel : ViewModelBase
     {
-        private static readonly PublicKey WrappedSolMint = new ("So11111111111111111111111111111111111111112");
+        private static readonly PublicKey WrappedSolMint = new("So11111111111111111111111111111111111111112");
 
         #region Framework
 
@@ -65,6 +65,7 @@ namespace Anvil.ViewModels.Crafter
             _internetConnectionService.OnNetworkConnectionChanged += OnNetworkConnectionChanged;
             _rpcProvider = rpcProvider;
             _walletService = walletService;
+            _walletService.OnCurrentWalletChanged += _walletService_OnCurrentWalletChanged;
             _nonceAccountMappingStore = nonceAccountMappingStore;
             _addressBookService = addressBookService;
 
@@ -105,6 +106,32 @@ namespace Anvil.ViewModels.Crafter
                     }
                     this.RaisePropertyChanged(nameof(CanCraftTransaction));
                 });
+        }
+
+        private async void _walletService_OnCurrentWalletChanged(object? sender, Services.Wallets.Events.CurrentWalletChangedEventArgs e)
+        {
+            PublicKey? authority = AccountContent is MultiSignatureAccountViewModel multiSigVm ? _walletService.CurrentWallet.Address : SourceAccount.PublicKey;
+            if (authority == null) return;
+            if (authority.Equals(e.Wallet.Address))
+            {
+                // fetch nonce account again
+                var _mapping = _nonceAccountMappingStore.GetMapping(authority);
+                if (_mapping == null)
+                {
+                    NonceAccountViewModel = null;
+                    NonceAccountExists = false;
+                    return;
+                }
+                var _nonceAccount = await GetNonceAccount(_mapping.Account);
+                if (_nonceAccount == null)
+                {
+                    NonceAccountViewModel = null;
+                    NonceAccountExists = false;
+                    return;
+                }
+                NonceAccountViewModel = new(_nonceAccount, _mapping);
+                NonceAccountExists = true;
+            }
         }
 
         private void OnNetworkConnectionChanged(object? sender, Services.Network.Events.NetworkConnectionChangedEventArgs e)
@@ -272,45 +299,6 @@ namespace Anvil.ViewModels.Crafter
         }
 
         /// <summary>
-        /// Creates a token account for a given owner and token mint.
-        /// </summary>
-        /// <param name="owner">The token account owner.</param>
-        /// <param name="owner">The token mint.</param>
-        public async void CreateTokenAccount(PublicKey owner, PublicKey mint)
-        {
-            var blockHash = await _rpcClient.GetRecentBlockHashAsync();
-
-            var txBuilder = new TransactionBuilder()
-                .SetFeePayer(_walletService.CurrentWallet.Address)
-                .SetRecentBlockHash(blockHash.Result.Value.Blockhash)
-                .AddInstruction(AssociatedTokenAccountProgram.CreateAssociatedTokenAccount(
-                    _walletService.CurrentWallet.Address,
-                    owner,
-                    mint));
-
-            var msgBytes = txBuilder.CompileMessage();
-
-            txBuilder.AddSignature(_walletService.CurrentWallet.Sign(msgBytes));
-
-            // submit transaction to create nonce
-            var txSign = await _rpcClient.SendTransactionAsync(txBuilder.Serialize());
-
-            CreatingTokenAccount = true;
-
-            await Task.Delay(2500);
-
-            // and poll confirmation
-            var txMeta = await _rpcProvider.PollTxAsync(txSign.Result, Solnet.Rpc.Types.Commitment.Confirmed);
-
-            var ata = AssociatedTokenAccountProgram.DeriveAssociatedTokenAccount(owner, mint);
-
-            // fetch token account again
-            var tokenAccount = await GetTokenAccount(ata);
-
-            CreatingTokenAccount = false;
-        }
-
-        /// <summary>
         /// Adds instructions to send solana from a regular account to a multisig account.
         /// </summary>
         /// <returns>A task which performs the action.</returns>
@@ -324,9 +312,8 @@ namespace Anvil.ViewModels.Crafter
                 return;
             }
 
-            var destinationAta = AssociatedTokenAccountProgram.DeriveAssociatedTokenAccount(DestinationAccount.PublicKey, new(AccountContent.SelectedAsset.TokenMint));
             // destination account is a multisig so we have to transfer wrapped sol to the multisig's wrapped sol associated token account
-            var destinationTokenAccount = await GetTokenAccount(destinationAta);
+            var destinationTokenAccount = await GetTokenAccount(_destinationAta);
 
             if (destinationTokenAccount == null)
             {
@@ -337,13 +324,12 @@ namespace Anvil.ViewModels.Crafter
                     new(AccountContent.SelectedAsset.TokenMint)));
             }
 
-            // now we'll wrap sol, transfer it and then close our wrapped sol token account
-
+            // now we'll transfer sol to the ata and then perform sync native
             _txBuilder.AddInstruction(SystemProgram.Transfer(
                 SourceAccount.PublicKey,
-                destinationAta,
+                _destinationAta,
                 SolHelper.ConvertToLamports(AccountContent.Amount)))
-                .AddInstruction(TokenProgram.SyncNative(destinationAta));
+                .AddInstruction(TokenProgram.SyncNative(_destinationAta));
         }
 
         /// <summary>
@@ -359,8 +345,7 @@ namespace Anvil.ViewModels.Crafter
                 TransactionCraftingError = true;
                 return;
             }
-            var destinationAta = AssociatedTokenAccountProgram.DeriveAssociatedTokenAccount(DestinationAccount.PublicKey, new(AccountContent.SelectedAsset.TokenMint));
-            var destinationTokenAccount = await GetTokenAccount(destinationAta);
+            var destinationTokenAccount = await GetTokenAccount(_destinationAta);
 
             if (destinationTokenAccount == null)
             {
@@ -429,36 +414,30 @@ namespace Anvil.ViewModels.Crafter
                 return;
             }
 
-            /// check if destination ATA exists, if it doesn't add instruction to create ATA
+            /// check if destination ata exists, if it doesn't add instruction to create ata
             /// this instruction is funded by the wallet service's current wallet
-            var destinationTokenAccount = await _rpcClient.GetTokenAccountInfoAsync(_destinationAta,
-                Solnet.Rpc.Types.Commitment.Confirmed);
+            var destinationTokenAccount = await GetTokenAccount(_destinationAta);
+            if (destinationTokenAccount == null)
+                _txBuilder.AddInstruction(AssociatedTokenAccountProgram.CreateAssociatedTokenAccount(
+                    _walletService.CurrentWallet.Address,
+                    DestinationAccount.PublicKey,
+                    new(AccountContent.SelectedAsset.TokenMint)));
 
-            if (destinationTokenAccount.WasSuccessful)
-            {
-                if (destinationTokenAccount.Result.Value == null)
-                    _txBuilder.AddInstruction(AssociatedTokenAccountProgram.CreateAssociatedTokenAccount(
-                        _walletService.CurrentWallet.Address,
-                        DestinationAccount.PublicKey,
-                        new(AccountContent.SelectedAsset.TokenMint)));
-            }
-            // if source Ata exists perform sync native and token program transfer to destination ATA
-
-            var amountConverter = (decimal)Math.Pow(10, AccountContent.SelectedAsset.Decimals);
-            var amount = (ulong)(AccountContent.Amount * amountConverter);
+            // if source ata exists perform token program transfer to destination ata
             if (AccountContent.SelectedAsset.TokenName == "Solana")
             {
                 _txBuilder
-                    .AddInstruction(TokenProgram.SyncNative(_sourceAta))
                     .AddInstruction(TokenProgram.Transfer(
                         _sourceAta,
                         _destinationAta,
-                        amount,
+                        SolHelper.ConvertToLamports(AccountContent.Amount),
                         SourceAccount.PublicKey,
                         selectedSigners));
             }
             else
             {
+                var amountConverter = (decimal)Math.Pow(10, AccountContent.SelectedAsset.Decimals);
+                var amount = (ulong)(AccountContent.Amount * amountConverter);
                 _txBuilder
                     .AddInstruction(TokenProgram.Transfer(
                     _sourceAta,
@@ -527,11 +506,11 @@ namespace Anvil.ViewModels.Crafter
                         _multiSigAccount = MultiSignatureAccount.Deserialize(accountBytes);
                     }
 
-                    var assets = await GetTokenAccounts(SourceAccount.PublicKey);
-                    if (assets == null) return;
 
                     if (_multiSigAccount != null)
                     {
+                        var assets = await GetTokenAccounts(SourceAccount.PublicKey, true);
+                        if (assets == null) return;
                         // because the source is multi sig the current wallet needs to sign to advance the nonce
                         _mapping = _nonceAccountMappingStore.GetMapping(_walletService.CurrentWallet.Address);
                         AccountContent = new MultiSignatureAccountViewModel(assets, _multiSigAccount);
@@ -539,6 +518,8 @@ namespace Anvil.ViewModels.Crafter
                     }
                     else
                     {
+                        var assets = await GetTokenAccounts(SourceAccount.PublicKey);
+                        if (assets == null) return;
                         // the source account is a regular account so it can be the authority of the nonce account
                         _mapping = _nonceAccountMappingStore.GetMapping(SourceAccount.PublicKey);
                         AccountContent = new AccountViewModel(assets);
@@ -558,7 +539,7 @@ namespace Anvil.ViewModels.Crafter
                             // for some reason we couldn't fetch the nonce account so we need to trigger an error here
                             NonceAccountViewModel = null;
                             NonceAccountExists = false;
-                            SourceInput = false;
+                            SourceInput = true;
                             return;
                         }
                     }
@@ -644,15 +625,19 @@ namespace Anvil.ViewModels.Crafter
                 var tokenAccount = await GetTokenAccount(ata);
                 if (tokenAccount == null) return null;
 
+                solanaTokenWrapper = new TokenWalletBalanceWrapper("Solana",
+                    tokenAccount.Data.Parsed.Info.TokenAmount.AmountUlong,
+                    tokenAccount.Data.Parsed.Info.TokenAmount.AmountDecimal,
+                    10,
+                    WrappedSolMint);
 
-
-
-            } else
+            }
+            else
             {
                 // this account is not a multisig so we'll just use the account's balance in lamports
                 var balance = await GetBalance(accountKey);
                 if (balance == null) return null;
-                
+
                 solanaTokenWrapper = new TokenWalletBalanceWrapper("Solana",
                     balance.Value,
                     SolHelper.ConvertToSol(balance.Value),
@@ -662,13 +647,14 @@ namespace Anvil.ViewModels.Crafter
 
             if (solanaTokenWrapper == null) return null;
 
-            var assets = new ObservableCollection<TokenWalletBalanceWrapper>() 
+            var assets = new ObservableCollection<TokenWalletBalanceWrapper>()
             {
                 solanaTokenWrapper
             };
 
             foreach (var twb in _tokenWallet.Balances())
             {
+                if (twb.Symbol.Contains("SOL")) continue;
                 assets.Add(new TokenWalletBalanceWrapper(twb));
             }
             return assets;

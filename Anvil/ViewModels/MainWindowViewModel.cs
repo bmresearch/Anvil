@@ -110,7 +110,7 @@ namespace Anvil.ViewModels
         /// </summary>
         private void InitializeServices()
         {
-            _rpcProvider = _appState.RpcUrl != string.Empty ? 
+            _rpcProvider = _appState.RpcUrl != string.Empty ?
                 new RpcClientProvider(_appState.RpcUrl) : new RpcClientProvider(_appState.Cluster);
 
             // the nonce account mapping store
@@ -161,7 +161,7 @@ namespace Anvil.ViewModels
                 _multisigAccountMappingStore, _watchOnlyAccountStore);
 
             _internetService = new InternetConnectionService();
-            //_internetService.Start();
+            _internetService.Start();
             _internetService.OnNetworkConnectionChanged += InternetService_OnNetworkConnectionChanged;
             _logger.Log(LogLevel.Information, "Initialized services.");
         }

@@ -14,10 +14,10 @@ namespace Anvil.Models
     {
         [DataMember]
         private string _keyStoreFilePath = AppContext.BaseDirectory;
-        public string KeyStoreFilePath 
-        { 
+        public string KeyStoreFilePath
+        {
             get => _keyStoreFilePath;
-            set => this.RaiseAndSetIfChanged(ref _keyStoreFilePath, value); 
+            set => this.RaiseAndSetIfChanged(ref _keyStoreFilePath, value);
         }
 
         [DataMember]

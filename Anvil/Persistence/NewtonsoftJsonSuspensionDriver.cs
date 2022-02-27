@@ -38,7 +38,7 @@ namespace Anvil.Persistence
                 var state = JsonConvert.DeserializeObject<object>(lines, _settings);
                 return Observable.Return(state);
             }
-            catch (FileNotFoundException fnf)
+            catch (FileNotFoundException)
             {
                 return Observable.Return(new ApplicationState());
             }

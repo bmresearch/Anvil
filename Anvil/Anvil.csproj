@@ -1,95 +1,98 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <OutputType>WinExe</OutputType>
-    <TargetFramework>net6.0</TargetFramework>
-    <Nullable>enable</Nullable>
-	<AssemblyName>Anvil</AssemblyName>
-	<RootNamespace>Anvil</RootNamespace>
-  </PropertyGroup>
-  <ItemGroup>
-	<Compile Update="**\*.axaml.cs">
-		<DependentUpon>%(Filename)</DependentUpon>
-	</Compile>
-    <AvaloniaResource Include="Assets\**" />
-    <AvaloniaResource Remove="Assets\DarkIcons.axaml" />
-    <AvaloniaXaml Remove="Views\Crafter\CrafterView.axaml" />
-    <AvaloniaXaml Remove="Views\Crafter\TransactionCraftView.axaml" />
-    <AvaloniaXaml Remove="Views\Crafter\TransactionSendView.axaml" />
-    <AvaloniaXaml Remove="Views\Crafter\TransactionSignView.axaml" />
-    <AvaloniaXaml Remove="Views\Wallet\WalletView.axaml" />
-    <None Remove=".gitignore" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Views\Crafter\CrafterView.axaml">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Views\Crafter\TransactionCraftView.axaml">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Views\Crafter\TransactionSendView.axaml">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Views\Crafter\TransactionSignView.axaml">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Views\Wallet\WalletView.axaml">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="Avalonia" Version="0.10.12" />
-    <PackageReference Include="Avalonia.Desktop" Version="0.10.12" />
-    <!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
-    <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="0.10.12" />
-    <PackageReference Include="Avalonia.ReactiveUI" Version="0.10.12" />
-    <PackageReference Include="Avalonia.Xaml.Behaviors" Version="0.10.12" />
-    <PackageReference Include="Material.Avalonia" Version="2.5.0.78-nightly" />
-    <PackageReference Include="Material.Icons.Avalonia" Version="1.0.2" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="6.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="6.0.0" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-    <PackageReference Include="Solnet.Extensions" Version="6.0.0" />
-    <PackageReference Include="Solnet.KeyStore" Version="6.0.0" />
-    <PackageReference Include="Solnet.Programs" Version="6.0.0" />
-    <PackageReference Include="Solnet.Rpc" Version="6.0.0" />
-    <PackageReference Include="Solnet.Wallet" Version="6.0.0" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Anvil.Core\Anvil.Core.csproj" />
-    <ProjectReference Include="..\Anvil.Services\Anvil.Services.csproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <AvaloniaXaml Update="Assets\DarkIcons.axaml">
-      <SubType>Designer</SubType>
-    </AvaloniaXaml>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Update="Views\Common\AddressBookButton.axaml.cs">
-      <DependentUpon>AddressBookButton.axaml</DependentUpon>
-    </Compile>
-    <Compile Update="Views\Crafter\CrafterView.axaml.cs">
-      <DependentUpon>%(Filename)</DependentUpon>
-    </Compile>
-    <Compile Update="Views\Crafter\TransactionCraftView.axaml.cs">
-      <DependentUpon>%(Filename)</DependentUpon>
-    </Compile>
-    <Compile Update="Views\Crafter\TransactionSendView.axaml.cs">
-      <DependentUpon>%(Filename)</DependentUpon>
-    </Compile>
-    <Compile Update="Views\Crafter\TransactionSignView.axaml.cs">
-      <DependentUpon>%(Filename)</DependentUpon>
-    </Compile>
-    <Compile Update="Views\NonceAccounts\NonceAccountsView.axaml.cs">
-      <DependentUpon>NonceAccountsView.axaml</DependentUpon>
-    </Compile>
-    <Compile Update="Views\Wallet\UnlockWalletView.axaml.cs">
-      <DependentUpon>UnlockWalletView.axaml</DependentUpon>
-    </Compile>
-    <Compile Update="Views\Wallet\WalletView.axaml.cs">
-      <DependentUpon>%(Filename)</DependentUpon>
-    </Compile>
-    <Compile Update="Views\WatchOnly\WatchOnlyView.axaml.cs">
-      <DependentUpon>WatchOnlyView.axaml</DependentUpon>
-    </Compile>
-  </ItemGroup>
+	<PropertyGroup>
+		<OutputType>WinExe</OutputType>
+		<TargetFramework>net6.0</TargetFramework>
+		<Nullable>enable</Nullable>
+		<AssemblyName>Anvil</AssemblyName>
+		<RootNamespace>Anvil</RootNamespace>
+		<PublishSingleFile>true</PublishSingleFile>
+		<ApplicationIcon>Assets\icon.ico</ApplicationIcon>
+	</PropertyGroup>
+	<ItemGroup>
+		<Compile Update="**\*.axaml.cs">
+			<DependentUpon>%(Filename)</DependentUpon>
+		</Compile>
+		<AvaloniaResource Include="Assets\**" />
+		<AvaloniaResource Remove="Assets\DarkIcons.axaml" />
+		<AvaloniaXaml Remove="Views\Crafter\CrafterView.axaml" />
+		<AvaloniaXaml Remove="Views\Crafter\TransactionCraftView.axaml" />
+		<AvaloniaXaml Remove="Views\Crafter\TransactionSendView.axaml" />
+		<AvaloniaXaml Remove="Views\Crafter\TransactionSignView.axaml" />
+		<AvaloniaXaml Remove="Views\Wallet\WalletView.axaml" />
+		<None Remove=".gitignore" />
+	</ItemGroup>
+	<ItemGroup>
+		<EmbeddedResource Include="Views\Crafter\CrafterView.axaml">
+			<SubType>Designer</SubType>
+		</EmbeddedResource>
+		<EmbeddedResource Include="Views\Crafter\TransactionCraftView.axaml">
+			<SubType>Designer</SubType>
+		</EmbeddedResource>
+		<EmbeddedResource Include="Views\Crafter\TransactionSendView.axaml">
+			<SubType>Designer</SubType>
+		</EmbeddedResource>
+		<EmbeddedResource Include="Views\Crafter\TransactionSignView.axaml">
+			<SubType>Designer</SubType>
+		</EmbeddedResource>
+		<EmbeddedResource Include="Views\Wallet\WalletView.axaml">
+			<SubType>Designer</SubType>
+		</EmbeddedResource>
+	</ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Avalonia" Version="0.10.12" />
+		<PackageReference Include="Avalonia.Desktop" Version="0.10.12" />
+		<!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
+		<PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="0.10.12" />
+		<PackageReference Include="Avalonia.ReactiveUI" Version="0.10.12" />
+		<PackageReference Include="Avalonia.Xaml.Behaviors" Version="0.10.12" />
+		<PackageReference Include="Material.Avalonia" Version="2.5.0.78-nightly" />
+		<PackageReference Include="Material.Icons.Avalonia" Version="1.0.2" />
+		<PackageReference Include="Microsoft.Extensions.Logging.Console" Version="6.0.0" />
+		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="6.0.0" />
+		<PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+		<PackageReference Include="Solnet.Extensions" Version="6.0.0" />
+		<PackageReference Include="Solnet.KeyStore" Version="6.0.0" />
+		<PackageReference Include="Solnet.Programs" Version="6.0.0" />
+		<PackageReference Include="Solnet.Rpc" Version="6.0.0" />
+		<PackageReference Include="Solnet.Wallet" Version="6.0.0" />
+	</ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\Anvil.Core\Anvil.Core.csproj" />
+		<ProjectReference Include="..\Anvil.Services\Anvil.Services.csproj" />
+	</ItemGroup>
+	<ItemGroup>
+		<AvaloniaXaml Update="Assets\DarkIcons.axaml">
+			<SubType>Designer</SubType>
+		</AvaloniaXaml>
+	</ItemGroup>
+	<ItemGroup>
+		<Compile Update="Views\Common\AddressBookButton.axaml.cs">
+			<DependentUpon>AddressBookButton.axaml</DependentUpon>
+		</Compile>
+		<Compile Update="Views\Crafter\CrafterView.axaml.cs">
+			<DependentUpon>%(Filename)</DependentUpon>
+		</Compile>
+		<Compile Update="Views\Crafter\TransactionCraftView.axaml.cs">
+			<DependentUpon>%(Filename)</DependentUpon>
+		</Compile>
+		<Compile Update="Views\Crafter\TransactionSendView.axaml.cs">
+			<DependentUpon>%(Filename)</DependentUpon>
+		</Compile>
+		<Compile Update="Views\Crafter\TransactionSignView.axaml.cs">
+			<DependentUpon>%(Filename)</DependentUpon>
+		</Compile>
+		<Compile Update="Views\NonceAccounts\NonceAccountsView.axaml.cs">
+			<DependentUpon>NonceAccountsView.axaml</DependentUpon>
+		</Compile>
+		<Compile Update="Views\Wallet\UnlockWalletView.axaml.cs">
+			<DependentUpon>UnlockWalletView.axaml</DependentUpon>
+		</Compile>
+		<Compile Update="Views\Wallet\WalletView.axaml.cs">
+			<DependentUpon>%(Filename)</DependentUpon>
+		</Compile>
+		<Compile Update="Views\WatchOnly\WatchOnlyView.axaml.cs">
+			<DependentUpon>WatchOnlyView.axaml</DependentUpon>
+		</Compile>
+	</ItemGroup>
+	<Import Project="..\SharedBuildProperties.props" />
 </Project>

@@ -29,16 +29,58 @@
 				MaxHeight="500"
 				VerticalScrollBarVisibility="Auto">
 				<DockPanel LastChildFill="False">
-					<TextBlock
+					<DockPanel
 						DockPanel.Dock="Top"
-						Classes="Subtitle1"
-						Text="Required Signers"
-						ToolTip.Tip="The number of signers required to validate a transaction where the multi signature account is a signing account."
-						TextAlignment="Left"
+						VerticalAlignment="Stretch"
+						HorizontalAlignment="Left">
+						<TextBlock
+							DockPanel.Dock="Left"
+							Classes="Subtitle1"
+							Text="Alias"
+							TextAlignment="Left"
+							VerticalAlignment="Center"
+							HorizontalAlignment="Left"
+							Margin="5"
+							Foreground="{DynamicResource MainTextAccent}"/>
+						<avalonia:MaterialIcon
+							ToolTip.Tip="An alias for the multi signature account."
+							Kind="InformationCircleOutline" />
+					</DockPanel>
+					<TextBox
+						DockPanel.Dock="Top"
+						Classes="Filled"
+						Text="{Binding Alias, Mode=TwoWay}"
 						VerticalAlignment="Center"
 						HorizontalAlignment="Left"
+						Width="475"
+						Margin="5"/>
+					<TextBlock
+						DockPanel.Dock="Top"
+						Classes="Body2"
+						VerticalAlignment="Top"
+						HorizontalAlignment="Left"
+						TextAlignment="Center"
 						Margin="5"
-						Foreground="{DynamicResource MainTextAccent}"/>
+						Foreground="Red"
+						IsVisible="{Binding InvalidAlias}"
+						Text="An alias must be set."/>
+					<DockPanel
+						DockPanel.Dock="Top"
+						VerticalAlignment="Stretch"
+						HorizontalAlignment="Left">
+						<TextBlock
+							DockPanel.Dock="Left"
+							Classes="Subtitle1"
+							Text="Required Signers"
+							TextAlignment="Left"
+							VerticalAlignment="Center"
+							HorizontalAlignment="Left"
+							Margin="5"
+							Foreground="{DynamicResource MainTextAccent}"/>
+						<avalonia:MaterialIcon
+							ToolTip.Tip="The number of signers required to validate a transaction where the multi signature account is a signing account."
+							Kind="InformationCircleOutline" />
+					</DockPanel>
 					<TextBox
 						DockPanel.Dock="Top"
 						Classes="Filled"
@@ -50,17 +92,23 @@
 					<DockPanel
 						DockPanel.Dock="Top"
 						VerticalAlignment="Stretch"
-						HorizontalAlignment="Stretch">
-						<TextBlock
-							DockPanel.Dock="Left"
-							Classes="Subtitle1"
-							Text="Signers"
-							ToolTip.Tip="The list of public keys that can sign a transaction where the multi signature account is a signing account."
-							TextAlignment="Left"
-							VerticalAlignment="Center"
-							HorizontalAlignment="Left"
-							Margin="5"
-							Foreground="{DynamicResource MainTextAccent}"/>
+						HorizontalAlignment="Left">
+						<DockPanel
+							DockPanel.Dock="Left">
+							<TextBlock
+								DockPanel.Dock="Left"
+								Classes="Subtitle1"
+								Text="Signers"
+								ToolTip.Tip=""
+								TextAlignment="Left"
+								VerticalAlignment="Center"
+								HorizontalAlignment="Left"
+								Margin="5"
+								Foreground="{DynamicResource MainTextAccent}"/>
+							<avalonia:MaterialIcon
+								ToolTip.Tip="The list of public keys that can sign a transaction where the multi signature account is a signing account."
+								Kind="InformationCircleOutline" />
+						</DockPanel>
 						<Button
 							DockPanel.Dock="Right"
 							Classes="Flat"
@@ -97,9 +145,10 @@
 							</DataTemplate>
 						</ItemsRepeater.ItemTemplate>
 					</ItemsRepeater>
-					<StackPanel
+					<DockPanel
 						DockPanel.Dock="Top"
-						Orientation="Horizontal">
+						VerticalAlignment="Stretch"
+						HorizontalAlignment="Left">
 						<TextBlock
 							VerticalAlignment="Center"
 							HorizontalAlignment="Left"
@@ -109,7 +158,7 @@
 						<avalonia:MaterialIcon
 							ToolTip.Tip="The rent cost to create this account."
 							Kind="InformationCircleOutline" />
-					</StackPanel>
+					</DockPanel>
 					<StackPanel
 						DockPanel.Dock="Top"
 						Orientation="Horizontal"
@@ -122,8 +171,7 @@
 							TextAlignment="Center"
 							Margin="5"
 							Foreground="{DynamicResource MainTextAccent}"
-							Text="{Binding Rent}">
-						</TextBlock>
+							Text="{Binding Rent}"/>
 						<TextBlock
 							Classes="Body2"
 							VerticalAlignment="Top"
@@ -131,11 +179,40 @@
 							TextAlignment="Center"
 							Margin="5"
 							Foreground="{DynamicResource MainTextAccent}"
-							Text="SOL">
-						</TextBlock>
+							Text="SOL"/>
 					</StackPanel>
 				</DockPanel>
 			</ScrollViewer>
+			<TextBlock
+				DockPanel.Dock="Top"
+				Classes="Body2"
+				VerticalAlignment="Top"
+				HorizontalAlignment="Center"
+				TextAlignment="Center"
+				Margin="5"
+				Foreground="Red"
+				IsVisible="{Binding InvalidSigners}"
+				Text="Minimum required signers must be greater than zero and fewer than provided signers!"/>
+			<TextBlock
+				DockPanel.Dock="Top"
+				Classes="Body2"
+				VerticalAlignment="Top"
+				HorizontalAlignment="Center"
+				TextAlignment="Center"
+				Margin="5"
+				Foreground="Red"
+				IsVisible="{Binding DuplicateSigners}"
+				Text="Provided signers are duplicate."/>
+			<TextBlock
+				DockPanel.Dock="Top"
+				Classes="Body2"
+				VerticalAlignment="Top"
+				HorizontalAlignment="Center"
+				TextAlignment="Center"
+				Margin="5"
+				Foreground="Red"
+				IsVisible="{Binding MissingSigners}"
+				Text="All provided signers must have a public key."/>
 			<StackPanel
 				DockPanel.Dock="Top"
 				Orientation="Horizontal"

@@ -19,11 +19,11 @@ namespace Anvil.Services.Store.State
         /// <summary>
         /// Whether a wallet exists.
         /// </summary>
-        public bool WalletExists 
-        { 
+        public bool WalletExists
+        {
             get => _walletExists;
-            set 
-            { 
+            set
+            {
                 _walletExists = value;
                 OnStateChanged?.Invoke(this, new(this));
             }

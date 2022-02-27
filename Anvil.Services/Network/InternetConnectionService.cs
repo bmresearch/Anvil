@@ -55,7 +55,7 @@ namespace Anvil.Services.Network
         private static bool TryPing()
         {
             bool result = false;
-            Ping p = new ();
+            Ping p = new();
             try
             {
                 PingReply reply = p.Send(Host, 443);

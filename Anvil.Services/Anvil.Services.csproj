@@ -1,17 +1,18 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net6.0</TargetFramework>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Solnet.KeyStore" Version="6.0.0" />
-    <PackageReference Include="Solnet.Rpc" Version="6.0.0" />
-    <PackageReference Include="Solnet.Wallet" Version="6.0.0" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Solnet.KeyStore" Version="6.0.0" />
+		<PackageReference Include="Solnet.Rpc" Version="6.0.0" />
+		<PackageReference Include="Solnet.Wallet" Version="6.0.0" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\Anvil.Core\Anvil.Core.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\Anvil.Core\Anvil.Core.csproj" />
+	</ItemGroup>
 
+	<Import Project="..\SharedBuildProperties.props" />
 </Project>

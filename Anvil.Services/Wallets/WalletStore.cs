@@ -57,7 +57,7 @@ namespace Anvil.Services.Wallets
         /// <inheritdoc cref="IWalletStore.RemoveWallets(List{PrivateKeyWallet})"/>
         public void RemoveWallets(List<PrivateKeyWallet> privateKeyWallets)
         {
-            foreach(var w in privateKeyWallets)
+            foreach (var w in privateKeyWallets)
             {
                 PrivateKeyWallets.Remove(w);
             }

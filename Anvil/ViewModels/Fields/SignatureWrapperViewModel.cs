@@ -39,7 +39,7 @@ namespace Anvil.ViewModels.Fields
                             return;
                         }
                     }
-                    catch (Exception e)
+                    catch (Exception)
                     {
                         Verified = false;
                         return;

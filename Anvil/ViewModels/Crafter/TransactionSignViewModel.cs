@@ -20,7 +20,7 @@ namespace Anvil.ViewModels.Crafter
         public string Header => "Sign Transaction";
 
 
-        public TransactionSignViewModel(IClassicDesktopStyleApplicationLifetime appLifetime, 
+        public TransactionSignViewModel(IClassicDesktopStyleApplicationLifetime appLifetime,
             IWalletService walletService)
         {
             _appLifetime = appLifetime;
@@ -74,7 +74,7 @@ namespace Anvil.ViewModels.Crafter
             };
             var selected = await ofd.ShowAsync(_appLifetime.MainWindow);
             if (selected == null) return;
-                
+
             await File.WriteAllTextAsync(selected, Signature);
         }
 
@@ -102,7 +102,8 @@ namespace Anvil.ViewModels.Crafter
             {
                 msg = Message.Deserialize(Payload);
                 InvalidPayload = false;
-            } catch(Exception)
+            }
+            catch (Exception)
             {
                 InvalidPayload = true;
                 DecodedInstructions = new();
@@ -113,7 +114,7 @@ namespace Anvil.ViewModels.Crafter
             var ixs = InstructionDecoder.DecodeInstructions(msg);
 
             DecodedInstructions = new();
-            foreach(var ix in ixs)
+            foreach (var ix in ixs)
             {
                 DecodedInstructions.Add(ix);
             }
@@ -159,10 +160,10 @@ namespace Anvil.ViewModels.Crafter
         }
 
         private string _signature;
-        public string Signature 
-        { 
-            get => _signature; 
-            set => this.RaiseAndSetIfChanged(ref _signature, value); 
+        public string Signature
+        {
+            get => _signature;
+            set => this.RaiseAndSetIfChanged(ref _signature, value);
         }
     }
 }

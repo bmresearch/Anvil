@@ -30,7 +30,7 @@ namespace Anvil.ViewModels.Crafter
 
         private InternetConnectionService _internetConnectionService;
 
-        public TransactionSendViewModel(IClassicDesktopStyleApplicationLifetime appLifetime, 
+        public TransactionSendViewModel(IClassicDesktopStyleApplicationLifetime appLifetime,
             InternetConnectionService internetConnectionService, IRpcClientProvider rpcProvider)
         {
             _appLifetime = appLifetime;
@@ -97,7 +97,8 @@ namespace Anvil.ViewModels.Crafter
                 TransactionConfirmed = true;
                 TransactionError = false;
                 SubmittingTransaction = false;
-            } else
+            }
+            else
             {
                 TransactionError = true;
                 TransactionConfirmed = false;
@@ -212,10 +213,10 @@ namespace Anvil.ViewModels.Crafter
         }
 
         private bool _canSendTransaction;
-        public bool CanSendTransaction 
-        { 
-            get => _canSendTransaction; 
-            set => this.RaiseAndSetIfChanged(ref _canSendTransaction, value); 
+        public bool CanSendTransaction
+        {
+            get => _canSendTransaction;
+            set => this.RaiseAndSetIfChanged(ref _canSendTransaction, value);
         }
     }
 }

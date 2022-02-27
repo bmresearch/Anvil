@@ -34,11 +34,11 @@ namespace Anvil.Views.Common
 
         private void AddressBookItems_SelectionChanged(object? sender, SelectionChangedEventArgs e)
         {
-            if(e.AddedItems != null && e.AddedItems.Count > 0)
+            if (e.AddedItems != null && e.AddedItems.Count > 0)
             {
                 var newItem = e.AddedItems[0];
 
-                if(newItem is AddressBookItem w)
+                if (newItem is AddressBookItem w)
                 {
                     SelectedAddress = w.Address;
                 }

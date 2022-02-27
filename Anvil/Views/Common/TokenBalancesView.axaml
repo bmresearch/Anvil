@@ -86,7 +86,7 @@
 					MinWidth="20"/>
 				<ScrollViewer
 					DockPanel.Dock="Top"
-					VerticalScrollBarVisibility="Auto"
+					VerticalScrollBarVisibility="Visible"
 					VerticalAlignment="Stretch"
 					HorizontalAlignment="Stretch"
 					Margin="5"

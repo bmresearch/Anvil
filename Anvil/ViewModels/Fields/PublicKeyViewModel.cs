@@ -11,10 +11,10 @@ namespace Anvil.ViewModels.Fields
         public PublicKeyViewModel()
         {
             this.WhenAnyValue(x => x.PublicKeyString)
-                .Subscribe(x => 
+                .Subscribe(x =>
                 {
-                    if (PublicKey != null) 
-                    { 
+                    if (PublicKey != null)
+                    {
                         PublicKey = null;
                         Verified = false;
                     }
@@ -24,18 +24,18 @@ namespace Anvil.ViewModels.Fields
                     {
                         decoded = Encoders.Base58.DecodeData(x);
                     }
-                    catch (Exception ex)
+                    catch (Exception)
                     {
                         Verified = false;
                         return;
                     }
-                    if (decoded.Length != PublicKey.PublicKeyLength) 
-                    { 
+                    if (decoded.Length != PublicKey.PublicKeyLength)
+                    {
                         Verified = false;
                         return;
                     }
                     Verified = decoded.IsOnCurve();
-                    if(Verified) PublicKey = new PublicKey(_publicKeyString);
+                    if (Verified) PublicKey = new PublicKey(_publicKeyString);
                 });
         }
 
@@ -58,8 +58,8 @@ namespace Anvil.ViewModels.Fields
             set => this.RaiseAndSetIfChanged(ref _input, value);
         }
 
-        private PublicKey _publicKey;
-        public PublicKey PublicKey
+        private PublicKey? _publicKey;
+        public PublicKey? PublicKey
         {
             get => _publicKey;
             set => this.RaiseAndSetIfChanged(ref _publicKey, value);

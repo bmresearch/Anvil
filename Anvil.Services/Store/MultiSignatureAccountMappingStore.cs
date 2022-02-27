@@ -27,7 +27,7 @@ namespace Anvil.Services.Store
         public MultiSignatureAccountMappingStore(ILogger logger, StoreConfig config) : base(logger, config)
         {
             _state = _persistenceDriver.LoadState<MultiSignatureAccountMappingState>();
-            if(_state.MultiSignatureAccountMappings == null)
+            if (_state.MultiSignatureAccountMappings == null)
             {
                 _state.MultiSignatureAccountMappings = new();
                 _persistenceDriver.SaveState(_state);
@@ -65,9 +65,9 @@ namespace Anvil.Services.Store
         }
 
         /// <inheritdoc cref="IMultiSignatureAccountMappingStore.MultiSignatureAccountMappings"
-        public List<MultiSignatureAccountMapping> MultiSignatureAccountMappings 
-        { 
-            get => _state.MultiSignatureAccountMappings; 
+        public List<MultiSignatureAccountMapping> MultiSignatureAccountMappings
+        {
+            get => _state.MultiSignatureAccountMappings;
         }
 
         /// <inheritdoc cref="IMultiSignatureAccountMappingStore.OnStateChanged"
