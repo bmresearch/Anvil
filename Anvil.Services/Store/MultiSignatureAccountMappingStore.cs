@@ -1,8 +1,10 @@
 ﻿using Anvil.Services.Store.Config;
+using Anvil.Services.Store.Events;
 using Anvil.Services.Store.Models;
 using Anvil.Services.Store.State;
 using Microsoft.Extensions.Logging;
 using Solnet.Wallet;
+using System;
 using System.Collections.Generic;
 
 namespace Anvil.Services.Store
@@ -38,15 +40,22 @@ namespace Anvil.Services.Store
         /// </summary>
         /// <param name="sender">The sender.</param>
         /// <param name="e">The event.</param>
-        private void _state_OnStateChanged(object sender, Events.MultiSignatureAccountMappingStateChangedEventArgs e)
+        private void _state_OnStateChanged(object sender, MultiSignatureAccountMappingStateChangedEventArgs e)
         {
             _persistenceDriver.SaveState(e.State);
+            OnStateChanged?.Invoke(this, e);
         }
 
         /// <inheritdoc cref="IMultiSignatureAccountMappingStore.AddMapping(MultiSignatureAccountMapping)"
         public void AddMapping(MultiSignatureAccountMapping mapping)
         {
             _state.AddMapping(mapping);
+        }
+
+        /// <inheritdoc cref="IMultiSignatureAccountMappingStore.EditAlias(string, string)"
+        public void EditAlias(string account, string newAlias)
+        {
+            _state.EditAlias(account, newAlias);
         }
 
         /// <inheritdoc cref="IMultiSignatureAccountMappingStore.GetMapping(PublicKey)"
@@ -61,9 +70,13 @@ namespace Anvil.Services.Store
             get => _state.MultiSignatureAccountMappings; 
         }
 
+        /// <inheritdoc cref="IMultiSignatureAccountMappingStore.OnStateChanged"
+        public event EventHandler<MultiSignatureAccountMappingStateChangedEventArgs> OnStateChanged;
+
         /// <summary>
         /// The store file name.
         /// </summary>
         public const string FileName = "multisigaccount.store";
+
     }
 }

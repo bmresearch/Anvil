@@ -10,6 +10,8 @@ namespace Anvil.Models
     {
         public string Mnemonic { get; set; }
 
+        public string Alias { get; set; }
+
         public string Password { get; set; }
 
         public string PrivateKeyFilePath { get; set; }

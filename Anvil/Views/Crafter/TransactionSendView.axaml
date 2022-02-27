@@ -12,8 +12,28 @@
 		HorizontalAlignment="Stretch"
 		VerticalAlignment="Stretch">
 		<styles:Card
+			Margin="50"
+			DockPanel.Dock="Top"
+			IsVisible="{Binding NoConnection}"
+			VerticalAlignment="Center"
+			HorizontalAlignment="Center">
+			<DockPanel
+				Margin="5"
+				VerticalAlignment="Stretch"
+				HorizontalAlignment="Stretch">
+				<TextBlock
+					DockPanel.Dock="Top"
+					VerticalAlignment="Center"
+					HorizontalAlignment="Center"
+					Classes="Subtitle2"
+					Foreground="{DynamicResource ErrorAccent}"
+					Text="Cannot submit transactions without a network connection."/>
+			</DockPanel>
+		</styles:Card>
+		<styles:Card
 			Margin="5"
-			DockPanel.Dock="Bottom">
+			DockPanel.Dock="Bottom"
+			IsVisible="{Binding !NoConnection}">
 			<DockPanel
 				Margin="5"
 				VerticalAlignment="Stretch"
@@ -117,7 +137,8 @@
 		</styles:Card>
 		<styles:Card
 			Margin="5"
-			DockPanel.Dock="Left">
+			DockPanel.Dock="Left"
+			IsVisible="{Binding !NoConnection}">
 			<DockPanel
 				Margin="5"
 				VerticalAlignment="Stretch"
@@ -173,7 +194,8 @@
 		</styles:Card>
 		<styles:Card
 			Margin="5"
-			DockPanel.Dock="Right">
+			DockPanel.Dock="Right"
+			IsVisible="{Binding !NoConnection}">
 			<DockPanel
 				Margin="5"
 				VerticalAlignment="Stretch"

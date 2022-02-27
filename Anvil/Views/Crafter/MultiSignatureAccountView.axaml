@@ -56,40 +56,35 @@
 				ToolTip.Tip="The public keys that can sign a transaction using this multi signature account, a number of signatures equal to the minimum signers must be present."
 				Kind="InformationCircleOutline" />
 		</StackPanel>
-		<ScrollViewer
-			DockPanel.Dock="Top"
-			HorizontalScrollBarVisibility="Auto"
-			HorizontalAlignment="Stretch"
-			VerticalAlignment="Stretch">
-			<ListBox
-				Items="{Binding Signers}"
-				SelectedItems="{Binding SelectedSigners}"
-				SelectionMode="Multiple,Toggle"
-				VerticalAlignment="Center"
-				HorizontalAlignment="Left"
-				Width="500"
-				Margin="5">
-				<ListBox.ItemTemplate>
-					<DataTemplate>
-						<DockPanel
-							HorizontalAlignment="Stretch"
-							VerticalAlignment="Stretch">
-							<CheckBox
-								DockPanel.Dock="Left"
-								IsChecked="{Binding $parent[ListBoxItem].IsSelected}"
-								IsHitTestVisible="False"/>
-							<TextBlock
-								DockPanel.Dock="Right"
-								Classes="Body1"
-								Text="{Binding}"
-								TextAlignment="Left"
-								VerticalAlignment="Center"
-								HorizontalAlignment="Left"
-								Margin="5"/>
-						</DockPanel>
-					</DataTemplate>
-				</ListBox.ItemTemplate>
-			</ListBox>
-		</ScrollViewer>
+		<ListBox
+			Items="{Binding Signers}"
+			SelectedItems="{Binding SelectedSigners}"
+			SelectionMode="Multiple,Toggle"
+			VerticalAlignment="Center"
+			HorizontalAlignment="Left"
+			ScrollViewer.VerticalScrollBarVisibility="Visible"
+			Width="500"
+			Margin="5">
+			<ListBox.ItemTemplate>
+				<DataTemplate>
+					<DockPanel
+						HorizontalAlignment="Stretch"
+						VerticalAlignment="Stretch">
+						<CheckBox
+							DockPanel.Dock="Left"
+							IsChecked="{Binding $parent[ListBoxItem].IsSelected}"
+							IsHitTestVisible="False"/>
+						<TextBlock
+							DockPanel.Dock="Right"
+							Classes="Body1"
+							Text="{Binding}"
+							TextAlignment="Left"
+							VerticalAlignment="Center"
+							HorizontalAlignment="Left"
+							Margin="5"/>
+					</DockPanel>
+				</DataTemplate>
+			</ListBox.ItemTemplate>
+		</ListBox>
 	</DockPanel>
 </UserControl>

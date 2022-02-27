@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net5.0</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
     <Nullable>enable</Nullable>
 	<AssemblyName>Anvil</AssemblyName>
 	<RootNamespace>Anvil</RootNamespace>
@@ -45,14 +45,14 @@
     <PackageReference Include="Avalonia.Xaml.Behaviors" Version="0.10.12" />
     <PackageReference Include="Material.Avalonia" Version="2.5.0.78-nightly" />
     <PackageReference Include="Material.Icons.Avalonia" Version="1.0.2" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="5.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="5.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="6.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="6.0.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-    <PackageReference Include="Solnet.Extensions" Version="0.6.0" />
-    <PackageReference Include="Solnet.KeyStore" Version="0.6.0" />
-    <PackageReference Include="Solnet.Programs" Version="0.6.0" />
-    <PackageReference Include="Solnet.Rpc" Version="0.6.0" />
-    <PackageReference Include="Solnet.Wallet" Version="0.6.0" />
+    <PackageReference Include="Solnet.Extensions" Version="6.0.0" />
+    <PackageReference Include="Solnet.KeyStore" Version="6.0.0" />
+    <PackageReference Include="Solnet.Programs" Version="6.0.0" />
+    <PackageReference Include="Solnet.Rpc" Version="6.0.0" />
+    <PackageReference Include="Solnet.Wallet" Version="6.0.0" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Anvil.Core\Anvil.Core.csproj" />
@@ -64,6 +64,9 @@
     </AvaloniaXaml>
   </ItemGroup>
   <ItemGroup>
+    <Compile Update="Views\Common\AddressBookButton.axaml.cs">
+      <DependentUpon>AddressBookButton.axaml</DependentUpon>
+    </Compile>
     <Compile Update="Views\Crafter\CrafterView.axaml.cs">
       <DependentUpon>%(Filename)</DependentUpon>
     </Compile>
@@ -76,11 +79,17 @@
     <Compile Update="Views\Crafter\TransactionSignView.axaml.cs">
       <DependentUpon>%(Filename)</DependentUpon>
     </Compile>
+    <Compile Update="Views\NonceAccounts\NonceAccountsView.axaml.cs">
+      <DependentUpon>NonceAccountsView.axaml</DependentUpon>
+    </Compile>
     <Compile Update="Views\Wallet\UnlockWalletView.axaml.cs">
       <DependentUpon>UnlockWalletView.axaml</DependentUpon>
     </Compile>
     <Compile Update="Views\Wallet\WalletView.axaml.cs">
       <DependentUpon>%(Filename)</DependentUpon>
+    </Compile>
+    <Compile Update="Views\WatchOnly\WatchOnlyView.axaml.cs">
+      <DependentUpon>WatchOnlyView.axaml</DependentUpon>
     </Compile>
   </ItemGroup>
 </Project>

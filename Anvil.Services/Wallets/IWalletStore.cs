@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Anvil.Services.Wallets.SubWallets;
+using System.Collections.Generic;
 
 namespace Anvil.Services.Wallets
 {
@@ -33,6 +34,26 @@ namespace Anvil.Services.Wallets
         /// </summary>
         /// <param name="privateKeyWallet">The private key wallet.</param>
         void AddWallet(PrivateKeyWallet privateKeyWallet);
+
+        /// <summary>
+        /// Remove a wallet by private key.
+        /// </summary>
+        /// <param name="privateKeyWallets">The private key wallets.</param>
+        void RemoveWallets(List<PrivateKeyWallet> privateKeyWallets);
+
+        /// <summary>
+        /// Edits the alias of the given derivation index based wallet.
+        /// </summary>
+        /// <param name="derivationIndexWallet">The derivation index wallet.</param>
+        /// <param name="newAlias">The new alias.</param>
+        void EditAlias(DerivationIndexWallet derivationIndexWallet, string newAlias);
+
+        /// <summary>
+        /// Edits the alias of the given private key file based wallet.
+        /// </summary>
+        /// <param name="privateKeyWallet">The private key wallet.</param>
+        /// <param name="newAlias">The new alias.</param>
+        void EditAlias(PrivateKeyWallet privateKeyWallet, string newAlias);
 
         /// <summary>
         /// Add a wallet by mnemonic. 

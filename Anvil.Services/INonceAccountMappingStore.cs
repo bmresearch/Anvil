@@ -1,10 +1,8 @@
-﻿using Anvil.Services.Store.Models;
+﻿using Anvil.Services.Store.Events;
+using Anvil.Services.Store.Models;
 using Solnet.Wallet;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Anvil.Services
 {
@@ -30,5 +28,10 @@ namespace Anvil.Services
         /// The existing <see cref="NonceAccountMapping"/>s.
         /// </summary>
         List<NonceAccountMapping> NonceAccountMappings { get; }
+
+        /// <summary>
+        /// An event raised whenever the store state changes.
+        /// </summary>
+        event EventHandler<NonceAccountMappingStateChangedEventArgs> OnStateChanged;
     }
 }

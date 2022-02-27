@@ -1,0 +1,161 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+			 xmlns:styles="clr-namespace:Material.Styles;assembly=Material.Styles"
+             xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+             xmlns:dialogs="clr-namespace:Anvil.ViewModels.Dialogs"
+			 xmlns:uc="clr-namespace:Anvil.Views.Common;assembly=Anvil"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="Anvil.Views.Dialogs.CreateMultiSignatureAccountDialogView">
+
+	<Design.DataContext>
+		<dialogs:CreateMultiSignatureAccountDialogViewModel />
+	</Design.DataContext>
+
+	<styles:Card Background="{DynamicResource CardBackgroundColor}">
+		<DockPanel LastChildFill="False">
+			<TextBlock
+                DockPanel.Dock="Top"
+                Classes="Headline5"
+                Margin="15"
+                TextAlignment="Center"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Stretch"
+                Text="Create Multi Signature Account" />
+			<ScrollViewer
+				DockPanel.Dock="Top"
+				Width="550"
+				MaxHeight="500"
+				VerticalScrollBarVisibility="Auto">
+				<DockPanel LastChildFill="False">
+					<TextBlock
+						DockPanel.Dock="Top"
+						Classes="Subtitle1"
+						Text="Required Signers"
+						ToolTip.Tip="The number of signers required to validate a transaction where the multi signature account is a signing account."
+						TextAlignment="Left"
+						VerticalAlignment="Center"
+						HorizontalAlignment="Left"
+						Margin="5"
+						Foreground="{DynamicResource MainTextAccent}"/>
+					<TextBox
+						DockPanel.Dock="Top"
+						Classes="Filled"
+						Text="{Binding RequiredSigners, Mode=TwoWay}"
+						VerticalAlignment="Center"
+						HorizontalAlignment="Left"
+						Width="475"
+						Margin="5"/>
+					<DockPanel
+						DockPanel.Dock="Top"
+						VerticalAlignment="Stretch"
+						HorizontalAlignment="Stretch">
+						<TextBlock
+							DockPanel.Dock="Left"
+							Classes="Subtitle1"
+							Text="Signers"
+							ToolTip.Tip="The list of public keys that can sign a transaction where the multi signature account is a signing account."
+							TextAlignment="Left"
+							VerticalAlignment="Center"
+							HorizontalAlignment="Left"
+							Margin="5"
+							Foreground="{DynamicResource MainTextAccent}"/>
+						<Button
+							DockPanel.Dock="Right"
+							Classes="Flat"
+							ToolTip.Tip="Add new signer."
+							VerticalAlignment="Center"
+							HorizontalAlignment="Right"
+							Height="32"
+							Width="32"
+							Margin="5"
+							Command="{Binding AddSigner}">
+							<avalonia:MaterialIcon Kind="Add" />
+						</Button>
+					</DockPanel>
+					<ItemsRepeater
+						DockPanel.Dock="Top"
+						Items="{Binding Signers}"
+						VerticalAlignment="Center"
+						HorizontalAlignment="Center"
+						ScrollViewer.VerticalScrollBarVisibility="Visible">
+						<ItemsRepeater.ItemTemplate>
+							<DataTemplate>
+								<DockPanel>
+									<ContentControl
+										DockPanel.Dock="Left"
+										HorizontalAlignment="Center"
+										VerticalAlignment="Center"
+										Content="{Binding}"/>
+									<uc:AddressBookButton
+										DockPanel.Dock="Left"
+										HorizontalAlignment="Center"
+										VerticalAlignment="Center"
+										SelectedAddress="{Binding PublicKeyString, Mode=TwoWay}"/>
+								</DockPanel>
+							</DataTemplate>
+						</ItemsRepeater.ItemTemplate>
+					</ItemsRepeater>
+					<StackPanel
+						DockPanel.Dock="Top"
+						Orientation="Horizontal">
+						<TextBlock
+							VerticalAlignment="Center"
+							HorizontalAlignment="Left"
+							Text="Rent Cost"
+							Margin="5"
+							Classes="Subtitle1"/>
+						<avalonia:MaterialIcon
+							ToolTip.Tip="The rent cost to create this account."
+							Kind="InformationCircleOutline" />
+					</StackPanel>
+					<StackPanel
+						DockPanel.Dock="Top"
+						Orientation="Horizontal"
+						HorizontalAlignment="Left"
+						VerticalAlignment="Center">
+						<TextBlock
+							Classes="Body2"
+							VerticalAlignment="Top"
+							HorizontalAlignment="Center"
+							TextAlignment="Center"
+							Margin="5"
+							Foreground="{DynamicResource MainTextAccent}"
+							Text="{Binding Rent}">
+						</TextBlock>
+						<TextBlock
+							Classes="Body2"
+							VerticalAlignment="Top"
+							HorizontalAlignment="Center"
+							TextAlignment="Center"
+							Margin="5"
+							Foreground="{DynamicResource MainTextAccent}"
+							Text="SOL">
+						</TextBlock>
+					</StackPanel>
+				</DockPanel>
+			</ScrollViewer>
+			<StackPanel
+				DockPanel.Dock="Top"
+				Orientation="Horizontal"
+				HorizontalAlignment="Center"
+				Spacing="10"
+				Margin="0,10,0,0"
+				VerticalAlignment="Bottom">
+				<Button
+					Content="Cancel"
+					HorizontalAlignment="Left"
+					Command="{Binding Cancel}"
+					CommandParameter="{Binding $parent[Window]}" />
+				<Button
+					Content="Confirm"
+					HorizontalAlignment="Right"
+					Command="{Binding Confirm}"
+					CommandParameter="{Binding $parent[Window]}"
+					IsEnabled="{Binding IsInputValid}" />
+			</StackPanel>
+		</DockPanel>
+	</styles:Card>
+
+</UserControl>

@@ -1,0 +1,230 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+			 xmlns:styles="clr-namespace:Material.Styles;assembly=Material.Styles"
+             xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+			 xmlns:common="clr-namespace:Anvil.Views.Common"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="Anvil.Views.WatchOnly.WatchOnlyView">
+
+	<DockPanel LastChildFill="True">
+		<styles:Card
+			Margin="5,5,0,5"
+			DockPanel.Dock="Left">
+			<DockPanel
+				LastChildFill="False"
+				Margin="5"
+				HorizontalAlignment="Stretch"
+				VerticalAlignment="Stretch"
+				Width="250">
+				<StackPanel
+					Orientation="Vertical"
+					DockPanel.Dock="Bottom"
+					HorizontalAlignment="Stretch"
+					VerticalAlignment="Bottom">
+					<Button
+						Margin="5"
+						VerticalAlignment="Center"
+						HorizontalAlignment="Center"
+						Background="{DynamicResource ButtonBackgroundColor}"
+						Command="{Binding AddWatchOnlyAccount}"
+						Content="Add Watch Only Account"/>
+				</StackPanel>
+				<TextBlock
+					Classes="Headline5 Subheadline2"
+					DockPanel.Dock="Top"
+					VerticalAlignment="Center"
+					HorizontalAlignment="Left"
+					TextAlignment="Center"
+					Foreground="{DynamicResource MainTextAccent}"
+					Text="Watch Only Accounts">
+				</TextBlock>
+				<ListBox
+					DockPanel.Dock="Top"
+					Margin="5"
+					HorizontalAlignment="Stretch"
+					VerticalAlignment="Stretch"
+					SelectionMode="Single"
+					SelectedItem="{Binding CurrentAccount}"
+					Items="{Binding WatchOnlyAccounts}">
+					<ListBox.Template>
+					</ListBox.Template>
+					<ListBox.ItemTemplate>
+						<DataTemplate>
+							<DockPanel
+								Margin="5"
+								HorizontalAlignment="Stretch"
+								VerticalAlignment="Stretch">
+								<TextBlock
+									DockPanel.Dock="Right"
+									Margin="5"
+									Classes="Body2"
+									Text="{Binding ShortenedAddress}"/>
+								<Separator />
+								<TextBlock
+									DockPanel.Dock="Left"
+									Margin="5"
+									Classes="Subtitle2"
+									Text="{Binding Alias}"/>
+							</DockPanel>
+						</DataTemplate>
+					</ListBox.ItemTemplate>
+				</ListBox>
+			</DockPanel>
+		</styles:Card>
+		<styles:Card
+			Margin="5,5,5,5"
+			DockPanel.Dock="Top">
+			<DockPanel
+				Margin="5"
+				HorizontalAlignment="Stretch"
+				VerticalAlignment="Stretch">
+				<TextBlock
+					Classes="Headline5 Subheadline2"
+					DockPanel.Dock="Top"
+					VerticalAlignment="Center"
+					HorizontalAlignment="Left"
+					TextAlignment="Center"
+					Foreground="{DynamicResource MainTextAccent}"
+					Text="Watching Account">
+				</TextBlock>
+				<TextBlock
+					Classes="Subtitle2"
+					Margin="20"
+					DockPanel.Dock="Top"
+					VerticalAlignment="Center"
+					HorizontalAlignment="Center"
+					TextAlignment="Center"
+					IsVisible="{Binding NoAccountsFound}"
+					Foreground="{DynamicResource MainTextAccent}"
+					Text="You have not added a watch-only account yet!"/>
+				<DockPanel
+					DockPanel.Dock="Top"
+					IsVisible="{Binding !NoAccountsFound}">
+					<DockPanel
+						DockPanel.Dock="Top"
+						HorizontalAlignment="Center"
+						Margin="10">
+						<StackPanel
+							DockPanel.Dock="Top"
+							Orientation="Horizontal"
+							VerticalAlignment="Center"
+							HorizontalAlignment="Center">
+							<TextBlock
+								Classes="Subtitle2"
+								Text="{Binding CurrentAccount.Alias}"
+								Margin="0"
+								VerticalAlignment="Center"
+								HorizontalAlignment="Center"/>
+							<Button
+								Classes="Flat"
+								ToolTip.Tip="Edit Alias"
+								VerticalAlignment="Center"
+								Command="{Binding EditAccountAlias}"
+								Height="24"
+								Width="24"
+								Padding="0">
+								<avalonia:MaterialIcon Kind="Edit" />
+							</Button>
+						</StackPanel>
+						<StackPanel
+							DockPanel.Dock="Top"
+							Orientation="Horizontal"
+							VerticalAlignment="Center"
+							HorizontalAlignment="Center">
+							<TextBlock
+								Classes="Body1"
+								Text="{Binding CurrentAccount.ShortenedAddress}"
+								Margin="0"
+								VerticalAlignment="Center"
+								HorizontalAlignment="Center"/>
+							<Button
+								Classes="Flat"
+								ToolTip.Tip="Copy address to clipboard"
+								VerticalAlignment="Center"
+								Command="{Binding CopyAddressToClipboard}"
+								Height="24"
+								Width="24"
+								Padding="0">
+								<avalonia:MaterialIcon Kind="ContentCopy" />
+							</Button>
+						</StackPanel>
+						<TextBlock
+							DockPanel.Dock="Top"
+							Classes="Headline6 Subheadline2"
+							VerticalAlignment="Top"
+							HorizontalAlignment="Center"
+							TextAlignment="Center"
+							Margin="5"
+							Foreground="{DynamicResource MainTextAccent}"
+							Text="Balance"
+							IsVisible="{Binding !NoConnection}">
+						</TextBlock>
+						<StackPanel
+							DockPanel.Dock="Top"
+							Orientation="Horizontal"
+							HorizontalAlignment="Center"
+							VerticalAlignment="Center"
+							IsVisible="{Binding !NoConnection}">
+							<ProgressBar
+								VerticalAlignment="Center"
+								HorizontalAlignment="Center"
+								Classes="Circle"
+								IsIndeterminate="True"
+								IsVisible="{Binding FetchingBalance}"
+								Width="20"
+								Height="20"
+								MinWidth="20"/>
+							<TextBlock
+								Classes="Body1"
+								VerticalAlignment="Top"
+								HorizontalAlignment="Center"
+								TextAlignment="Center"
+								Margin="5"
+								IsVisible="{Binding !FetchingBalance}"
+								Foreground="{DynamicResource MainTextAccent}"
+								Text="{Binding CurrentBalance}">
+							</TextBlock>
+							<TextBlock
+								Classes="Body1"
+								VerticalAlignment="Top"
+								HorizontalAlignment="Center"
+								TextAlignment="Center"
+								Margin="5"
+								IsVisible="{Binding !FetchingBalance}"
+								Foreground="{DynamicResource MainTextAccent}"
+								Text="SOL">
+							</TextBlock>
+						</StackPanel>
+					</DockPanel>
+				</DockPanel>
+			</DockPanel>
+		</styles:Card>
+		<styles:Card
+			Margin="5,5,0,5"
+			DockPanel.Dock="Top"
+			IsVisible="{Binding NoConnection}">
+			<DockPanel
+				Margin="5"
+				HorizontalAlignment="Stretch"
+				VerticalAlignment="Stretch">
+				<TextBlock
+					DockPanel.Dock="Top"
+					VerticalAlignment="Center"
+					HorizontalAlignment="Center"
+					Classes="Subtitle2"
+					Foreground="{DynamicResource ErrorAccent}"
+					Text="Cannot watch accounts without a network connection."/>
+			</DockPanel>
+		</styles:Card>
+		<DockPanel
+			DockPanel.Dock="Top"
+			IsVisible="{Binding !NoConnection}">
+			<common:TokenBalancesView 
+				DockPanel.Dock="Top"
+				IsVisible="{Binding !NoAccountsFound}"/>			
+		</DockPanel>
+	</DockPanel>
+
+</UserControl>

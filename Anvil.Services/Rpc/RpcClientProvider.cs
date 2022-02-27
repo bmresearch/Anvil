@@ -49,7 +49,7 @@ namespace Anvil.Services
             RequestResult<TransactionMetaSlotInfo> txMeta = await Client.GetTransactionAsync(signature);
             while (!txMeta.WasSuccessful)
             {
-                await Task.Delay(1000);
+                await Task.Delay(2500);
                 txMeta = await Client.GetTransactionAsync(signature);
                 if (txMeta.WasSuccessful)
                     return txMeta.Result;

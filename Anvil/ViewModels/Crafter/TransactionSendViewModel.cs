@@ -1,5 +1,6 @@
 using Anvil.Core.ViewModels;
 using Anvil.Services;
+using Anvil.Services.Network;
 using Anvil.ViewModels.Fields;
 using Avalonia;
 using Avalonia.Controls;
@@ -23,16 +24,29 @@ namespace Anvil.ViewModels.Crafter
     public class TransactionSendViewModel : ViewModelBase
     {
         public string Header => "Send Transaction";
-
+        private IClassicDesktopStyleApplicationLifetime _appLifetime;
         private IRpcClientProvider _rpcProvider;
         private IRpcClient _rpcClient => _rpcProvider.Client;
 
-        public TransactionSendViewModel(IRpcClientProvider rpcProvider)
+        private InternetConnectionService _internetConnectionService;
+
+        public TransactionSendViewModel(IClassicDesktopStyleApplicationLifetime appLifetime, 
+            InternetConnectionService internetConnectionService, IRpcClientProvider rpcProvider)
         {
+            _appLifetime = appLifetime;
             _rpcProvider = rpcProvider;
+            _internetConnectionService = internetConnectionService;
+            _internetConnectionService.OnNetworkConnectionChanged += OnNetworkConnectionChanged;
 
             RequiredSignatures = new();
+            NoConnection = !_internetConnectionService.IsConnected;
         }
+
+        private void OnNetworkConnectionChanged(object? sender, Services.Network.Events.NetworkConnectionChangedEventArgs e)
+        {
+            NoConnection = !e.Connected;
+        }
+
         public async void LoadPayloadFromFile()
         {
             var ofd = new OpenFileDialog()
@@ -48,16 +62,13 @@ namespace Anvil.ViewModels.Crafter
                     }
                 }
             };
-            if (Application.Current.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+            var selected = await ofd.ShowAsync(_appLifetime.MainWindow);
+            if (selected == null) return;
+            if (selected.Length > 0)
             {
-                var selected = await ofd.ShowAsync(desktop.MainWindow);
-                if (selected == null) return;
-                if (selected.Length > 0)
-                {
-                    if (!File.Exists(selected[0])) return;
+                if (!File.Exists(selected[0])) return;
 
-                    Payload = await File.ReadAllTextAsync(selected[0]);
-                }
+                Payload = await File.ReadAllTextAsync(selected[0]);
             }
         }
 
@@ -103,13 +114,13 @@ namespace Anvil.ViewModels.Crafter
             TransactionError = false;
             TransactionErrorMessage = string.Empty;
 
-            Message msg = null;
+            Message? msg = null;
             try
             {
                 msg = Message.Deserialize(Payload);
                 InvalidPayload = false;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 InvalidPayload = true;
                 return;
@@ -137,6 +148,13 @@ namespace Anvil.ViewModels.Crafter
         {
             get => _submittingTransaction;
             set => this.RaiseAndSetIfChanged(ref _submittingTransaction, value);
+        }
+
+        private bool _noConnection;
+        public bool NoConnection
+        {
+            get => _noConnection;
+            set => this.RaiseAndSetIfChanged(ref _noConnection, value);
         }
 
         private bool _transactionError;

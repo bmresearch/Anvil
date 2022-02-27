@@ -1,6 +1,9 @@
 using Anvil.Core.ViewModels;
+using Anvil.Models;
 using Anvil.Services;
+using Anvil.Services.Network;
 using Anvil.Services.Store.Models;
+using Anvil.Services.Wallets.SubWallets;
 using Anvil.ViewModels.Fields;
 using Avalonia;
 using Avalonia.Controls;
@@ -14,9 +17,7 @@ using Solnet.Programs.Utilities;
 using Solnet.Rpc;
 using Solnet.Rpc.Builders;
 using Solnet.Rpc.Models;
-using Solnet.Rpc.Utilities;
 using Solnet.Wallet;
-using Solnet.Wallet.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -25,102 +26,58 @@ using System.Threading.Tasks;
 
 namespace Anvil.ViewModels.Crafter
 {
-    public class TokenWalletBalanceWrapper
-    {
-        private TokenWalletBalance _tokenWalletBalance;
-        private PublicKey _mint;
-        private string _name;
-        private ulong _rawBalance;
-        private decimal _balance;
-        private int _decimals;
-
-        public TokenWalletBalanceWrapper(TokenWalletBalance walletBalance)
-        {
-            _tokenWalletBalance = walletBalance;
-        }
-
-        public TokenWalletBalanceWrapper(string name, ulong rawBalance, decimal balance, int decimals, PublicKey mint)
-        {
-            _name = name;
-            _rawBalance = rawBalance;
-            _balance = balance;
-            _decimals = decimals;
-            _mint = mint;
-        }
-
-        public int Decimals
-        {
-            get
-            {
-                return _tokenWalletBalance != null ? _tokenWalletBalance.DecimalPlaces : _decimals;
-            }
-        }
-
-        public ulong RawBalance
-        {
-            get
-            {
-                return _tokenWalletBalance != null ? _tokenWalletBalance.QuantityRaw : _rawBalance;
-            }
-        }
-
-        public decimal Balance
-        {
-            get
-            {
-                return _tokenWalletBalance != null ? _tokenWalletBalance.QuantityDecimal : _balance;
-            }
-        }
-
-        public string TokenName
-        {
-            get
-            {
-                return _tokenWalletBalance != null ? _tokenWalletBalance.TokenName : _name;
-            }
-        }
-
-        public string TokenMint
-        {
-            get
-            {
-                return _tokenWalletBalance != null ? _tokenWalletBalance.TokenMint : _mint;
-            }
-        }
-
-        public TokenWalletBalance TokenWalletBalance { get => _tokenWalletBalance; }
-    }
-
+    /// <summary>
+    /// The view model used to craft transactions.
+    /// </summary>
     public class TransactionCraftViewModel : ViewModelBase
     {
+        private static readonly PublicKey WrappedSolMint = new ("So11111111111111111111111111111111111111112");
+
+        #region Framework
+
+        private IClassicDesktopStyleApplicationLifetime _appLifetime;
+
+        #endregion
+
         private IRpcClientProvider _rpcProvider;
         private IRpcClient _rpcClient => _rpcProvider.Client;
         private IWalletService _walletService;
         private INonceAccountMappingStore _nonceAccountMappingStore;
+
+        private InternetConnectionService _internetConnectionService;
+        private AddressBookService _addressBookService;
         private TokenWallet _tokenWallet;
         private TokenMintResolver _tokenMintResolver;
 
-        private PublicKey _destinationTokenAccount;
+        private PublicKey _sourceAta;
+        private PublicKey _destinationAta;
 
         private TransactionBuilder _txBuilder;
-        private Transaction _tx;
-        private Message _msg;
         private byte[] _msgBytes;
 
-        public TransactionCraftViewModel(IRpcClientProvider rpcProvider, IWalletService walletService, INonceAccountMappingStore nonceAccountMappingStore)
+        public TransactionCraftViewModel(IClassicDesktopStyleApplicationLifetime appLifetime,
+            InternetConnectionService internetConnectionService,
+            IRpcClientProvider rpcProvider, IWalletService walletService,
+            INonceAccountMappingStore nonceAccountMappingStore, AddressBookService addressBookService)
         {
+            _appLifetime = appLifetime;
+            _internetConnectionService = internetConnectionService;
+            _internetConnectionService.OnNetworkConnectionChanged += OnNetworkConnectionChanged;
             _rpcProvider = rpcProvider;
             _walletService = walletService;
             _nonceAccountMappingStore = nonceAccountMappingStore;
+            _addressBookService = addressBookService;
+
             SourceAccount = new PublicKeyViewModel();
             DestinationAccount = new PublicKeyViewModel();
+            NoConnection = !_internetConnectionService.IsConnected;
 
             this.WhenAnyValue(x => x.SourceAccount.PublicKey)
-                .Subscribe(x =>
+                .Subscribe(async x =>
                 {
                     if (x != null)
                     {
-                        GetSourceAccount();
+                        await GetSourceAccount();
                     }
                     else
                     {
@@ -132,25 +89,27 @@ namespace Anvil.ViewModels.Crafter
                         NonceAccountExists = false;
                         SourceInput = false;
                     }
-                    this.RaisePropertyChanged("CanCraftTransaction");
+                    this.RaisePropertyChanged(nameof(CanCraftTransaction));
                 });
 
             this.WhenAnyValue(x => x.DestinationAccount.PublicKey)
-                .Subscribe(x =>
+                .Subscribe(async x =>
                 {
                     if (x != null)
                     {
+                        await GetDestinationAccount();
                     }
                     else
                     {
+                        DestinationInput = false;
                     }
-                    this.RaisePropertyChanged("CanCraftTransaction");
+                    this.RaisePropertyChanged(nameof(CanCraftTransaction));
                 });
-        }        
-        
-        public void CopyTransactionToClipboard()
+        }
+
+        private void OnNetworkConnectionChanged(object? sender, Services.Network.Events.NetworkConnectionChangedEventArgs e)
         {
-            Application.Current.Clipboard.SetTextAsync(Payload);
+            NoConnection = !e.Connected;
         }
 
         public async void SaveTransaction()
@@ -160,18 +119,20 @@ namespace Anvil.ViewModels.Crafter
                 Title = "Save Transaction To File",
                 DefaultExtension = "tx"
             };
-            if (Application.Current.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
-            {
-                var selected = await ofd.ShowAsync(desktop.MainWindow);
-                if (selected == null) return;
+            var selected = await ofd.ShowAsync(_appLifetime.MainWindow);
+            if (selected == null) return;
 
-                await File.WriteAllTextAsync(selected, Payload);
-            }
+            await File.WriteAllTextAsync(selected, Payload);
         }
 
         public void EditTransaction()
         {
             TransactionCrafted = false;
+        }
+
+        public void CopyTransactionToClipboard()
+        {
+            Application.Current.Clipboard.SetTextAsync(Payload);
         }
 
         public void CraftNewTransaction()
@@ -186,13 +147,26 @@ namespace Anvil.ViewModels.Crafter
             }
             NonceAccountExists = false;
             SourceInput = false;
+            DestinationInput = false;
             TransactionCrafted = false;
         }
 
-        public void CraftTransaction()
+        /// <summary>
+        /// Crafts the transaction.
+        /// </summary>
+        /// <returns>A task which performs the action.</returns>
+        public async Task CraftTransaction()
         {
-            // Initialize the nonce information to be used with the transaction
-            NonceInformation nonceInfo = new NonceInformation()
+            if (NonceAccountViewModel == null)
+            {
+                // something went wrong
+                TransactionCrafted = false;
+                TransactionCraftingError = true;
+                return;
+            }
+
+            // initialize the nonce information to be used with the transaction
+            var nonceInfo = new NonceInformation()
             {
                 Nonce = NonceAccountViewModel.Nonce,
                 Instruction = SystemProgram.AdvanceNonceAccount(
@@ -200,17 +174,37 @@ namespace Anvil.ViewModels.Crafter
                     new(NonceAccountViewModel.NonceAccountMap.Authority)
                 )
             };
-            _txBuilder = new TransactionBuilder()
-                .SetFeePayer(SourceAccount.PublicKey)
-                .SetNonceInformation(nonceInfo);
+
+            if (AccountContent == null)
+            {
+                // something went wrong
+                TransactionCrafted = false;
+                TransactionCraftingError = true;
+                return;
+            }
+
+            _destinationAta = AssociatedTokenAccountProgram.DeriveAssociatedTokenAccount(
+                DestinationAccount.PublicKey,
+                new(AccountContent.SelectedAsset.TokenMint));
+            _sourceAta = AssociatedTokenAccountProgram.DeriveAssociatedTokenAccount(
+                SourceAccount.PublicKey,
+                new(AccountContent.SelectedAsset.TokenMint));
 
             if (AccountContent is MultiSignatureAccountViewModel multiSigVm)
             {
-                CraftMultiSignatureTransaction(multiSigVm.SelectedSigners);
+                // because the source is a multisig we'll set the current wallet as the fee payer
+                _txBuilder = new TransactionBuilder()
+                    .SetFeePayer(_walletService.CurrentWallet.Address)
+                    .SetNonceInformation(nonceInfo);
+                await CraftMultiSignatureTransaction(multiSigVm.SelectedSigners);
             }
             else
             {
-                CraftNonMultiSignatureTransaction();
+                // because the source is a regular account it can be the fee payer
+                _txBuilder = new TransactionBuilder()
+                    .SetFeePayer(SourceAccount.PublicKey)
+                    .SetNonceInformation(nonceInfo);
+                await CraftNonMultiSignatureTransaction();
             }
 
             _msgBytes = _txBuilder.CompileMessage();
@@ -260,11 +254,14 @@ namespace Anvil.ViewModels.Crafter
                     Authority = authority
                 });
 
+                await Task.Delay(500);
+
                 // fetch nonce account again
                 var _mapping = _nonceAccountMappingStore.GetMapping(authority);
                 var _nonceAccount = await GetNonceAccount(_mapping.Account);
                 CreatingNonceAccount = false;
                 NonceAccountViewModel = new(_nonceAccount, _mapping);
+                NonceAccountExists = true;
             }
             else
             {
@@ -275,9 +272,10 @@ namespace Anvil.ViewModels.Crafter
         }
 
         /// <summary>
-        /// 
+        /// Creates a token account for a given owner and token mint.
         /// </summary>
-        /// <param name="owner"></param>
+        /// <param name="owner">The token account owner.</param>
+        /// <param name="owner">The token mint.</param>
         public async void CreateTokenAccount(PublicKey owner, PublicKey mint)
         {
             var blockHash = await _rpcClient.GetRecentBlockHashAsync();
@@ -285,7 +283,11 @@ namespace Anvil.ViewModels.Crafter
             var txBuilder = new TransactionBuilder()
                 .SetFeePayer(_walletService.CurrentWallet.Address)
                 .SetRecentBlockHash(blockHash.Result.Value.Blockhash)
-                .AddInstruction(AssociatedTokenAccountProgram.CreateAssociatedTokenAccount(_walletService.CurrentWallet.Address, owner, mint));
+                .AddInstruction(AssociatedTokenAccountProgram.CreateAssociatedTokenAccount(
+                    _walletService.CurrentWallet.Address,
+                    owner,
+                    mint));
+
             var msgBytes = txBuilder.CompileMessage();
 
             txBuilder.AddSignature(_walletService.CurrentWallet.Sign(msgBytes));
@@ -295,108 +297,229 @@ namespace Anvil.ViewModels.Crafter
 
             CreatingTokenAccount = true;
 
-            Task.Delay(3000);
+            await Task.Delay(2500);
+
             // and poll confirmation
             var txMeta = await _rpcProvider.PollTxAsync(txSign.Result, Solnet.Rpc.Types.Commitment.Confirmed);
 
+            var ata = AssociatedTokenAccountProgram.DeriveAssociatedTokenAccount(owner, mint);
+
             // fetch token account again
-            var tokenAccount = await GetTokenAccount(owner, mint);
+            var tokenAccount = await GetTokenAccount(ata);
 
             CreatingTokenAccount = false;
         }
 
         /// <summary>
-        /// 
+        /// Adds instructions to send solana from a regular account to a multisig account.
         /// </summary>
-        private void CraftNonMultiSignatureTransaction()
+        /// <returns>A task which performs the action.</returns>
+        private async Task SendSolanaFromRegularToMultiSig()
         {
-            if (AccountContent.SelectedAsset.TokenName == "Solana")
+            // sanity check, this should never happen
+            if (AccountContent == null)
             {
-                _txBuilder.AddInstruction(SystemProgram.Transfer(
+                TransactionCrafted = false;
+                TransactionCraftingError = true;
+                return;
+            }
+
+            var destinationAta = AssociatedTokenAccountProgram.DeriveAssociatedTokenAccount(DestinationAccount.PublicKey, new(AccountContent.SelectedAsset.TokenMint));
+            // destination account is a multisig so we have to transfer wrapped sol to the multisig's wrapped sol associated token account
+            var destinationTokenAccount = await GetTokenAccount(destinationAta);
+
+            if (destinationTokenAccount == null)
+            {
+                // destination associated token account doesn't exist so we have to create it and set the source account as the rent payer
+                _txBuilder.AddInstruction(AssociatedTokenAccountProgram.CreateAssociatedTokenAccount(
                     SourceAccount.PublicKey,
                     DestinationAccount.PublicKey,
-                    (ulong)(AccountContent.AssetAmount * SolHelper.LAMPORTS_PER_SOL)
-                ));
+                    new(AccountContent.SelectedAsset.TokenMint)));
+            }
+
+            // now we'll wrap sol, transfer it and then close our wrapped sol token account
+
+            _txBuilder.AddInstruction(SystemProgram.Transfer(
+                SourceAccount.PublicKey,
+                destinationAta,
+                SolHelper.ConvertToLamports(AccountContent.Amount)))
+                .AddInstruction(TokenProgram.SyncNative(destinationAta));
+        }
+
+        /// <summary>
+        /// Adds instructions to send tokens from a regular account.
+        /// </summary>
+        /// <returns>A task which performs the action.</returns>
+        private async Task SendTokenFromRegular()
+        {
+            // sanity check, this should never happen
+            if (AccountContent == null)
+            {
+                TransactionCrafted = false;
+                TransactionCraftingError = true;
+                return;
+            }
+            var destinationAta = AssociatedTokenAccountProgram.DeriveAssociatedTokenAccount(DestinationAccount.PublicKey, new(AccountContent.SelectedAsset.TokenMint));
+            var destinationTokenAccount = await GetTokenAccount(destinationAta);
+
+            if (destinationTokenAccount == null)
+            {
+                // destination associated token account doesn't exist so we have to create it and set the source account as the rent payer
+                _txBuilder.AddInstruction(AssociatedTokenAccountProgram.CreateAssociatedTokenAccount(
+                    SourceAccount.PublicKey,
+                    DestinationAccount.PublicKey,
+                    new(AccountContent.SelectedAsset.TokenMint)));
+            }
+
+            var amountConverter = (decimal)Math.Pow(10, AccountContent.SelectedAsset.Decimals);
+            var amount = (ulong)(AccountContent.Amount * amountConverter);
+            _txBuilder.AddInstruction(TokenProgram.Transfer(
+                _sourceAta,
+                _destinationAta,
+                amount,
+                SourceAccount.PublicKey));
+        }
+
+        /// <summary>
+        /// Adds instructions to a non-multisig transaction.
+        /// </summary>
+        /// <returns>A task which performs the action.</returns>
+        private async Task CraftNonMultiSignatureTransaction()
+        {
+            // sanity check, this should never happen
+            if (AccountContent == null)
+            {
+                TransactionCrafted = false;
+                TransactionCraftingError = true;
+                return;
+            }
+
+            if (AccountContent.SelectedAsset.TokenName == "Solana")
+            {
+                if (DestinationMultiSig)
+                {
+                    await SendSolanaFromRegularToMultiSig();
+                }
+                else
+                {
+                    // destination account is not a multisig so we'll just do a regular lamports transfer
+                    _txBuilder.AddInstruction(SystemProgram.Transfer(
+                        SourceAccount.PublicKey,
+                        DestinationAccount.PublicKey,
+                        SolHelper.ConvertToLamports(AccountContent.Amount)
+                    ));
+                }
             }
             else
             {
-                var sourceAccount = AssociatedTokenAccountProgram.DeriveAssociatedTokenAccount(SourceAccount.PublicKey, new(AccountContent.SelectedAsset.TokenWalletBalance.TokenMint));
-                _txBuilder.AddInstruction(TokenProgram.Transfer(
-                    sourceAccount,
-                    _destinationTokenAccount,
-                    (ulong)(AccountContent.AssetAmount * Math.Pow(10, AccountContent.SelectedAsset.TokenWalletBalance.DecimalPlaces)),
-                    SourceAccount.PublicKey));
+                await SendTokenFromRegular();
             }
         }
 
         /// <summary>
-        /// 
+        /// Adds instructions to a multisig transaction.
         /// </summary>
-        private void CraftMultiSignatureTransaction(ObservableCollection<PublicKey> selectedSigners)
-        {                
-            // if source Ata exists perform sync native and token program transfer to destination ATA
-            var sourceAta = AssociatedTokenAccountProgram.DeriveAssociatedTokenAccount(SourceAccount.PublicKey, new(AccountContent.SelectedAsset.TokenWalletBalance.TokenMint));
-            var destinationAta = AssociatedTokenAccountProgram.DeriveAssociatedTokenAccount(DestinationAccount.PublicKey, new(AccountContent.SelectedAsset.TokenWalletBalance.TokenMint));
+        private async Task CraftMultiSignatureTransaction(ObservableCollection<PublicKey> selectedSigners)
+        {
+            // sanity check, this should never happen
+            if (AccountContent == null)
+            {
+                TransactionCrafted = false;
+                TransactionCraftingError = true;
+                return;
+            }
 
+            /// check if destination ATA exists, if it doesn't add instruction to create ATA
+            /// this instruction is funded by the wallet service's current wallet
+            var destinationTokenAccount = await _rpcClient.GetTokenAccountInfoAsync(_destinationAta,
+                Solnet.Rpc.Types.Commitment.Confirmed);
+
+            if (destinationTokenAccount.WasSuccessful)
+            {
+                if (destinationTokenAccount.Result.Value == null)
+                    _txBuilder.AddInstruction(AssociatedTokenAccountProgram.CreateAssociatedTokenAccount(
+                        _walletService.CurrentWallet.Address,
+                        DestinationAccount.PublicKey,
+                        new(AccountContent.SelectedAsset.TokenMint)));
+            }
+            // if source Ata exists perform sync native and token program transfer to destination ATA
+
+            var amountConverter = (decimal)Math.Pow(10, AccountContent.SelectedAsset.Decimals);
+            var amount = (ulong)(AccountContent.Amount * amountConverter);
             if (AccountContent.SelectedAsset.TokenName == "Solana")
             {
-                _txBuilder.AddInstruction(AssociatedTokenAccountProgram.CreateAssociatedTokenAccount(
-                        SourceAccount.PublicKey,
-                        SourceAccount.PublicKey,
-                        new(AccountContent.SelectedAsset.TokenWalletBalance.TokenMint)))
+                _txBuilder
+                    .AddInstruction(TokenProgram.SyncNative(_sourceAta))
                     .AddInstruction(TokenProgram.Transfer(
-                        sourceAta,
-                        destinationAta,
-                        (ulong)((double)AccountContent.AssetAmount / (ulong)AccountContent.SelectedAsset.Decimals),
-                        DestinationAccount.PublicKey,
+                        _sourceAta,
+                        _destinationAta,
+                        amount,
+                        SourceAccount.PublicKey,
                         selectedSigners));
             }
             else
             {
-                var sourceAccount = AssociatedTokenAccountProgram.DeriveAssociatedTokenAccount(SourceAccount.PublicKey, new(AccountContent.SelectedAsset.TokenWalletBalance.TokenMint));
-
-                _txBuilder.AddInstruction(TokenProgram.Transfer(
-                    sourceAccount,
-                    _destinationTokenAccount,
-                    (ulong)(AccountContent.AssetAmount * AccountContent.SelectedAsset.TokenWalletBalance.DecimalPlaces),
+                _txBuilder
+                    .AddInstruction(TokenProgram.Transfer(
+                    _sourceAta,
+                    _destinationAta,
+                    amount,
                     SourceAccount.PublicKey,
                     selectedSigners));
             }
         }
 
-
-        private async Task<PublicKey> GetTokenAccount(PublicKey owner, PublicKey mint)
+        /// <summary>
+        /// Gets the token account for a given owner and token mint.
+        /// </summary>
+        /// <param name="ata">The associated token account.</param>
+        /// <returns>A task which performs the action and may return the token account.</returns>
+        private async Task<TokenAccountInfo?> GetTokenAccount(PublicKey ata)
         {
-            var tokenAccounts = await _rpcClient.GetTokenAccountsByOwnerAsync(owner, mint);
-            if (tokenAccounts.WasSuccessful)
+            var tokenAccount = await _rpcClient.GetTokenAccountInfoAsync(ata, Solnet.Rpc.Types.Commitment.Confirmed);
+            if (tokenAccount.WasSuccessful)
             {
-                return new(tokenAccounts.Result.Value[0]?.PublicKey);
+                if (tokenAccount.Result.Value == null) return null;
+                return tokenAccount.Result.Value;
             }
             return null;
         }
 
-        private async Task<NonceAccount> GetNonceAccount(string accountKey)
+        /// <summary>
+        /// Gets a nonce account with a given public key.
+        /// </summary>
+        /// <param name="accountKey">The account public key.</param>
+        /// <returns>A task which performs the action and may return the nonce account.</returns>
+        private async Task<NonceAccount?> GetNonceAccount(string accountKey)
         {
-            // Get the Nonce Account to get the Nonce to use for the transaction
             var nonceAccountInfo = await _rpcClient.GetAccountInfoAsync(accountKey, Solnet.Rpc.Types.Commitment.Confirmed);
             if (nonceAccountInfo.WasSuccessful)
             {
+                if (nonceAccountInfo.Result.Value == null) return null;
                 byte[] accountDataBytes = Convert.FromBase64String(nonceAccountInfo.Result.Value.Data[0]);
+
+                if (accountDataBytes.Length != NonceAccount.AccountDataSize) return null;
                 var nonceAccount = NonceAccount.Deserialize(accountDataBytes);
+
                 return nonceAccount;
             }
             return null;
         }
 
+        /// <summary>
+        /// Get the source account to check whether it's a regular account or a multisig.
+        /// </summary>
+        /// <returns>A task which performs the action.</returns>
         private async Task GetSourceAccount()
         {
-            _tokenMintResolver ??= await TokenMintResolver.LoadAsync();
-            await GetAccountInfo(SourceAccount.PublicKeyString).ContinueWith(async account =>
+            await GetAccountInfo(SourceAccount.PublicKey).ContinueWith(async account =>
             {
                 if (account.Result != null)
                 {
-                    MultiSignatureAccount _multiSigAccount = null;
-                    NonceAccountMapping _mapping = null;
+                    MultiSignatureAccount? _multiSigAccount = null;
+                    NonceAccountMapping? _mapping = null;
+
+                    // attempt to deserialize the account data into the multisig account structure
                     var _sourceAccountData = account.Result.Data[0];
                     var accountBytes = Convert.FromBase64String(_sourceAccountData);
                     if (accountBytes.Length == MultiSignatureAccount.Layout.Length)
@@ -404,7 +527,8 @@ namespace Anvil.ViewModels.Crafter
                         _multiSigAccount = MultiSignatureAccount.Deserialize(accountBytes);
                     }
 
-                    var assets = await GetTokenAccounts(SourceAccount.PublicKeyString);
+                    var assets = await GetTokenAccounts(SourceAccount.PublicKey);
+                    if (assets == null) return;
 
                     if (_multiSigAccount != null)
                     {
@@ -424,39 +548,121 @@ namespace Anvil.ViewModels.Crafter
                     if (_mapping != null)
                     {
                         var nonceAccount = await GetNonceAccount(_mapping.Account);
-                        NonceAccountViewModel = new(nonceAccount, _mapping);
-                        NonceAccountExists = true;
+                        if (nonceAccount != null)
+                        {
+                            NonceAccountViewModel = new(nonceAccount, _mapping);
+                            NonceAccountExists = true;
+                        }
+                        else
+                        {
+                            // for some reason we couldn't fetch the nonce account so we need to trigger an error here
+                            NonceAccountViewModel = null;
+                            NonceAccountExists = false;
+                            SourceInput = false;
+                            return;
+                        }
                     }
                     else
                     {
                         NonceAccountViewModel = null;
+                        NonceAccountExists = false;
                     }
                     SourceInput = true;
                 }
             });
         }
 
+        /// <summary>
+        /// Get the destination account to check whether it's a regular account or a multisig.
+        /// </summary>
+        /// <returns>A task which performs the action.</returns>
         private async Task GetDestinationAccount()
         {
+            await GetAccountInfo(DestinationAccount.PublicKey).ContinueWith(async account =>
+            {
+                if (account.Result != null)
+                {
+                    MultiSignatureAccount? _multiSigAccount = null;
 
+                    // attempt to deserialize the account data into the multisig account structure
+                    var _destAccountData = account.Result.Data[0];
+                    var accountBytes = Convert.FromBase64String(_destAccountData);
+                    if (accountBytes.Length == MultiSignatureAccount.Layout.Length)
+                    {
+                        _multiSigAccount = MultiSignatureAccount.Deserialize(accountBytes);
+                    }
+
+                    var assets = await GetTokenAccounts(DestinationAccount.PublicKey);
+                    if (assets == null) return;
+
+                    if (_multiSigAccount != null)
+                    {
+                        // because the destination is multi sig we need to flag it as such so as not to transfer lamports to the account
+                        // but rather to an associated token account
+                        DestinationMultiSig = true;
+                    }
+                    else
+                    {
+                        // the destination account is a regular account so it can be the authority of the nonce account
+                        DestinationMultiSig = false;
+                    }
+
+                    DestinationInput = true;
+                }
+            });
         }
 
+        /// <summary>
+        /// Handles changes to the account content properties.
+        /// </summary>
+        /// <param name="sender">The sender.</param>
+        /// <param name="e">The event args.</param>
         private void AccountContent_PropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             if (e.PropertyName == null) return;
             if (e.PropertyName.Contains("Validated"))
-                this.RaisePropertyChanged("CanCraftTransaction");
+                this.RaisePropertyChanged(nameof(CanCraftTransaction));
         }
 
-        private async Task<ObservableCollection<TokenWalletBalanceWrapper>> GetTokenAccounts(string accountKey)
+        /// <summary>
+        /// Gets the token accounts for the account with the given public key.
+        /// </summary>
+        /// <param name="accountKey">The token accounts owner's public key.</param>
+        /// <param name="isMultiSig">Whether the token accounts owner is a multisig or not.</param>
+        /// <returns>A task which performs the action and may return a collection of token wallet balances.</returns>
+        private async Task<ObservableCollection<TokenWalletBalanceWrapper>?> GetTokenAccounts(PublicKey accountKey, bool isMultiSig = false)
         {
-            _tokenWallet = await TokenWallet.LoadAsync(_rpcClient, _tokenMintResolver, new(accountKey));
+            _tokenMintResolver ??= await TokenMintResolver.LoadAsync();
+            _tokenWallet = await TokenWallet.LoadAsync(_rpcClient, _tokenMintResolver, accountKey);
 
-            var balance = await GetBalance(accountKey);
+            TokenWalletBalanceWrapper? solanaTokenWrapper = null;
 
-            var solanaTokenWrapper =
-                new TokenWalletBalanceWrapper("Solana", balance, (decimal)balance / SolHelper.LAMPORTS_PER_SOL, 10, new PublicKey("So11111111111111111111111111111111111111112"));
-            var assets = new ObservableCollection<TokenWalletBalanceWrapper>()
+            if (isMultiSig)
+            {
+                // in case the account is a multisig we need to get the wrapped sol ata and not use the actual multisig's balance in lamports
+                var ata = AssociatedTokenAccountProgram.DeriveAssociatedTokenAccount(accountKey, WrappedSolMint);
+                var tokenAccount = await GetTokenAccount(ata);
+                if (tokenAccount == null) return null;
+
+
+
+
+            } else
+            {
+                // this account is not a multisig so we'll just use the account's balance in lamports
+                var balance = await GetBalance(accountKey);
+                if (balance == null) return null;
+                
+                solanaTokenWrapper = new TokenWalletBalanceWrapper("Solana",
+                    balance.Value,
+                    SolHelper.ConvertToSol(balance.Value),
+                    10,
+                    WrappedSolMint);
+            }
+
+            if (solanaTokenWrapper == null) return null;
+
+            var assets = new ObservableCollection<TokenWalletBalanceWrapper>() 
             {
                 solanaTokenWrapper
             };
@@ -468,18 +674,49 @@ namespace Anvil.ViewModels.Crafter
             return assets;
         }
 
-        private async Task<ulong> GetBalance(string accountKey)
+        /// <summary>
+        /// Gets the native balance for the account with the given public key.
+        /// </summary>
+        /// <param name="accountKey">The account public key.</param>
+        /// <returns>A task which performs the action and may return the account balance.</returns>
+        private async Task<ulong?> GetBalance(string accountKey)
         {
             var account = await _rpcClient.GetBalanceAsync(accountKey, Solnet.Rpc.Types.Commitment.Confirmed);
-
-            return account.WasSuccessful ? account.Result.Value : 0;
+            if (account.WasSuccessful)
+            {
+                return account.Result.Value;
+            }
+            return null;
         }
 
-        private async Task<AccountInfo> GetAccountInfo(string accountKey)
+        /// <summary>
+        /// Gets the account info for the account with the given public key.
+        /// </summary>
+        /// <param name="accountKey">The account public key.</param>
+        /// <returns>A task which performs the action and may return the account info.</returns>
+        private async Task<AccountInfo?> GetAccountInfo(string accountKey)
         {
             var account = await _rpcClient.GetAccountInfoAsync(accountKey, Solnet.Rpc.Types.Commitment.Confirmed);
+            if (account.WasSuccessful)
+            {
+                if (account.Result.Value == null) return null;
 
-            return account.WasSuccessful ? account.Result.Value : null;
+                return account.Result.Value;
+            }
+
+            return null;
+        }
+
+        private AddressBookItem _selectedAddressBookItem;
+        public AddressBookItem SelectedAddressBookItem
+        {
+            get => _selectedAddressBookItem;
+            set => this.RaiseAndSetIfChanged(ref _selectedAddressBookItem, value);
+        }
+
+        public List<AddressBookItem> AddressBookItems
+        {
+            get => _addressBookService.GetItems();
         }
 
         private PublicKeyViewModel _sourceAccount;
@@ -510,11 +747,39 @@ namespace Anvil.ViewModels.Crafter
             set => this.RaiseAndSetIfChanged(ref _transactionCrafted, value);
         }
 
+        private bool _noConnection;
+        public bool NoConnection
+        {
+            get => _noConnection;
+            set => this.RaiseAndSetIfChanged(ref _noConnection, value);
+        }
+
+        private bool _transactionCraftingError;
+        public bool TransactionCraftingError
+        {
+            get => _transactionCraftingError;
+            set => this.RaiseAndSetIfChanged(ref _transactionCraftingError, value);
+        }
+
         private bool _sourceInput;
         public bool SourceInput
         {
             get => _sourceInput;
             set => this.RaiseAndSetIfChanged(ref _sourceInput, value);
+        }
+
+        private bool _destinationInput;
+        public bool DestinationInput
+        {
+            get => _destinationInput;
+            set => this.RaiseAndSetIfChanged(ref _destinationInput, value);
+        }
+
+        private bool _destinationMultiSig;
+        public bool DestinationMultiSig
+        {
+            get => _destinationMultiSig;
+            set => this.RaiseAndSetIfChanged(ref _destinationMultiSig, value);
         }
 
         private bool _nonceAccountExists;
@@ -552,15 +817,15 @@ namespace Anvil.ViewModels.Crafter
             set => this.RaiseAndSetIfChanged(ref _errorCreatingAccountMessage, value);
         }
 
-        private AccountViewModel _accountContent;
-        public AccountViewModel AccountContent
+        private AccountViewModel? _accountContent;
+        public AccountViewModel? AccountContent
         {
             get => _accountContent;
             set => this.RaiseAndSetIfChanged(ref _accountContent, value);
         }
 
-        private NonceAccountViewModel _nonceAccountViewModel;
-        public NonceAccountViewModel NonceAccountViewModel
+        private NonceAccountViewModel? _nonceAccountViewModel;
+        public NonceAccountViewModel? NonceAccountViewModel
         {
             get => _nonceAccountViewModel;
             set => this.RaiseAndSetIfChanged(ref _nonceAccountViewModel, value);

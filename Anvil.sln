@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.31624.102
+# Visual Studio Version 17
+VisualStudioVersion = 17.1.32210.238
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Anvil", "Anvil\Anvil.csproj", "{0E05B0A3-4DD8-46BC-943E-3B1864C097C3}"
 EndProject
@@ -12,6 +12,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{103F9D0F-6721-4E43-9E56-E13DB9B3D17B}"
 	ProjectSection(SolutionItems) = preProject
 		README.md = README.md
+		SharedBuildProperties.props = SharedBuildProperties.props
 	EndProjectSection
 EndProject
 Global

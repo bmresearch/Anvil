@@ -15,12 +15,15 @@ namespace Anvil.ViewModels.Crafter
 {
     public class TransactionSignViewModel : ViewModelBase
     {
+        private IClassicDesktopStyleApplicationLifetime _appLifetime;
         private IWalletService _walletService;
         public string Header => "Sign Transaction";
 
 
-        public TransactionSignViewModel(IWalletService walletService)
+        public TransactionSignViewModel(IClassicDesktopStyleApplicationLifetime appLifetime, 
+            IWalletService walletService)
         {
+            _appLifetime = appLifetime;
             _walletService = walletService;
         }
 
@@ -52,16 +55,13 @@ namespace Anvil.ViewModels.Crafter
                     }
                 }
             };
-            if (Application.Current.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+            var selected = await ofd.ShowAsync(_appLifetime.MainWindow);
+            if (selected == null) return;
+            if (selected.Length > 0)
             {
-                var selected = await ofd.ShowAsync(desktop.MainWindow);
-                if (selected == null) return;
-                if (selected.Length > 0)
-                {
-                    if (!File.Exists(selected[0])) return;
+                if (!File.Exists(selected[0])) return;
 
-                    Payload = await File.ReadAllTextAsync(selected[0]);
-                }
+                Payload = await File.ReadAllTextAsync(selected[0]);
             }
         }
 
@@ -72,25 +72,37 @@ namespace Anvil.ViewModels.Crafter
                 Title = "Save Signature To File",
                 DefaultExtension = "sig"
             };
-            if (Application.Current.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
-            {
-                var selected = await ofd.ShowAsync(desktop.MainWindow);
-                if (selected == null) return;
+            var selected = await ofd.ShowAsync(_appLifetime.MainWindow);
+            if (selected == null) return;
                 
-                await File.WriteAllTextAsync(selected, Signature);
+            await File.WriteAllTextAsync(selected, Signature);
+        }
+
+        private void ValidatePayload()
+        {
+            if (string.IsNullOrEmpty(Payload))
+            {
+                DecodedInstructions = new();
+                Signed = false;
+                PayloadInput = false;
+            }
+            else
+            {
+                DecodeMessageFromPayload();
+                PayloadInput = true;
             }
         }
 
         private void DecodeMessageFromPayload()
         {
-            Message msg = null;
+            Message msg;
             Signature = string.Empty;
 
             try
             {
                 msg = Message.Deserialize(Payload);
                 InvalidPayload = false;
-            } catch(Exception ex)
+            } catch(Exception)
             {
                 InvalidPayload = true;
                 DecodedInstructions = new();
@@ -121,16 +133,7 @@ namespace Anvil.ViewModels.Crafter
             set
             {
                 this.RaiseAndSetIfChanged(ref _payload, value);
-                if (string.IsNullOrEmpty(_payload))
-                {
-                    DecodedInstructions = new();
-                    Signed = false;
-                    PayloadInput = false;
-                }else
-                {
-                    DecodeMessageFromPayload();
-                    PayloadInput = true;
-                }
+                ValidatePayload();
             }
         }
 

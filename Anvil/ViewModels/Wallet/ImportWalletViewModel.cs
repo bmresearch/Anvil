@@ -4,6 +4,8 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using ReactiveUI;
+using Solnet.Wallet.Bip39;
+using System;
 using System.Reactive;
 
 namespace Anvil.ViewModels.Wallet
@@ -21,16 +23,17 @@ namespace Anvil.ViewModels.Wallet
                 y => y.PrivateKeyFilePath,
                 w => w.Password,
                 z => z.ConfirmPassword,
-                (x,y,w,z) => (!string.IsNullOrEmpty(x.Value) && w.Value == z.Value) || !string.IsNullOrEmpty(y.Value));
+                (x,y,w,z) => (x.Value != null || !string.IsNullOrEmpty(y.Value)) && w.Value == z.Value);
 
             Confirm = ReactiveCommand.Create(
                 () =>
                 {
                     return new WalletImport
                     {
-                        Mnemonic = Mnemonic,
+                        Mnemonic = MnemonicString,
                         PrivateKeyFilePath = PrivateKeyFilePath,
-                        Password = Password
+                        Password = Password,
+                        Alias = Alias,
                     };
                 }, canConfirm);
         }
@@ -58,6 +61,41 @@ namespace Anvil.ViewModels.Wallet
             }
         }
 
+        private void ValidateMnemonicString()
+        {
+            if (string.IsNullOrEmpty(_mnemonicString)) 
+            {
+                MnemonicValidationError = false;
+                return; 
+            }
+            try
+            {
+                Mnemonic = new Mnemonic(_mnemonicString, WordList.AutoDetect(_mnemonicString));
+                if (Mnemonic.IsValidChecksum)
+                {
+                    MnemonicValidationError = false;
+                    return;
+                }
+            } catch(Exception)
+            {
+                MnemonicValidationError = true;
+            }
+        }
+
+        private bool _mnemonicValidationError;
+        public bool MnemonicValidationError
+        {
+            get => _mnemonicValidationError;
+            set => this.RaiseAndSetIfChanged(ref _mnemonicValidationError, value);
+        }
+
+        private Mnemonic _mnemonic;
+        public Mnemonic Mnemonic
+        {
+            get => _mnemonic;
+            set => this.RaiseAndSetIfChanged(ref _mnemonic, value);
+        }
+
         private string _privateKeyFilePath;
         public string PrivateKeyFilePath
         {
@@ -65,14 +103,25 @@ namespace Anvil.ViewModels.Wallet
             set => this.RaiseAndSetIfChanged(ref _privateKeyFilePath, value);
         }
 
-        private string _mnemonic;
-        public string Mnemonic
+        private string _mnemonicString;
+        public string MnemonicString
         {
-            get => _mnemonic;
-            set => this.RaiseAndSetIfChanged(ref _mnemonic, value);
+            get => _mnemonicString;
+            set 
+            {
+                this.RaiseAndSetIfChanged(ref _mnemonicString, value);
+                ValidateMnemonicString();
+            }
         }
 
-        private string _password;
+        private string _alias;
+        public string Alias
+        {
+            get => _alias;
+            set => this.RaiseAndSetIfChanged(ref _alias, value);
+        }
+
+        private string _password = string.Empty;
         public string Password
         {
             get => _password;
@@ -80,7 +129,7 @@ namespace Anvil.ViewModels.Wallet
         }
         
 
-        private string _confirmPassword;
+        private string _confirmPassword = string.Empty;
         public string ConfirmPassword
         {
             get => _confirmPassword;

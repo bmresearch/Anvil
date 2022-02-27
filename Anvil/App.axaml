@@ -1,18 +1,35 @@
 <Application xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="using:Anvil"
+			 xmlns:converters="clr-namespace:Anvil.Converters"
              xmlns:themes="clr-namespace:Material.Styles.Themes;assembly=Material.Styles"
              x:Class="Anvil.App">
+
+	<!-- Data Templates -->
     <Application.DataTemplates>
         <local:ViewLocator/>
     </Application.DataTemplates>
 
+	<!-- Styles -->
 	<Application.Styles>
 		<StyleInclude Source="avares://Anvil/Styles/ThemeLight.axaml"/>
 		<StyleInclude Source="avares://Material.Icons.Avalonia/App.xaml"/>
 		<StyleInclude Source="avares://Material.Avalonia/Material.Avalonia.Templates.xaml" />
 	</Application.Styles>
+
+	<!-- Resources -->
 	<Application.Resources>
 		<themes:BundledTheme BaseTheme="Light" PrimaryColor="Teal" SecondaryColor="Amber"/>
+		
+		<!-- Converters -->
+		<converters:StringToDecimalConverter x:Key="StringToDecimalConverter" />
 	</Application.Resources>
+
+	<!-- Tray Icon -->
+	<!--<TrayIcon.Icons>
+		<TrayIcons>
+			<TrayIcon Icon="{Binding TrayIcon}" Clicked="TrayIcon_OnClicked"/>
+		</TrayIcons>
+	</TrayIcon.Icons>-->
+	
 </Application>

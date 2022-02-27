@@ -1,0 +1,238 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+			 xmlns:styles="clr-namespace:Material.Styles;assembly=Material.Styles"
+             xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+			 xmlns:common="clr-namespace:Anvil.Views.Common"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="Anvil.Views.NonceAccounts.NonceAccountsView">
+
+	<DockPanel
+		LastChildFill="True">
+		<styles:Card
+			Margin="5,5,0,5"
+			DockPanel.Dock="Left">
+			<DockPanel
+				LastChildFill="False"
+				Margin="5"
+				HorizontalAlignment="Stretch"
+				VerticalAlignment="Stretch"
+				Width="250">
+				<StackPanel
+					Orientation="Vertical"
+					DockPanel.Dock="Bottom"
+					HorizontalAlignment="Stretch"
+					VerticalAlignment="Bottom">
+					<Button
+						Margin="5"
+						VerticalAlignment="Center"
+						HorizontalAlignment="Center"
+						Background="{DynamicResource ButtonBackgroundColor}"
+						IsEnabled="{Binding !NoConnection}"
+						Command="{Binding CreateNonceAccount}"
+						Content="Create Nonce Account"/>
+					<Button
+						Margin="5"
+						VerticalAlignment="Center"
+						HorizontalAlignment="Center"
+						Background="{DynamicResource ButtonBackgroundColor}"
+						IsEnabled="{Binding !NoConnection}"
+						Command="{Binding ImportNonceAccount}"
+						Content="Import Nonce Account"/>
+				</StackPanel>
+				<TextBlock
+					Classes="Headline5 Subheadline2"
+					DockPanel.Dock="Top"
+					VerticalAlignment="Center"
+					HorizontalAlignment="Left"
+					TextAlignment="Center"
+					Foreground="{DynamicResource MainTextAccent}"
+					Text="Nonce Accounts">
+				</TextBlock>
+				<ListBox
+					DockPanel.Dock="Top"
+					Margin="5"
+					HorizontalAlignment="Stretch"
+					VerticalAlignment="Stretch"
+					SelectionMode="Single"
+					SelectedItem="{Binding CurrentNonceAccountMapping}"
+					Items="{Binding NonceAccounts}">
+					<ListBox.Template>
+					</ListBox.Template>
+					<ListBox.ItemTemplate>
+						<DataTemplate>
+							<DockPanel
+								Margin="5"
+								HorizontalAlignment="Stretch"
+								VerticalAlignment="Stretch">
+								<TextBlock
+									DockPanel.Dock="Right"
+									Margin="5"
+									Classes="Body2"
+									Text="{Binding ShortenedAddress}"/>
+							</DockPanel>
+						</DataTemplate>
+					</ListBox.ItemTemplate>
+				</ListBox>
+			</DockPanel>
+		</styles:Card>
+		<styles:Card
+			Margin="5,5,5,5"
+			DockPanel.Dock="Top">
+			<DockPanel
+				LastChildFill="False"
+				Margin="5"
+				HorizontalAlignment="Stretch"
+				VerticalAlignment="Stretch">
+				<TextBlock
+					Classes="Headline5 Subheadline2"
+					DockPanel.Dock="Top"
+					VerticalAlignment="Center"
+					HorizontalAlignment="Left"
+					TextAlignment="Center"
+					Foreground="{DynamicResource MainTextAccent}"
+					Text="Current Nonce Account">
+				</TextBlock>
+				<TextBlock
+					Classes="Subtitle2"
+					Margin="20"
+					DockPanel.Dock="Top"
+					VerticalAlignment="Center"
+					HorizontalAlignment="Center"
+					TextAlignment="Center"
+					IsVisible="{Binding NoAccountsFound}"
+					Foreground="{DynamicResource MainTextAccent}"
+					Text="You have not added a multisig account yet!"/>
+				<DockPanel
+					Margin="20"
+					DockPanel.Dock="Bottom">
+					<common:TransactionSubmissionView
+						DockPanel.Dock="Top"
+						DataContext="{Binding TransactionSubmission}"/>
+				</DockPanel>
+				<DockPanel
+					DockPanel.Dock="Top"
+					IsVisible="{Binding !NoAccountsFound}"
+					Margin="15">
+					<TextBlock
+						Classes="Subtitle2"
+						Margin="5"
+						DockPanel.Dock="Top"
+						VerticalAlignment="Center"
+						HorizontalAlignment="Left"
+						TextAlignment="Center"
+						Foreground="{DynamicResource MainTextAccent}"
+						Text="Address"/>
+					<TextBlock
+						Classes="Body2"
+						Margin="5"
+						DockPanel.Dock="Top"
+						VerticalAlignment="Center"
+						HorizontalAlignment="Left"
+						TextAlignment="Center"
+						Foreground="{DynamicResource MainTextAccent}"
+						Text="{Binding CurrentNonceAccountMapping.Account}"/>
+				</DockPanel>
+				<DockPanel
+					DockPanel.Dock="Top"
+					IsVisible="{Binding !NoAccountsFound}"
+					Margin="15">
+					<TextBlock
+						Classes="Subtitle2"
+						Margin="5"
+						DockPanel.Dock="Top"
+						VerticalAlignment="Center"
+						HorizontalAlignment="Left"
+						TextAlignment="Center"
+						Foreground="{DynamicResource MainTextAccent}"
+						Text="Authority"/>
+					<TextBlock
+						Classes="Body2"
+						Margin="5"
+						DockPanel.Dock="Top"
+						VerticalAlignment="Center"
+						HorizontalAlignment="Left"
+						TextAlignment="Center"
+						Foreground="{DynamicResource MainTextAccent}"
+						Text="{Binding CurrentNonceAccountMapping.Authority}"/>
+				</DockPanel>
+				<DockPanel
+					DockPanel.Dock="Top"
+					IsVisible="{Binding !NoConnection}">
+					<DockPanel
+						DockPanel.Dock="Top"
+						Margin="15"
+						IsVisible="{Binding !FetchingNonceAccount}">
+						<TextBlock
+							Classes="Subtitle2"
+							Margin="5"
+							DockPanel.Dock="Top"
+							VerticalAlignment="Center"
+							HorizontalAlignment="Left"
+							TextAlignment="Center"
+							IsVisible="{Binding !ErrorFetchingNonceAccount}"
+							Foreground="{DynamicResource MainTextAccent}"
+							Text="Nonce"/>
+						<TextBlock
+							Classes="Body2"
+							Margin="5"
+							DockPanel.Dock="Top"
+							VerticalAlignment="Center"
+							HorizontalAlignment="Left"
+							TextAlignment="Center"
+							IsVisible="{Binding !ErrorFetchingNonceAccount}"
+							Foreground="{DynamicResource MainTextAccent}"
+							Text="{Binding CurrentNonce}"/>
+					</DockPanel>
+					<TextBlock
+						Classes="Subtitle2"
+						Margin="5"
+						DockPanel.Dock="Top"
+						VerticalAlignment="Center"
+						HorizontalAlignment="Center"
+						TextAlignment="Center"
+						Foreground="{DynamicResource ErrorAccent}"
+						Text="There was an error fetching this nonce account."
+						IsVisible="{Binding ErrorFetchingNonceAccount}"/>
+					<DockPanel
+						DockPanel.Dock="Top"
+						VerticalAlignment="Center"
+						HorizontalAlignment="Center"
+						Margin="15">
+						<TextBlock
+							Classes="Subtitle2"
+							Margin="5"
+							DockPanel.Dock="Top"
+							VerticalAlignment="Center"
+							HorizontalAlignment="Center"
+							TextAlignment="Center"
+							IsVisible="{Binding FetchingNonceAccount}"
+							Foreground="{DynamicResource MainTextAccent}"
+							Text="Fetching nonce account.."/>
+						<ProgressBar
+							DockPanel.Dock="Top"
+							VerticalAlignment="Center"
+							HorizontalAlignment="Center"
+							Classes="Circle"
+							IsIndeterminate="True"
+							IsVisible="{Binding FetchingNonceAccount}"
+							Width="20"
+							Height="20"
+							MinWidth="20"/>
+					</DockPanel>
+				</DockPanel>
+				<TextBlock
+					Classes="Subtitle2"
+					Margin="5"
+					DockPanel.Dock="Top"
+					VerticalAlignment="Center"
+					HorizontalAlignment="Center"
+					TextAlignment="Center"
+					IsVisible="{Binding NoConnection}"
+					Foreground="{DynamicResource ErrorAccent}"
+					Text="Cannot fetch nonces and new nonce accounts without a network connection."/>
+			</DockPanel>
+		</styles:Card>
+	</DockPanel>
+</UserControl>

@@ -1,7 +1,9 @@
 ﻿using Anvil.Services.Store.Events;
 using Anvil.Services.Store.State;
 using Anvil.Services.Wallets;
+using Anvil.Services.Wallets.SubWallets;
 using System;
+using System.Collections.Generic;
 
 namespace Anvil.Services.Store
 {
@@ -37,6 +39,13 @@ namespace Anvil.Services.Store
         void Persist(KeyStoreState state);
 
         /// <summary>
+        /// Edit the alias of an aliased wallet.
+        /// </summary>
+        /// <param name="aliasedWallet">The aliased wallet.</param>
+        /// <param name="newAlias">The new alias.</param>
+        void EditAlias(IAliasedWallet aliasedWallet, string newAlias);
+
+        /// <summary>
         /// Add a wallet by derivation index.
         /// </summary>
         /// <param name="derivationIndexWallet">The derivation index wallet.</param>
@@ -47,6 +56,12 @@ namespace Anvil.Services.Store
         /// </summary>
         /// <param name="privateKeyWallet">The private key wallet.</param>
         void AddWallet(PrivateKeyWallet privateKeyWallet);
+
+        /// <summary>
+        /// Remove a wallet by private key.
+        /// </summary>
+        /// <param name="privateKeyWallets">The private key wallets.</param>
+        void RemoveWallets(List<PrivateKeyWallet> privateKeyWallets);
 
         /// <summary>
         /// Add a wallet by mnemonic. 

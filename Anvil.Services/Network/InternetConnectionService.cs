@@ -22,14 +22,14 @@ namespace Anvil.Services.Network
         /// <summary>
         /// The cancellation token source for the periodic task.
         /// </summary>
-        private CancellationTokenSource cancellationTokenSource;
+        private readonly CancellationTokenSource _cancellationTokenSource;
 
         /// <summary>
         /// Initialize  the internet service.
         /// </summary>
         public InternetConnectionService()
         {
-            cancellationTokenSource = new();
+            _cancellationTokenSource = new();
         }
 
         /// <summary>
@@ -40,10 +40,10 @@ namespace Anvil.Services.Network
         {
             return Task.Run(() =>
             {
-                while (!cancellationTokenSource.Token.IsCancellationRequested)
+                while (!_cancellationTokenSource.Token.IsCancellationRequested)
                 {
                     IsConnected = TryPing();
-                    Task.Delay(5000, cancellationTokenSource.Token).Wait();
+                    Task.Delay(15000, _cancellationTokenSource.Token).Wait();
                 }
             });
         }
@@ -52,10 +52,10 @@ namespace Anvil.Services.Network
         /// Attempts to ping the host.
         /// </summary>
         /// <returns>true if it succeeds, else false.</returns>
-        private bool TryPing()
+        private static bool TryPing()
         {
             bool result = false;
-            Ping p = new Ping();
+            Ping p = new ();
             try
             {
                 PingReply reply = p.Send(Host, 443);
@@ -74,7 +74,7 @@ namespace Anvil.Services.Network
         /// </summary>
         public void Stop()
         {
-            cancellationTokenSource.Cancel();
+            _cancellationTokenSource.Cancel();
         }
 
         /// <summary>

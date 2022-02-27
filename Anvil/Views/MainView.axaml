@@ -6,49 +6,16 @@
 			 xmlns:views="clr-namespace:Anvil.Views"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Anvil.Views.MainView">
-
-	<ContentPresenter
-		Name="MainContentPresenter"
+	<DockPanel
+		LastChildFill="True"
 		Background="{DynamicResource AppBackgroundColor}">
-		<Interaction.Behaviors>
-			<DataTriggerBehavior
-				Binding="{Binding WalletUnlocked, Mode=OneWay}"
-				ComparisonCondition="Equal"
-				Value="True">
-				<ChangePropertyAction
-					TargetObject="{Binding #PasswordContentPresenter}"
-					PropertyName="Content">
-					<ChangePropertyAction.Value>
-						<DockPanel LastChildFill="True">
-							<views:SideBarView DockPanel.Dock="Left"/>
-							<ContentPresenter>
-								<ContentPresenter.Content>
-									<ContentControl Content="{Binding CurrentView}"/>
-								</ContentPresenter.Content>
-							</ContentPresenter>
-						</DockPanel>
-					</ChangePropertyAction.Value>
-				</ChangePropertyAction>
-			</DataTriggerBehavior>
-			<DataTriggerBehavior
-				Binding="{Binding WalletUnlocked, Mode=OneWay}"
-				ComparisonCondition="Equal"
-				Value="False">
-				<ChangePropertyAction
-					TargetObject="{Binding #PasswordContentPresenter}"
-					PropertyName="Content">
-					<ChangePropertyAction.Value>
-						<DockPanel LastChildFill="True">
-							<ContentPresenter>
-								<ContentPresenter.Content>
-									<ContentControl Content="{Binding CurrentView}"/>
-								</ContentPresenter.Content>
-							</ContentPresenter>
-						</DockPanel>
-					</ChangePropertyAction.Value>
-				</ChangePropertyAction>
-			</DataTriggerBehavior>
-		</Interaction.Behaviors>
-	</ContentPresenter>
-
+		<views:SideBarView
+			IsVisible="{Binding WalletUnlocked}"
+			DockPanel.Dock="Left"/>
+		<ContentPresenter>
+			<ContentPresenter.Content>
+				<ContentControl Content="{Binding CurrentView}"/>
+			</ContentPresenter.Content>
+		</ContentPresenter>
+	</DockPanel>
 </UserControl>

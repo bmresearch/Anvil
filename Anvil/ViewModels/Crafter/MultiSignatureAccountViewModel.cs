@@ -1,4 +1,5 @@
-﻿using ReactiveUI;
+﻿using Anvil.Models;
+using ReactiveUI;
 using Solnet.Programs.Models.TokenProgram;
 using Solnet.Wallet;
 using System.Collections.ObjectModel;

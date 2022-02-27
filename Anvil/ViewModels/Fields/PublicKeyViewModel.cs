@@ -1,13 +1,8 @@
 ﻿using Anvil.Core.ViewModels;
 using ReactiveUI;
-using Solnet.Rpc.Utilities;
 using Solnet.Wallet;
 using Solnet.Wallet.Utilities;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Anvil.ViewModels.Fields
 {
@@ -18,7 +13,11 @@ namespace Anvil.ViewModels.Fields
             this.WhenAnyValue(x => x.PublicKeyString)
                 .Subscribe(x => 
                 {
-                    if (PublicKey != null) PublicKey = null;
+                    if (PublicKey != null) 
+                    { 
+                        PublicKey = null;
+                        Verified = false;
+                    }
                     Input = !string.IsNullOrEmpty(x);
                     byte[] decoded;
                     try
@@ -27,12 +26,15 @@ namespace Anvil.ViewModels.Fields
                     }
                     catch (Exception ex)
                     {
-                        Console.WriteLine($"Exception trying to decode address: {ex.Message}");
                         Verified = false;
                         return;
                     }
-                    if (decoded.Length == 0) return;
-                    Verified = Ed25519Extensions.IsOnCurve(decoded);
+                    if (decoded.Length != PublicKey.PublicKeyLength) 
+                    { 
+                        Verified = false;
+                        return;
+                    }
+                    Verified = decoded.IsOnCurve();
                     if(Verified) PublicKey = new PublicKey(_publicKeyString);
                 });
         }

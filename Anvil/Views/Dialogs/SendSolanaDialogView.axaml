@@ -1,0 +1,124 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:dialogs="clr-namespace:Anvil.ViewModels.Dialogs"
+             xmlns:styles="clr-namespace:Material.Styles;assembly=Material.Styles"
+             xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+			 xmlns:uc="clr-namespace:Anvil.Views.Common;assembly=Anvil"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="Anvil.Views.Dialogs.SendSolanaDialogView"
+             Background="Transparent">
+
+	<Design.DataContext>
+		<dialogs:SendTokenDialogViewModel />
+	</Design.DataContext>
+
+	<styles:Card Background="{DynamicResource CardBackgroundColor}">
+		<DockPanel LastChildFill="False">
+			<TextBlock
+                DockPanel.Dock="Top"
+                Classes="Headline5"
+                Margin="5"
+                TextAlignment="Center"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Stretch"
+                Text="Send Solana" />
+			<StackPanel
+                DockPanel.Dock="Top"
+				Orientation="Horizontal">
+				<TextBlock
+					Text="Destination"
+					Margin="5"
+					VerticalAlignment="Center"
+					HorizontalAlignment="Left"
+					Classes="Subtitle1" />
+				<avalonia:MaterialIcon
+					ToolTip.Tip="The destination of the transfer."
+					Kind="InformationCircleOutline" />
+				<uc:AddressBookButton
+					HorizontalAlignment="Center"
+					VerticalAlignment="Center"
+					SelectedAddress="{Binding Destination.PublicKeyString, Mode=TwoWay}"/>
+			</StackPanel>
+			<ContentControl
+                DockPanel.Dock="Top"
+				Margin="5"
+				Content="{Binding Destination}"/>
+			<StackPanel
+				DockPanel.Dock="Top"
+				Orientation="Horizontal">
+				<TextBlock
+					VerticalAlignment="Center"
+					HorizontalAlignment="Left"
+					Text="Balance"
+					Margin="5"
+					Classes="Subtitle1"/>
+				<avalonia:MaterialIcon
+					ToolTip.Tip="The current balance."
+					Kind="InformationCircleOutline" />
+			</StackPanel>
+			<TextBox
+				DockPanel.Dock="Top"
+				VerticalAlignment="Stretch"
+				HorizontalAlignment="Stretch"
+				Text="{Binding Balance}"
+				IsReadOnly="True"
+				IsHitTestVisible="False"
+				Margin="5"
+				Classes="Filled"/>
+			<StackPanel
+				DockPanel.Dock="Top"
+				Orientation="Horizontal">
+				<TextBlock
+					VerticalAlignment="Center"
+					HorizontalAlignment="Left"
+					Text="Amount"
+					Margin="5"
+					Classes="Subtitle1"/>
+				<avalonia:MaterialIcon
+					ToolTip.Tip="The amount to transfer."
+					Kind="InformationCircleOutline" />
+			</StackPanel>
+			<DockPanel
+				DockPanel.Dock="Top"
+				VerticalAlignment="Stretch"
+				HorizontalAlignment="Stretch">
+				<Button
+					DockPanel.Dock="Right"
+					Content="Max"
+					VerticalAlignment="Stretch"
+					HorizontalAlignment="Stretch"
+					Margin="5"
+					Height="32"
+					Command="{Binding Max}"/>
+				<TextBox
+					DockPanel.Dock="Left"
+					VerticalAlignment="Stretch"
+					HorizontalAlignment="Stretch"
+					Text="{Binding Amount, Converter={StaticResource StringToDecimalConverter}, Mode=TwoWay}"
+					Margin="5"
+					Classes="Filled"/>
+			</DockPanel>
+			<StackPanel
+				DockPanel.Dock="Top"
+				Orientation="Horizontal"
+				HorizontalAlignment="Center"
+				Spacing="10"
+				Margin="0,10,0,0"
+				VerticalAlignment="Bottom">
+				<Button
+					Content="Cancel"
+					HorizontalAlignment="Left"
+					Command="{Binding Cancel}"
+					CommandParameter="{Binding $parent[Window]}" />
+				<Button
+					Content="Confirm"
+					HorizontalAlignment="Right"
+					Command="{Binding Confirm}"
+					CommandParameter="{Binding $parent[Window]}"
+					IsEnabled="{Binding IsInputValid}" />
+			</StackPanel>
+		</DockPanel>
+	</styles:Card>
+</UserControl>

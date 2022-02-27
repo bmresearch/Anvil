@@ -1,8 +1,10 @@
 ﻿using Anvil.Services.Store.Config;
+using Anvil.Services.Store.Events;
 using Anvil.Services.Store.Models;
 using Anvil.Services.Store.State;
 using Microsoft.Extensions.Logging;
 using Solnet.Wallet;
+using System;
 using System.Collections.Generic;
 
 namespace Anvil.Services.Store
@@ -20,8 +22,8 @@ namespace Anvil.Services.Store
         /// <summary>
         /// Initialize the <see cref="NonceAccountMappingStore"/> with the given <see cref="ILogger"/> and <see cref="StoreConfig"/>.
         /// </summary>
-        /// <param name="logger"></param>
-        /// <param name="config"></param>
+        /// <param name="logger">The logger.</param>
+        /// <param name="config">The store config.</param>
         public NonceAccountMappingStore(ILogger logger, StoreConfig config) : base(logger, config)
         {
             _state = _persistenceDriver.LoadState<NonceAccountMappingState>();
@@ -38,9 +40,10 @@ namespace Anvil.Services.Store
         /// </summary>
         /// <param name="sender">The sender.</param>
         /// <param name="e">The event.</param>
-        private void _state_OnStateChanged(object sender, Events.NonceAccountMappingStateChangedEventArgs e)
+        private void _state_OnStateChanged(object sender, NonceAccountMappingStateChangedEventArgs e)
         {
             _persistenceDriver.SaveState(e.State);
+            OnStateChanged?.Invoke(this, e);
         }
 
         /// <inheritdoc cref="INonceAccountMappingStore.AddMapping(NonceAccountMapping)"></inheritdoc>
@@ -61,6 +64,13 @@ namespace Anvil.Services.Store
             get => _state.NonceAccountMappings;
         }
 
+        /// <inheritdoc cref="INonceAccountMappingStore.OnStateChanged"
+        public event EventHandler<NonceAccountMappingStateChangedEventArgs> OnStateChanged;
+
+        /// <summary>
+        /// The name of the store file.
+        /// </summary>
         public const string FileName = "nonceaccount.store";
+
     }
 }

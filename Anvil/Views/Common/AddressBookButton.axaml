@@ -1,0 +1,82 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+			 xmlns:styles="clr-namespace:Material.Styles;assembly=Material.Styles"
+             xmlns:assists="clr-namespace:Material.Styles.Assists;assembly=Material.Styles"
+             xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="Anvil.Views.Common.AddressBookButton">
+	<Button
+		x:Name="flyOutButton"
+		Height="32"
+		Width="32"
+		Margin="5"
+		HorizontalAlignment="Center"
+		VerticalAlignment="Center">
+		<avalonia:MaterialIcon Kind="BookAccountOutline"
+							   HorizontalAlignment="Center"
+							   VerticalAlignment="Center"/>
+		<ToolTip.Tip>Address Book</ToolTip.Tip>
+		<Button.Styles>
+			<Style Selector="FlyoutPresenter">
+				<Setter Property="Background" Value="WhiteSmoke" />
+				<Setter Property="Padding" Value="5" />
+				<Setter Property="assists:ShadowAssist.ShadowDepth" Value="Depth5"/>
+				<Setter Property="assists:ShadowAssist.Darken" Value="True"/>
+				<Setter Property="Cursor" Value="Arrow" />
+			</Style>
+		</Button.Styles>
+		<Button.Flyout>
+			<Flyout
+				Placement="Bottom">
+				<DockPanel
+					LastChildFill="True"
+					MaxHeight="500"
+					Width="300">
+					<TextBlock
+						DockPanel.Dock="Top"
+						Margin="5"
+						Classes="Subtitle2"
+						Text="Address Book"
+						VerticalAlignment="Center"
+						HorizontalAlignment="Center"
+						Foreground="Black"/>
+					<ListBox
+						x:Name="addressBookList"
+						DockPanel.Dock="Top"
+						ScrollViewer.VerticalScrollBarVisibility="Visible"
+						Padding="0,0,10,0"
+						Margin="5"
+						VerticalAlignment="Stretch"
+						HorizontalAlignment="Stretch"
+						SelectionMode="Single"
+						SelectedItem="{Binding SelectedAddressBookItem}"
+						Items="{Binding AddressBookItems}">
+						<ListBox.Template>
+						</ListBox.Template>
+						<ListBox.ItemTemplate>
+							<DataTemplate>
+								<DockPanel
+									Margin="5"
+									HorizontalAlignment="Stretch"
+									VerticalAlignment="Stretch">
+									<TextBlock
+										DockPanel.Dock="Right"
+										Margin="5"
+										Classes="Body2"
+										Text="{Binding ShortenedAddress}"/>
+									<TextBlock
+										DockPanel.Dock="Left"
+										Margin="5"
+										Classes="Subtitle2"
+										Text="{Binding Alias}"/>
+								</DockPanel>
+							</DataTemplate>
+						</ListBox.ItemTemplate>
+					</ListBox>
+				</DockPanel>
+			</Flyout>
+		</Button.Flyout>
+	</Button>
+</UserControl>

@@ -1,4 +1,5 @@
 ﻿using Anvil.Core.ViewModels;
+using Anvil.Models;
 using ReactiveUI;
 using System;
 using System.Collections.Generic;
@@ -31,30 +32,15 @@ namespace Anvil.ViewModels.Crafter
             set => this.RaiseAndSetIfChanged(ref _selectedAsset, value);
         }
 
-        private string _amount = "0";
-        public string Amount
+        private decimal _amount = 0m;
+        public decimal Amount
         {
             get => _amount;
             set
             {
-                var success = float.TryParse(value, out float converted);
-                if (success)
-                {
-                    this.RaiseAndSetIfChanged(ref _amount, value);
-                    AssetAmount = converted;
-                }
-            }
-        }
-
-        private float _assetAmount = 0f;
-        public float AssetAmount
-        {
-            get => _assetAmount;
-            set
-            {
-                this.RaiseAndSetIfChanged(ref _assetAmount, value);
-                this.RaisePropertyChanged("InsufficientBalance");
-                this.RaisePropertyChanged("InputValidated");
+                this.RaiseAndSetIfChanged(ref _amount, value);
+                this.RaisePropertyChanged(nameof(InsufficientBalance));
+                this.RaisePropertyChanged(nameof(InputValidated));
             }
         }
 
@@ -62,7 +48,7 @@ namespace Anvil.ViewModels.Crafter
         {
             get
             {
-                return (decimal)AssetAmount > SelectedAsset.Balance;
+                return Amount > SelectedAsset.Balance;
             }
         }
 
@@ -70,7 +56,7 @@ namespace Anvil.ViewModels.Crafter
         {
             get
             {
-                return AssetAmount > 0f && !InsufficientBalance;
+                return Amount > 0m && !InsufficientBalance;
             }
         }
     }

@@ -44,13 +44,13 @@
 											PropertyName="Content">
 											<ChangePropertyAction.Value>
 												<TextBlock
-													Classes="Body1"
+													Classes="Body2"
 													Text="Public key is invalid."
 													TextAlignment="Left"
 													VerticalAlignment="Center"
 													HorizontalAlignment="Left"
 													Margin="5,-5,0,5"
-													Foreground="{DynamicResource ErrorAccent}"/>
+													Foreground="Red"/>
 											</ChangePropertyAction.Value>
 										</ChangePropertyAction>
 									</DataTriggerBehavior>
@@ -63,13 +63,13 @@
 											PropertyName="Content">
 											<ChangePropertyAction.Value>
 												<TextBlock
-													Classes="Body1"
+													Classes="Body2"
 													Text="Public key is valid."
 													TextAlignment="Left"
 													VerticalAlignment="Center"
 													HorizontalAlignment="Left"
 													Margin="5,-5,0,5"
-													Foreground="{DynamicResource ValidatedAccent}"/>
+													Foreground="Green"/>
 											</ChangePropertyAction.Value>
 										</ChangePropertyAction>
 									</DataTriggerBehavior>
@@ -89,14 +89,14 @@
 				Classes="Filled"
 				Text="{Binding PublicKeyString}"
 				VerticalAlignment="Center"
-				HorizontalAlignment="Left"
+				HorizontalAlignment="Center"
 				Width="450"/>
 			<Button
-				DockPanel.Dock="Right"
+				DockPanel.Dock="Left"
 				Classes="Flat"
 				ToolTip.Tip="Remove this signer"
 				VerticalAlignment="Center"
-				HorizontalAlignment="Right"
+				HorizontalAlignment="Center"
 				Height="32"
 				Width="32"
 				Margin="5"

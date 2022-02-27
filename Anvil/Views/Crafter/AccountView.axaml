@@ -78,7 +78,7 @@
 			</StackPanel>
 			<TextBox
 				Classes="Filled"
-				Text="{Binding Amount}"
+				Text="{Binding Amount, Converter={StaticResource StringToDecimalConverter}}"
 				VerticalAlignment="Center"
 				HorizontalAlignment="Left"
 				Width="500"/>

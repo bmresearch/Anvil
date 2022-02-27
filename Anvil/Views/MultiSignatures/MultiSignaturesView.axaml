@@ -3,30 +3,237 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 			 xmlns:styles="clr-namespace:Material.Styles;assembly=Material.Styles"
+			 xmlns:common="clr-namespace:Anvil.Views.Common"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Anvil.Views.MultiSignatures.MultiSignaturesView">
-	
-	<styles:Card
-		  Margin="5">
-		<TabControl
-			Classes="Scrollable"
-			Items="{Binding Tabs}">
-			<TabControl.ItemTemplate>
-				<DataTemplate>
+
+	<DockPanel
+		LastChildFill="True">
+		<styles:Card
+			Margin="5,5,0,5"
+			DockPanel.Dock="Left">
+			<DockPanel
+				LastChildFill="False"
+				Margin="5"
+				HorizontalAlignment="Stretch"
+				VerticalAlignment="Stretch"
+				Width="250">
+				<StackPanel
+					Orientation="Vertical"
+					DockPanel.Dock="Bottom"
+					HorizontalAlignment="Stretch"
+					VerticalAlignment="Bottom">
+					<Button
+						Margin="5"
+						VerticalAlignment="Center"
+						HorizontalAlignment="Center"
+						Background="{DynamicResource ButtonBackgroundColor}"
+						IsEnabled="{Binding !NoConnection}"
+						Command="{Binding CreateMultiSignatureAccount}"
+						Content="Create Multisig Account"/>
+					<Button
+						Margin="5"
+						VerticalAlignment="Center"
+						HorizontalAlignment="Center"
+						Background="{DynamicResource ButtonBackgroundColor}"
+						IsEnabled="{Binding !NoConnection}"
+						Command="{Binding ImportMultiSignatureAccount}"
+						Content="Import Multisig Account"/>
+					<Button
+						Margin="5"
+						VerticalAlignment="Center"
+						HorizontalAlignment="Center"
+						Background="{DynamicResource ButtonBackgroundColor}"
+						IsEnabled="{Binding !NoConnection}"
+						Command="{Binding ImportMultiSignatureAccountFromPublicKey}"
+						Content="Import Multisig From Public Key"/>
+				</StackPanel>
+				<TextBlock
+					Classes="Headline5 Subheadline2"
+					DockPanel.Dock="Top"
+					VerticalAlignment="Center"
+					HorizontalAlignment="Left"
+					TextAlignment="Center"
+					Foreground="{DynamicResource MainTextAccent}"
+					Text="Multisig Accounts">
+				</TextBlock>
+				<ListBox
+					SelectionMode="Single"
+					SelectedItem="{Binding CurrentMultiSigAccount}"
+					Items="{Binding MultiSigAccounts}">
+					<ListBox.Template>
+					</ListBox.Template>
+					<ListBox.ItemTemplate>
+						<DataTemplate>
+							<DockPanel
+								Margin="5"
+								HorizontalAlignment="Stretch"
+								VerticalAlignment="Stretch">
+								<TextBlock
+									DockPanel.Dock="Right"
+									Margin="5"
+									Classes="Body2"
+									Text="{Binding ShortenedAddress}"/>
+								<Separator />
+								<TextBlock
+									DockPanel.Dock="Left"
+									Margin="5"
+									Classes="Subtitle2"
+									Text="{Binding Alias}"/>
+							</DockPanel>
+						</DataTemplate>
+					</ListBox.ItemTemplate>
+				</ListBox>
+			</DockPanel>
+		</styles:Card>
+		<styles:Card
+			Margin="5,5,0,5"
+			DockPanel.Dock="Top">
+			<DockPanel
+				LastChildFill="False"
+				Margin="5"
+				HorizontalAlignment="Stretch"
+				VerticalAlignment="Stretch">
+				<TextBlock
+					Classes="Headline5 Subheadline2"
+					DockPanel.Dock="Top"
+					VerticalAlignment="Center"
+					HorizontalAlignment="Left"
+					TextAlignment="Center"
+					Foreground="{DynamicResource MainTextAccent}"
+					Text="Current Multisig Account">
+				</TextBlock>
+				<TextBlock
+					Classes="Subtitle2"
+					Margin="20"
+					DockPanel.Dock="Top"
+					VerticalAlignment="Center"
+					HorizontalAlignment="Center"
+					TextAlignment="Center"
+					IsVisible="{Binding NoAccountsFound}"
+					Foreground="{DynamicResource MainTextAccent}"
+					Text="You have not added a multisig account yet!"/>
+				<DockPanel
+					Margin="20"
+					DockPanel.Dock="Bottom">
+					<common:TransactionSubmissionView
+						DockPanel.Dock="Top"
+						DataContext="{Binding TransactionSubmission}"/>
+				</DockPanel>
+				<DockPanel
+					DockPanel.Dock="Top"
+					IsVisible="{Binding !NoAccountsFound}"
+					Margin="5">
 					<TextBlock
-						Text="{Binding Header}"
-						Classes="Headline6 Subheadline2 Centered"
-						Foreground="{DynamicResource MainTextAccent}"/>
-				</DataTemplate>
-			</TabControl.ItemTemplate>
-			<TabControl.ContentTemplate>
-				<DataTemplate>
-					<DataTemplate.Content>
-						<ContentPresenter Content="{Binding $parent.SelectedItem}"/>
-					</DataTemplate.Content>
-				</DataTemplate>
-			</TabControl.ContentTemplate>
-		</TabControl>
-	</styles:Card>
-	
+						Classes="Subtitle2"
+						Margin="5"
+						DockPanel.Dock="Top"
+						VerticalAlignment="Center"
+						HorizontalAlignment="Left"
+						TextAlignment="Center"
+						Foreground="{DynamicResource MainTextAccent}"
+						Text="Address"/>
+					<TextBlock
+						Classes="Body2"
+						Margin="5"
+						DockPanel.Dock="Top"
+						VerticalAlignment="Center"
+						HorizontalAlignment="Left"
+						TextAlignment="Center"
+						Foreground="{DynamicResource MainTextAccent}"
+						Text="{Binding CurrentMultiSigAccountMapping.Address}"/>
+				</DockPanel>
+				<DockPanel
+					DockPanel.Dock="Top"
+					IsVisible="{Binding !NoAccountsFound}"
+					Margin="5">
+					<TextBlock
+						Classes="Subtitle2"
+						Margin="5"
+						DockPanel.Dock="Top"
+						VerticalAlignment="Center"
+						HorizontalAlignment="Left"
+						TextAlignment="Center"
+						Foreground="{DynamicResource MainTextAccent}"
+						Text="Minimum Signers"/>
+					<TextBlock
+						Classes="Body2"
+						Margin="5"
+						DockPanel.Dock="Top"
+						VerticalAlignment="Center"
+						HorizontalAlignment="Left"
+						TextAlignment="Center"
+						Foreground="{DynamicResource MainTextAccent}"
+						Text="{Binding CurrentMultiSigAccountMapping.MinimumSigners}"/>
+					<TextBlock
+						Classes="Body2"
+						Margin="5"
+						DockPanel.Dock="Top"
+						VerticalAlignment="Center"
+						HorizontalAlignment="Left"
+						TextAlignment="Center"
+						Foreground="{DynamicResource MainTextAccent}"
+						Text="of"/>
+					<TextBlock
+						Classes="Body2"
+						Margin="5"
+						DockPanel.Dock="Top"
+						VerticalAlignment="Center"
+						HorizontalAlignment="Left"
+						TextAlignment="Center"
+						Foreground="{DynamicResource MainTextAccent}"
+						Text="{Binding CurrentMultiSigAccount.NumberSigners}"/>
+				</DockPanel>
+				<DockPanel
+					DockPanel.Dock="Top"
+					IsVisible="{Binding !NoAccountsFound}"
+					Margin="5">
+					<TextBlock
+						Classes="Subtitle2"
+						Margin="5"
+						DockPanel.Dock="Top"
+						VerticalAlignment="Center"
+						HorizontalAlignment="Left"
+						TextAlignment="Center"
+						Foreground="{DynamicResource MainTextAccent}"
+						Text="Signers"/>
+					<ListBox
+						Items="{Binding CurrentMultiSigAccountMapping.Signers}"
+						IsHitTestVisible="False"
+						VerticalAlignment="Center"
+						HorizontalAlignment="Left"
+						ScrollViewer.VerticalScrollBarVisibility="Auto"
+						Width="500"
+						Margin="5">
+						<ListBox.ItemTemplate>
+							<DataTemplate>
+								<DockPanel
+									HorizontalAlignment="Stretch"
+									VerticalAlignment="Stretch">
+									<TextBlock
+										DockPanel.Dock="Right"
+										Classes="Body1"
+										Text="{Binding}"
+										TextAlignment="Left"
+										VerticalAlignment="Center"
+										HorizontalAlignment="Left"
+										Margin="5"/>
+								</DockPanel>
+							</DataTemplate>
+						</ListBox.ItemTemplate>
+					</ListBox>
+				</DockPanel>
+				<TextBlock
+					Classes="Subtitle2"
+					Margin="5"
+					DockPanel.Dock="Top"
+					VerticalAlignment="Center"
+					HorizontalAlignment="Center"
+					TextAlignment="Center"
+					IsVisible="{Binding NoConnection}"
+					Foreground="{DynamicResource ErrorAccent}"
+					Text="Cannot fetch new multisigs without a network connection."/>
+			</DockPanel>
+		</styles:Card>
+	</DockPanel>
 </UserControl>

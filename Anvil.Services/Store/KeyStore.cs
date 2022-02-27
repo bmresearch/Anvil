@@ -2,8 +2,10 @@
 using Anvil.Services.Store.Events;
 using Anvil.Services.Store.State;
 using Anvil.Services.Wallets;
+using Anvil.Services.Wallets.SubWallets;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Collections.Generic;
 
 namespace Anvil.Services.Store
 {
@@ -61,6 +63,12 @@ namespace Anvil.Services.Store
             _state.AddWallet(privateKeyWallet);
         }
 
+        /// <inheritdoc cref="IKeyStore.RemoveWallets(PrivateKeyWallet)"/>
+        public void RemoveWallets(List<PrivateKeyWallet> privateKeyWallets)
+        {
+            _state.RemoveWallets(privateKeyWallets);
+        }
+
         /// <inheritdoc cref="IKeyStore.AddWallet(string)"/>
         public void AddWallet(string mnemonic)
         {
@@ -71,6 +79,18 @@ namespace Anvil.Services.Store
         public void Persist(KeyStoreState state)
         {
             _persistenceDriver.SaveState(state);
+        }
+
+        /// <inheritdoc cref="IKeyStore.EditAlias(IAliasedWallet, string)"/>
+        public void EditAlias(IAliasedWallet aliasedWallet, string newAlias)
+        {
+            if(aliasedWallet is DerivationIndexWallet derivationIndexWallet)
+            {
+                _state.EditAlias(derivationIndexWallet, newAlias);
+            } else if(aliasedWallet is PrivateKeyWallet privateKeyWallet)
+            {
+                _state.EditAlias(privateKeyWallet, newAlias);
+            }
         }
 
         /// <summary>

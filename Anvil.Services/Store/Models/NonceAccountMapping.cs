@@ -1,9 +1,4 @@
 ﻿using Solnet.Wallet;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Anvil.Services.Store.Models
 {
@@ -22,5 +17,10 @@ namespace Anvil.Services.Store.Models
         /// The <see cref="PublicKey"/> of the <see cref="NonceAccount"/>.
         /// </summary>
         public string Account { get; set; }
+
+        /// <summary>
+        /// The shortened address
+        /// </summary>
+        public string ShortenedAddress { get => Account[..6] + "..." + Account[^6..]; }
     }
 }

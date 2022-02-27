@@ -1,9 +1,6 @@
-﻿using Solnet.Wallet;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Anvil.Services.Wallets.Enums;
+using Anvil.Services.Wallets.SubWallets;
+using Solnet.Wallet;
 
 namespace Anvil.Services.Wallets
 {
@@ -18,6 +15,11 @@ namespace Anvil.Services.Wallets
         public SubWalletType SubWalletType { get; }
 
         /// <summary>
+        /// The aliased wallet.
+        /// </summary>
+        public IAliasedWallet AliasedWallet { get; }
+
+        /// <summary>
         /// The wallet address.
         /// </summary>
         public PublicKey Address { get; }
@@ -26,6 +28,11 @@ namespace Anvil.Services.Wallets
         /// The wallet's shortened address.
         /// </summary>
         public string ShortenedAddress { get; }
+
+        /// <summary>
+        /// The wallet's alias.
+        /// </summary>
+        public string Alias { get; set; }
 
         /// <summary>
         /// Request a signature of the given data.

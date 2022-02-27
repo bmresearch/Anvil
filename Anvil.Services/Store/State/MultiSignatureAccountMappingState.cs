@@ -29,7 +29,23 @@ namespace Anvil.Services.Store.State
         /// <returns>The mapping.</returns>
         public MultiSignatureAccountMapping GetMapping(PublicKey account)
         {
-            return MultiSignatureAccountMappings.FirstOrDefault(x => x.MultiSignature == account.Key);
+            return MultiSignatureAccountMappings.FirstOrDefault(x => x.Address == account.Key);
+        }
+
+        /// <summary>
+        /// Edits the alias of a given multi signature account.
+        /// </summary>
+        /// <param name="account">The multi signature account.</param>
+        /// <param name="newAlias">The new alias.</param>
+        public void EditAlias(string account, string newAlias)
+        {
+            var multiSig = MultiSignatureAccountMappings.FirstOrDefault(x => x.Address == account);
+            
+            if (multiSig != null)
+            {
+                multiSig.Alias = newAlias;
+                OnStateChanged?.Invoke(this, new MultiSignatureAccountMappingStateChangedEventArgs(this));
+            }
         }
 
         /// <summary>

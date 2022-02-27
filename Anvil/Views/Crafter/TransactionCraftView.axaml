@@ -3,8 +3,10 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 			 xmlns:styles="clr-namespace:Material.Styles;assembly=Material.Styles"
+             xmlns:assists="clr-namespace:Material.Styles.Assists;assembly=Material.Styles"
              xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
 			 xmlns:fields="clr-namespace:Anvil.Views.Fields;assembly=Anvil"
+			 xmlns:uc="clr-namespace:Anvil.Views.Common;assembly=Anvil"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Anvil.Views.Crafter.TransactionCraftView">
 
@@ -13,331 +15,388 @@
 		HorizontalAlignment="Stretch"
 		VerticalAlignment="Stretch">
 		<styles:Card
-			Margin="5"
-			DockPanel.Dock="Bottom"
-			IsVisible="{Binding !TransactionCrafted}">
+			Margin="50"
+			DockPanel.Dock="Top"
+			IsVisible="{Binding NoConnection}"
+			VerticalAlignment="Center"
+			HorizontalAlignment="Center">
 			<DockPanel
 				Margin="5"
-				HorizontalAlignment="Stretch"
-				VerticalAlignment="Stretch">
-				<Button
+				VerticalAlignment="Stretch"
+				HorizontalAlignment="Stretch">
+				<TextBlock
 					DockPanel.Dock="Top"
-					Classes="Filled"
+					VerticalAlignment="Center"
+					HorizontalAlignment="Center"
+					Classes="Subtitle2"
+					Foreground="{DynamicResource ErrorAccent}"
+					Text="Cannot craft transactions without a network connection."/>
+			</DockPanel>
+		</styles:Card>
+		<DockPanel
+			DockPanel.Dock="Bottom"
+			IsVisible="{Binding !NoConnection}">
+			<styles:Card
+				Margin="5"
+				DockPanel.Dock="Top"
+				IsVisible="{Binding !TransactionCrafted}">
+				<DockPanel
 					Margin="5"
-					Content="Craft Transaction"
-					Command="{Binding CraftTransaction}"
-					IsEnabled="{Binding CanCraftTransaction}"
-					Width="150"
-					VerticalAlignment="Center"
-					HorizontalAlignment="Center"/>
-			</DockPanel>
-		</styles:Card>
-		<styles:Card
-			Margin="5"
-			DockPanel.Dock="Bottom"
-			IsVisible="{Binding TransactionCrafted}">
-			<DockPanel
-				Margin="5"
-				HorizontalAlignment="Stretch"
-				VerticalAlignment="Stretch">
-				<StackPanel
-					DockPanel.Dock="Top"
-					Orientation="Horizontal"
-					VerticalAlignment="Center"
-					HorizontalAlignment="Center"
-					Margin="5">
-					<Button
-						Classes="Filled"
-						VerticalAlignment="Center"
-						HorizontalAlignment="Center"
-						Margin="5"
-						Content="Save Transaction"
-						Command="{Binding SaveTransaction}"/>
-				</StackPanel>
-				<StackPanel
-					DockPanel.Dock="Top"
-					Orientation="Horizontal"
-					VerticalAlignment="Center"
-					HorizontalAlignment="Center"
-					Margin="5">
-					<Button
-						Classes="Filled"
-						VerticalAlignment="Center"
-						HorizontalAlignment="Center"
-						Margin="5"
-						Content="Edit Transaction"
-						Command="{Binding EditTransaction}"/>
-					<Button
-						Classes="Filled"
-						VerticalAlignment="Center"
-						HorizontalAlignment="Center"
-						Margin="5"
-						Content="Craft New Transaction"
-						Command="{Binding CraftNewTransaction}"/>
-				</StackPanel>
-			</DockPanel>
-		</styles:Card>
-		<styles:Card
-			Margin="5"
-			DockPanel.Dock="Left"
-			IsVisible="{Binding !TransactionCrafted}">
-			<DockPanel
-				Margin="5"
-				HorizontalAlignment="Stretch"
-				VerticalAlignment="Stretch">
-				<StackPanel
-					DockPanel.Dock="Top"
-					Orientation="Vertical"
 					HorizontalAlignment="Stretch"
 					VerticalAlignment="Stretch">
-					<StackPanel Orientation="Horizontal">
+					<Button
+						DockPanel.Dock="Top"
+						Classes="Filled"
+						Margin="5"
+						Content="Craft Transaction"
+						Command="{Binding CraftTransaction}"
+						IsEnabled="{Binding CanCraftTransaction}"
+						Width="150"
+						VerticalAlignment="Center"
+						HorizontalAlignment="Center"/>
+				</DockPanel>
+			</styles:Card>
+			<styles:Card
+				Margin="5"
+				DockPanel.Dock="Top"
+				IsVisible="{Binding TransactionCrafted}">
+				<DockPanel
+					Margin="5"
+					HorizontalAlignment="Stretch"
+					VerticalAlignment="Stretch">
+					<StackPanel
+						DockPanel.Dock="Top"
+						Orientation="Horizontal"
+						VerticalAlignment="Center"
+						HorizontalAlignment="Center"
+						Margin="5">
+						<Button
+							Classes="Filled"
+							VerticalAlignment="Center"
+							HorizontalAlignment="Center"
+							Margin="5"
+							Content="Save Transaction"
+							Command="{Binding SaveTransaction}"/>
+					</StackPanel>
+					<StackPanel
+						DockPanel.Dock="Top"
+						Orientation="Horizontal"
+						VerticalAlignment="Center"
+						HorizontalAlignment="Center"
+						Margin="5">
+						<Button
+							Classes="Filled"
+							VerticalAlignment="Center"
+							HorizontalAlignment="Center"
+							Margin="5"
+							Content="Edit Transaction"
+							Command="{Binding EditTransaction}"/>
+						<Button
+							Classes="Filled"
+							VerticalAlignment="Center"
+							HorizontalAlignment="Center"
+							Margin="5"
+							Content="Craft New Transaction"
+							Command="{Binding CraftNewTransaction}"/>
+					</StackPanel>
+				</DockPanel>
+			</styles:Card>
+		</DockPanel>
+		<DockPanel
+			DockPanel.Dock="Left"
+			IsVisible="{Binding !NoConnection}">
+			<styles:Card
+				Margin="5"
+				DockPanel.Dock="Top"
+				IsVisible="{Binding !TransactionCrafted}">
+				<DockPanel
+					Margin="5"
+					HorizontalAlignment="Stretch"
+					VerticalAlignment="Stretch">
+					<StackPanel
+						DockPanel.Dock="Top"
+						Orientation="Vertical"
+						HorizontalAlignment="Stretch"
+						VerticalAlignment="Stretch">
+						<StackPanel Orientation="Horizontal">
+							<TextBlock
+								Classes="Subtitle2"
+								Text="Source Account"
+								ToolTip.Tip="This account will be the source of funds and will also pay transaction fees."
+								TextAlignment="Left"
+								VerticalAlignment="Center"
+								HorizontalAlignment="Left"
+								Margin="5"/>
+							<avalonia:MaterialIcon
+								ToolTip.Tip="This source account of the transaction, can be a regular account or a multi signature account."
+								Kind="InformationCircleOutline" />
+							<uc:AddressBookButton
+								HorizontalAlignment="Center"
+								VerticalAlignment="Center"
+								SelectedAddress="{Binding SourceAccount.PublicKeyString, Mode=TwoWay}"/>
+						</StackPanel>
+						<ContentControl
+							HorizontalAlignment="Center"
+							VerticalAlignment="Center"
+							Content="{Binding SourceAccount}"/>
+						<ContentControl Content="{Binding AccountContent}"/>
+					</StackPanel>
+				</DockPanel>
+			</styles:Card>
+		</DockPanel>
+		<DockPanel
+			DockPanel.Dock="Right"
+			IsVisible="{Binding !NoConnection}">
+			<styles:Card
+				Margin="5"
+				DockPanel.Dock="Top"
+				IsVisible="{Binding !TransactionCrafted}">
+				<DockPanel
+					Margin="5"
+					HorizontalAlignment="Stretch"
+					VerticalAlignment="Stretch">
+					<StackPanel
+						Orientation="Horizontal"
+						DockPanel.Dock="Top">
 						<TextBlock
 							Classes="Subtitle2"
-							Text="Source Account"
-							ToolTip.Tip="This account will be the source of funds and will also pay transaction fees."
+							Text="Destination Account"
+							ToolTip.Tip="The destination account of the transfer."
 							TextAlignment="Left"
 							VerticalAlignment="Center"
 							HorizontalAlignment="Left"
 							Margin="5"/>
 						<avalonia:MaterialIcon
-							ToolTip.Tip="This source account of the transaction, can be a regular account or a multi signature account."
+							ToolTip.Tip="The destination account of the transaction, can be a regular account or a multi signature account."
 							Kind="InformationCircleOutline" />
+						<uc:AddressBookButton
+							HorizontalAlignment="Center"
+							VerticalAlignment="Center"
+							SelectedAddress="{Binding DestinationAccount.PublicKeyString, Mode=TwoWay}"/>
 					</StackPanel>
-					<ContentControl Content="{Binding SourceAccount}"/>
-					<ContentControl Content="{Binding AccountContent}"/>
-				</StackPanel>
-			</DockPanel>
-		</styles:Card>
-		<styles:Card
-			Margin="5"
-			DockPanel.Dock="Right"
-			IsVisible="{Binding !TransactionCrafted}">
-			<DockPanel
-				Margin="5"
-				HorizontalAlignment="Stretch"
-				VerticalAlignment="Stretch">
-				<StackPanel
-					Orientation="Horizontal"
-					DockPanel.Dock="Top">
-					<TextBlock
-						Classes="Subtitle2"
-						Text="Destination Account"
-						ToolTip.Tip="The destination account of the transfer."
-						TextAlignment="Left"
+					<ContentControl
+						DockPanel.Dock="Top"
+						HorizontalAlignment="Center"
 						VerticalAlignment="Center"
-						HorizontalAlignment="Left"
-						Margin="5"/>
-					<avalonia:MaterialIcon
-						ToolTip.Tip="The destination account of the transaction, can be a regular account or a multi signature account."
-						Kind="InformationCircleOutline" />
-				</StackPanel>
-				<ContentControl
-					DockPanel.Dock="Top"
-					Content="{Binding DestinationAccount}"/>
-				<ContentPresenter
-					DockPanel.Dock="Top"
-					Name="NonceAccountContentPresenter"
-					IsVisible="{Binding SourceInput}">
-					<Interaction.Behaviors>
-						<DataTriggerBehavior
-							Binding="{Binding NonceAccountExists, Mode=OneWay}"
-							ComparisonCondition="Equal"
-							Value="False">
-							<ChangePropertyAction
-								TargetObject="{Binding #NonceAccountContentPresenter}"
-								PropertyName="Content">
-								<ChangePropertyAction.Value>
-									<DockPanel
-										Margin="5"
-										HorizontalAlignment="Stretch"
-										VerticalAlignment="Stretch">
-										<TextBlock
-											DockPanel.Dock="Bottom"
-											Classes="Body1"
-											Text="{Binding ErrorCreatingAccountMessage}"
-											IsVisible="{Binding ErrorCreatingAccount}"
-											TextAlignment="Left"
-											VerticalAlignment="Center"
-											HorizontalAlignment="Center"
+						Content="{Binding DestinationAccount}"/>
+					<ContentPresenter
+						DockPanel.Dock="Top"
+						Name="NonceAccountContentPresenter"
+						IsVisible="{Binding SourceInput}">
+						<Interaction.Behaviors>
+							<DataTriggerBehavior
+								Binding="{Binding NonceAccountExists, Mode=OneWay}"
+								ComparisonCondition="Equal"
+								Value="False">
+								<ChangePropertyAction
+									TargetObject="{Binding #NonceAccountContentPresenter}"
+									PropertyName="Content">
+									<ChangePropertyAction.Value>
+										<DockPanel
 											Margin="5"
-											Foreground="{DynamicResource ErrorAccent}"/>
-										<TextBlock
-											DockPanel.Dock="Bottom"
-											Classes="Body1"
-											Text="{Binding ErrorCreatingAccountMessage}"
-											IsVisible="{Binding ErrorCreatingAccount}"
-											TextAlignment="Left"
-											VerticalAlignment="Center"
-											HorizontalAlignment="Center"
-											Margin="5"
-											Foreground="{DynamicResource ErrorAccent}"/>
-										<TextBlock
-											DockPanel.Dock="Top"
-											Classes="Subtitle2"
-											Text="Nonce Account"
-											ToolTip.Tip="The nonce account used to submit the transaction, the source account is the nonce account's authority."
-											TextAlignment="Left"
-											VerticalAlignment="Center"
-											HorizontalAlignment="Left"
-											Margin="5"/>
-										<TextBlock
-											DockPanel.Dock="Top"
-											Classes="Body1"
-											Text="Nonce Account not found, you must create or add one locally."
-											TextAlignment="Left"
-											VerticalAlignment="Center"
-											HorizontalAlignment="Center"
-											Margin="5"/>
-										<Button
-											DockPanel.Dock="Top"
-											Classes="Filled"
-											Margin="5"
-											Command="{Binding CreateNonceAccount}"
-											VerticalAlignment="Center"
-											HorizontalAlignment="Center"
-											HorizontalContentAlignment="Center"
-											VerticalContentAlignment="Center">
-											<Grid>
-												<TextBlock
-													IsVisible="{Binding !CreatingNonceAccount}"
-													VerticalAlignment="Center"
-													Grid.Column="0"
-													Grid.Row="0"
-													HorizontalAlignment="Center"
-													Text="Create Nonce Account"/>
-												<ProgressBar
-													VerticalAlignment="Center"
-													Grid.Column="0"
-													Grid.Row="0"
-													HorizontalAlignment="Center"
-													Classes="Circle"
-													IsIndeterminate="True"
-													IsVisible="{Binding CreatingNonceAccount}"
-													Width="20"
-													Height="20"
-													MinWidth="20"/>
-											</Grid>
-										</Button>
-									</DockPanel>
-								</ChangePropertyAction.Value>
-							</ChangePropertyAction>
-						</DataTriggerBehavior>
-						<DataTriggerBehavior
-							Binding="{Binding NonceAccountExists, Mode=OneWay}"
-							ComparisonCondition="Equal"
-							Value="True">
-							<ChangePropertyAction
-								TargetObject="{Binding #NonceAccountContentPresenter}"
-								PropertyName="Content">
-								<ChangePropertyAction.Value>
-									<DockPanel
-										HorizontalAlignment="Stretch"
-										VerticalAlignment="Top">
-										<StackPanel
-											Orientation="Horizontal"
-											DockPanel.Dock="Top">
+											HorizontalAlignment="Stretch"
+											VerticalAlignment="Stretch">
 											<TextBlock
-												Classes="Subtitle2"
-												Text="Nonce Account"
+												DockPanel.Dock="Bottom"
+												Classes="Body1"
+												Text="{Binding ErrorCreatingAccountMessage}"
+												IsVisible="{Binding ErrorCreatingAccount}"
 												TextAlignment="Left"
 												VerticalAlignment="Center"
-												HorizontalAlignment="Left"
-												Margin="5"/>
-											<avalonia:MaterialIcon
-												ToolTip.Tip="The nonce account used to submit the transaction. If the source account is a multi signature account the nonce account's authority will be the currently selected wallet's account, otherwise it will be the source account."
-												Kind="InformationCircleOutline" />
-										</StackPanel>
-										<TextBlock
-											DockPanel.Dock="Top"
-											Classes="Body1"
-											Text="{Binding NonceAccountViewModel.NonceAccountMap.Account}"
-											TextAlignment="Left"
-											VerticalAlignment="Center"
-											HorizontalAlignment="Left"
-											Margin="5"/>
-										<StackPanel
-											Orientation="Horizontal"
-											DockPanel.Dock="Top">
+												HorizontalAlignment="Center"
+												Margin="5"
+												Foreground="{DynamicResource ErrorAccent}"/>
 											<TextBlock
+												DockPanel.Dock="Bottom"
+												Classes="Body1"
+												Text="{Binding ErrorCreatingAccountMessage}"
+												IsVisible="{Binding ErrorCreatingAccount}"
+												TextAlignment="Left"
+												VerticalAlignment="Center"
+												HorizontalAlignment="Center"
+												Margin="5"
+												Foreground="{DynamicResource ErrorAccent}"/>
+											<TextBlock
+												DockPanel.Dock="Top"
 												Classes="Subtitle2"
-												Text="Nonce"
+												Text="Nonce Account"
 												ToolTip.Tip="The nonce account used to submit the transaction, the source account is the nonce account's authority."
 												TextAlignment="Left"
 												VerticalAlignment="Center"
 												HorizontalAlignment="Left"
 												Margin="5"/>
-											<avalonia:MaterialIcon
-												ToolTip.Tip="The nonce currently stored in the nonce account, this hash is used instead of a recent block hash so that transactions can be validated outside of the time window in which block hashes are valid."
-												Kind="InformationCircleOutline" />
-										</StackPanel>
-										<TextBlock
-											DockPanel.Dock="Top"
-											Classes="Body1"
-											Text="{Binding NonceAccountViewModel.Nonce}"
-											TextAlignment="Left"
-											VerticalAlignment="Center"
-											HorizontalAlignment="Left"
-											Margin="5"/>
-									</DockPanel>
-								</ChangePropertyAction.Value>
-							</ChangePropertyAction>
-						</DataTriggerBehavior>
-					</Interaction.Behaviors>
-				</ContentPresenter>
-			</DockPanel>
-		</styles:Card>
-		<styles:Card
-			Margin="5"
+											<TextBlock
+												DockPanel.Dock="Top"
+												Classes="Body1"
+												Text="Nonce Account not found, you must create or add one locally."
+												TextAlignment="Left"
+												VerticalAlignment="Center"
+												HorizontalAlignment="Center"
+												Margin="5"/>
+											<TextBlock
+												DockPanel.Dock="Top"
+												Classes="Body1"
+												Text="Creating Nonce Account.."
+												IsVisible="{Binding CreatingNonceAccount}"
+												TextAlignment="Left"
+												VerticalAlignment="Center"
+												HorizontalAlignment="Center"
+												Margin="5"/>
+											<Button
+												DockPanel.Dock="Top"
+												Classes="Filled"
+												Margin="5"
+												Command="{Binding CreateNonceAccount}"
+												VerticalAlignment="Center"
+												HorizontalAlignment="Center"
+												HorizontalContentAlignment="Center"
+												VerticalContentAlignment="Center">
+												<Grid>
+													<TextBlock
+														IsVisible="{Binding !CreatingNonceAccount}"
+														VerticalAlignment="Center"
+														Grid.Column="0"
+														Grid.Row="0"
+														HorizontalAlignment="Center"
+														Text="Create Nonce Account"/>
+													<ProgressBar
+														VerticalAlignment="Center"
+														Grid.Column="0"
+														Grid.Row="0"
+														HorizontalAlignment="Center"
+														Classes="Circle"
+														IsIndeterminate="True"
+														IsVisible="{Binding CreatingNonceAccount}"
+														Width="20"
+														Height="20"
+														MinWidth="20"/>
+												</Grid>
+											</Button>
+										</DockPanel>
+									</ChangePropertyAction.Value>
+								</ChangePropertyAction>
+							</DataTriggerBehavior>
+							<DataTriggerBehavior
+								Binding="{Binding NonceAccountExists, Mode=OneWay}"
+								ComparisonCondition="Equal"
+								Value="True">
+								<ChangePropertyAction
+									TargetObject="{Binding #NonceAccountContentPresenter}"
+									PropertyName="Content">
+									<ChangePropertyAction.Value>
+										<DockPanel
+											HorizontalAlignment="Stretch"
+											VerticalAlignment="Top">
+											<StackPanel
+												Orientation="Horizontal"
+												DockPanel.Dock="Top">
+												<TextBlock
+													Classes="Subtitle2"
+													Text="Nonce Account"
+													TextAlignment="Left"
+													VerticalAlignment="Center"
+													HorizontalAlignment="Left"
+													Margin="5"/>
+												<avalonia:MaterialIcon
+													ToolTip.Tip="The nonce account used to submit the transaction. If the source account is a multi signature account the nonce account's authority will be the currently selected wallet's account, otherwise it will be the source account."
+													Kind="InformationCircleOutline" />
+											</StackPanel>
+											<TextBlock
+												DockPanel.Dock="Top"
+												Classes="Body1"
+												Text="{Binding NonceAccountViewModel.NonceAccountMap.Account}"
+												TextAlignment="Left"
+												VerticalAlignment="Center"
+												HorizontalAlignment="Left"
+												Margin="5"/>
+											<StackPanel
+												Orientation="Horizontal"
+												DockPanel.Dock="Top">
+												<TextBlock
+													Classes="Subtitle2"
+													Text="Nonce"
+													ToolTip.Tip="The nonce account used to submit the transaction, the source account is the nonce account's authority."
+													TextAlignment="Left"
+													VerticalAlignment="Center"
+													HorizontalAlignment="Left"
+													Margin="5"/>
+												<avalonia:MaterialIcon
+													ToolTip.Tip="The nonce currently stored in the nonce account, this hash is used instead of a recent block hash so that transactions can be validated outside of the time window in which block hashes are valid."
+													Kind="InformationCircleOutline" />
+											</StackPanel>
+											<TextBlock
+												DockPanel.Dock="Top"
+												Classes="Body1"
+												Text="{Binding NonceAccountViewModel.Nonce}"
+												TextAlignment="Left"
+												VerticalAlignment="Center"
+												HorizontalAlignment="Left"
+												Margin="5"/>
+										</DockPanel>
+									</ChangePropertyAction.Value>
+								</ChangePropertyAction>
+							</DataTriggerBehavior>
+						</Interaction.Behaviors>
+					</ContentPresenter>
+				</DockPanel>
+			</styles:Card>
+		</DockPanel>
+		<DockPanel
 			DockPanel.Dock="Top"
-			IsVisible="{Binding TransactionCrafted}">
-			<DockPanel
+			IsVisible="{Binding !NoConnection}">
+			<styles:Card
 				Margin="5"
 				DockPanel.Dock="Top"
-				LastChildFill="False"
-				HorizontalAlignment="Stretch"
-				VerticalAlignment="Stretch">
+				IsVisible="{Binding TransactionCrafted}">
 				<DockPanel
+					Margin="5"
 					DockPanel.Dock="Top"
 					LastChildFill="False"
 					HorizontalAlignment="Stretch"
 					VerticalAlignment="Stretch">
-					<TextBlock
-						DockPanel.Dock="Left"
-						Classes="Subtitle2"
-						Text="Payload"
+					<DockPanel
+						DockPanel.Dock="Top"
+						LastChildFill="False"
+						HorizontalAlignment="Stretch"
+						VerticalAlignment="Stretch">
+						<TextBlock
+							DockPanel.Dock="Left"
+							Classes="Subtitle2"
+							Text="Payload"
+							TextAlignment="Left"
+							VerticalAlignment="Center"
+							HorizontalAlignment="Left"
+							Margin="5"/>
+						<avalonia:MaterialIcon
+							DockPanel.Dock="Left"
+							ToolTip.Tip="The payload of the transaction, it specifies the instructions, accounts and which are required signers."
+							Kind="InformationCircleOutline" />
+					</DockPanel>
+					<TextBox
+						DockPanel.Dock="Top"
+						Classes="Filled"
+						Text="{Binding Payload}"
+						IsReadOnly="True"
 						TextAlignment="Left"
 						VerticalAlignment="Center"
-						HorizontalAlignment="Left"
+						HorizontalAlignment="Center"
+						TextWrapping="Wrap"
 						Margin="5"/>
-					<avalonia:MaterialIcon
-						DockPanel.Dock="Left"
-						ToolTip.Tip="The payload of the transaction, it specifies the instructions, accounts and which are required signers."
-						Kind="InformationCircleOutline" />
+					<Button
+						DockPanel.Dock="Top"
+						Classes="Flat"
+						ToolTip.Tip="Copy transaction to clipboard."
+						VerticalAlignment="Center"
+						HorizontalAlignment="Center"
+						Height="32"
+						Width="32"
+						Margin="5"
+						Command="{Binding CopyTransactionToClipboard}"
+						IsVisible="{Binding TransactionCrafted}">
+						<avalonia:MaterialIcon Kind="ContentCopy" />
+					</Button>
 				</DockPanel>
-				<TextBox
-					DockPanel.Dock="Top"
-					Classes="Filled"
-					Text="{Binding Payload}"
-					IsReadOnly="True"
-					TextAlignment="Left"
-					VerticalAlignment="Center"
-					HorizontalAlignment="Center"
-					TextWrapping="Wrap"
-					Margin="5"/>
-				<Button
-					DockPanel.Dock="Top"
-					Classes="Flat"
-					ToolTip.Tip="Copy transaction to clipboard."
-					VerticalAlignment="Center"
-					HorizontalAlignment="Center"
-					Height="32"
-					Width="32"
-					Margin="5"
-					Command="{Binding CopyTransactionToClipboard}"
-					IsVisible="{Binding TransactionCrafted}">
-					<avalonia:MaterialIcon Kind="ContentCopy" />
-				</Button>
-			</DockPanel>
-		</styles:Card>
+			</styles:Card>
+		</DockPanel>
 	</DockPanel>
 </UserControl>

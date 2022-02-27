@@ -1,6 +1,8 @@
 ﻿using Anvil.Services.Store.Events;
 using Anvil.Services.Wallets;
+using Anvil.Services.Wallets.SubWallets;
 using System;
+using System.Collections.Generic;
 
 namespace Anvil.Services.Store.State
 {
@@ -80,6 +82,20 @@ namespace Anvil.Services.Store.State
             }
         }
 
+        /// <inheritdoc cref="IWalletStore.EditAlias(DerivationIndexWallet, string)"/>
+        public void EditAlias(DerivationIndexWallet derivationIndexWallet, string newAlias)
+        {
+            Wallet.EditAlias(derivationIndexWallet, newAlias);
+            OnStateChanged?.Invoke(this, new(this));
+        }
+
+        /// <inheritdoc cref="IWalletStore.EditAlias(PrivateKeyWallet, string)"/>
+        public void EditAlias(PrivateKeyWallet privateKeyWallet, string newAlias)
+        {
+            Wallet.EditAlias(privateKeyWallet, newAlias);
+            OnStateChanged?.Invoke(this, new(this));
+        }
+
         /// <inheritdoc cref="IWalletStore.AddWallet(DerivationIndexWallet)"/>
         public void AddWallet(DerivationIndexWallet derivationIndexWallet)
         {
@@ -95,9 +111,16 @@ namespace Anvil.Services.Store.State
         }
 
         /// <inheritdoc cref="IWalletStore.AddWallet(PrivateKeyWallet)"/>
-        public void AddWallet(PrivateKeyWallet derivationIndexWallet)
+        public void AddWallet(PrivateKeyWallet privateKeyWallet)
         {
-            Wallet.AddWallet(derivationIndexWallet);
+            Wallet.AddWallet(privateKeyWallet);
+            OnStateChanged?.Invoke(this, new(this));
+        }
+
+        /// <inheritdoc cref="IWalletStore.RemoveWallet(List{PrivateKeyWallet})"/>
+        public void RemoveWallets(List<PrivateKeyWallet> privateKeyWallets)
+        {
+            Wallet.RemoveWallets(privateKeyWallets);
             OnStateChanged?.Invoke(this, new(this));
         }
 

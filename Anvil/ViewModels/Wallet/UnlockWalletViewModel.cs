@@ -23,6 +23,18 @@ namespace Anvil.ViewModels.Wallet
                 }, canConfirm);
         }
 
+        public void TriggerShowPassword()
+        {
+            ShowPassword = !ShowPassword;
+        }
+
+        private bool _showPassword;
+        public bool ShowPassword
+        {
+            get => _showPassword;
+            set => this.RaiseAndSetIfChanged(ref _showPassword, value);
+        }
+
         private bool _isProcessing;
         public bool IsProcessing
         {
@@ -37,11 +49,28 @@ namespace Anvil.ViewModels.Wallet
             set => this.RaiseAndSetIfChanged(ref _password, value);
         }
 
+        private bool _wrongPassword;
+        public bool WrongPassword
+        {
+            get => _wrongPassword;
+            set => this.RaiseAndSetIfChanged(ref _wrongPassword, value);
+        }
+
         private string _progressStatus;
         public string ProgressStatus
         {
             get => _progressStatus;
-            set => this.RaiseAndSetIfChanged(ref _progressStatus, value);
+            set
+            {
+                if (value.Contains("Wrong"))
+                {
+                    WrongPassword = true;
+                } else
+                {
+                    WrongPassword = false;
+                }
+                this.RaiseAndSetIfChanged(ref _progressStatus, value);
+            }
         }
 
         /// <summary>

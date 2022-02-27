@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 			 xmlns:styles="clr-namespace:Material.Styles;assembly=Material.Styles"
              xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+			 xmlns:common="clr-namespace:Anvil.Views.Common"
 			 mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Anvil.Views.Wallet.WalletView">
 
@@ -13,10 +14,12 @@
 			DockPanel.Dock="Left">
 			<DockPanel
 				LastChildFill="False"
+				Margin="5"
 				HorizontalAlignment="Stretch"
-				VerticalAlignment="Stretch">
+				VerticalAlignment="Stretch"
+				Width="250">
 				<StackPanel
-					Orientation="Horizontal"
+					Orientation="Vertical"
 					DockPanel.Dock="Bottom"
 					HorizontalAlignment="Stretch"
 					VerticalAlignment="Bottom">
@@ -25,8 +28,19 @@
 						VerticalAlignment="Center"
 						HorizontalAlignment="Center"
 						Background="{DynamicResource ButtonBackgroundColor}"
+						IsVisible="{Binding ImportedMnemonic}"
+						IsEnabled="{Binding ImportedMnemonic}"
 						Command="{Binding DeriveWallet}"
 						Content="Derive Wallet"/>
+					<Button
+						Margin="5"
+						VerticalAlignment="Center"
+						HorizontalAlignment="Center"
+						Background="{DynamicResource ButtonBackgroundColor}"
+						IsVisible="{Binding !ImportedMnemonic}"
+						IsEnabled="{Binding !ImportedMnemonic}"
+						Command="{Binding ImportMnemonic}"
+						Content="Import Mnemonic"/>
 					<Button
 						Margin="5"
 						VerticalAlignment="Center"
@@ -54,30 +68,35 @@
 					<Expander.Header>
 						<TextBlock
 							Classes="Subtitle2"
-							Margin="5"
 							Text="Derivation Wallets"
 							TextAlignment="Center"
 							VerticalAlignment="Center"
 							HorizontalAlignment="Left"/>
 					</Expander.Header>
 					<Expander.Content>
-						<ListBox SelectionMode="Single" SelectedItem="{Binding CurrentWallet}" Items="{Binding DerivationWalletsColleciton}">
+						<ListBox
+							SelectionMode="Single"
+							SelectedItem="{Binding CurrentWallet}"
+							Items="{Binding DerivationWalletsCollection}">
 							<ListBox.Template>
 							</ListBox.Template>
 							<ListBox.ItemTemplate>
 								<DataTemplate>
-									<DockPanel>
-										<TextBlock
-											DockPanel.Dock="Left"
-											Margin="5"
-											Classes="Body2"
-											Text="{Binding Alias}"/>
-										<Separator />									
+									<DockPanel
+										Margin="5"
+										HorizontalAlignment="Stretch"
+										VerticalAlignment="Stretch">
 										<TextBlock
 											DockPanel.Dock="Right"
 											Margin="5"
 											Classes="Body2"
 											Text="{Binding ShortenedAddress}"/>
+										<Separator />
+										<TextBlock
+											DockPanel.Dock="Left"
+											Margin="5"
+											Classes="Subtitle2"
+											Text="{Binding Alias}"/>
 									</DockPanel>
 								</DataTemplate>
 							</ListBox.ItemTemplate>
@@ -94,30 +113,35 @@
 					<Expander.Header>
 						<TextBlock
 							Classes="Subtitle2"
-							Margin="5"
 							Text="Private Key Wallets"
 							TextAlignment="Center"
 							VerticalAlignment="Center"
 							HorizontalAlignment="Left"/>
 					</Expander.Header>
 					<Expander.Content>
-						<ListBox SelectionMode="Single" SelectedItem="{Binding CurrentWallet}" Items="{Binding PrivateKeyWalletsCollection}">
+						<ListBox
+							SelectionMode="Single"
+							SelectedItem="{Binding CurrentWallet}"
+							Items="{Binding PrivateKeyWalletsCollection}">
 							<ListBox.Template>
 							</ListBox.Template>
 							<ListBox.ItemTemplate>
 								<DataTemplate>
-									<DockPanel>
-										<TextBlock
-											DockPanel.Dock="Left"
-											Margin="5"
-											Classes="Body2"
-											Text="{Binding Alias}"/>
-										<Separator />
+									<DockPanel
+										Margin="5"
+										HorizontalAlignment="Stretch"
+										VerticalAlignment="Stretch">
 										<TextBlock
 											DockPanel.Dock="Right"
 											Margin="5"
 											Classes="Body2"
 											Text="{Binding ShortenedAddress}"/>
+										<Separator />
+										<TextBlock
+											DockPanel.Dock="Left"
+											Margin="5"
+											Classes="Subtitle2"
+											Text="{Binding Alias}"/>
 									</DockPanel>
 								</DataTemplate>
 							</ListBox.ItemTemplate>
@@ -128,8 +152,11 @@
 		</styles:Card>
 		<styles:Card
 			Margin="5,5,5,5"
-			DockPanel.Dock="Right">
-			<DockPanel>
+			DockPanel.Dock="Top">
+			<DockPanel
+				Margin="5"
+				HorizontalAlignment="Stretch"
+				VerticalAlignment="Stretch">
 				<TextBlock
 					Classes="Headline5 Subheadline2"
 					DockPanel.Dock="Top"
@@ -139,136 +166,142 @@
 					Foreground="{DynamicResource MainTextAccent}"
 					Text="Current Wallet">
 				</TextBlock>
-				<StackPanel
+				<DockPanel
 					DockPanel.Dock="Top"
-					Orientation="Vertical"
 					HorizontalAlignment="Center"
 					Margin="10">
-					<StackPanel Orientation="Horizontal">
-						<TextBlock Classes="Body1" Text="{Binding CurrentWallet.Address}" Margin="0" VerticalAlignment="Center"/>
-						<Button Classes="Flat" ToolTip.Tip="Copy address to clipboard" VerticalAlignment="Center" Command="{Binding CopyAddressToClipboard}" Height="24" Width="24" Padding="0">
+					<StackPanel
+						DockPanel.Dock="Top"
+						Orientation="Horizontal"
+						VerticalAlignment="Center"
+						HorizontalAlignment="Center">
+						<TextBlock
+							Classes="Subtitle2"
+							Text="{Binding CurrentWalletAlias}"
+							Margin="0"
+							VerticalAlignment="Center"
+							HorizontalAlignment="Center"/>
+						<Button
+							Classes="Flat"
+							ToolTip.Tip="Edit Alias"
+							VerticalAlignment="Center"
+							Command="{Binding EditAccountAlias}"
+							Height="24"
+							Width="24"
+							Padding="0">
+							<avalonia:MaterialIcon Kind="Edit" />
+						</Button>
+					</StackPanel>
+					<StackPanel
+						DockPanel.Dock="Top"
+						Orientation="Horizontal"
+						VerticalAlignment="Center"
+						HorizontalAlignment="Center">
+						<TextBlock
+							Classes="Body1"
+							Text="{Binding CurrentWallet.ShortenedAddress}"
+							Margin="0"
+							VerticalAlignment="Center"
+							HorizontalAlignment="Center"/>
+						<Button
+							Classes="Flat"
+							ToolTip.Tip="Copy address to clipboard"
+							VerticalAlignment="Center"
+							Command="{Binding CopyAddressToClipboard}"
+							Height="24"
+							Width="24"
+							Padding="0">
 							<avalonia:MaterialIcon Kind="ContentCopy" />
 						</Button>
 					</StackPanel>
 					<TextBlock
+						DockPanel.Dock="Top"
 						Classes="Headline6 Subheadline2"
 						VerticalAlignment="Top"
 						HorizontalAlignment="Center"
 						TextAlignment="Center"
 						Margin="5"
 						Foreground="{DynamicResource MainTextAccent}"
-						Text="Balance">
+						Text="Balance"
+						IsVisible="{Binding !NoConnection}">
 					</TextBlock>
 					<StackPanel
+						DockPanel.Dock="Top"
 						Orientation="Horizontal"
 						HorizontalAlignment="Center"
-						VerticalAlignment="Center">
-						<TextBlock
-							Classes="Body1"
-							VerticalAlignment="Top"
-							HorizontalAlignment="Center"
-							TextAlignment="Center"
-							Margin="5"
-							Foreground="{DynamicResource MainTextAccent}"
-							Text="{Binding CurrentBalance}">
-						</TextBlock>
-						<TextBlock
-							Classes="Body1"
-							VerticalAlignment="Top"
-							HorizontalAlignment="Center"
-							TextAlignment="Center"
-							Margin="5"
-							Foreground="{DynamicResource MainTextAccent}"
-							Text="SOL">
-						</TextBlock>
-					</StackPanel>
-				</StackPanel>
-				<StackPanel
-					DockPanel.Dock="Bottom"
-					Orientation="Vertical"
-					HorizontalAlignment="Center"
-					Margin="10">
-					<TextBlock
-						Classes="Headline6 Subheadline2"
 						VerticalAlignment="Center"
-						HorizontalAlignment="Center"
-						TextAlignment="Center"
-						Foreground="{DynamicResource MainTextAccent}"
-						Text="Token Accounts">
-					</TextBlock>
-
-					<ScrollViewer VerticalScrollBarVisibility="Auto" Margin="8">
-
-						<ItemsControl Items="{Binding FilteredTokenCollection}"  >
-
-							<ItemsControl.ItemTemplate>
-								<DataTemplate>
-									<styles:Card Height="60" HorizontalAlignment="Stretch" Background="{DynamicResource Card2BackgroundColor}" Padding="0" Margin="2">
-										<DockPanel>
-											<Image
-												DockPanel.Dock="Left"
-												VerticalAlignment="Center"
-												HorizontalAlignment="Center"
-												Margin="10,0,10,0"
-												Height="40" Width="40"
-												Source="{Binding Symbol, Converter={StaticResource CoinAssetConverter}, ConverterParameter=0}"/>
-
-
-											<Button DockPanel.Dock="Right" Classes="Flat Accent" ToolTip.Tip="Send" VerticalAlignment="Center" CommandParameter="{Binding}" Command="{Binding $parent[ItemsControl].DataContext.Send}" Margin="0,0,20,0">
-												<avalonia:MaterialIcon Kind="Send" />
-											</Button>
-
-											<StackPanel Orientation="Vertical" VerticalAlignment="Center">
-												<StackPanel Orientation="Horizontal" DockPanel.Dock="Top">
-													<TextBlock Text="{Binding FullDisplayName}" Classes="Body1"/>
-													<Button Classes="Flat Accent" ToolTip.Tip="Copy address to clipboard" VerticalAlignment="Center" Margin="5,0" Height="24" Width="24" Padding="0" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"  Command="{Binding CopyAddressToClipboard}">
-														<avalonia:MaterialIcon Kind="ContentCopy"/>
-													</Button>
-													<Button Name="editButton"  Classes="Flat Accent" ToolTip.Tip="Edit Name"  VerticalAlignment="Center" IsEnabled="False">
-														<avalonia:MaterialIcon Kind="Edit" />
-														<Interaction.Behaviors>
-															<DataTriggerBehavior Binding="{Binding TokenName}" ComparisonCondition="Equal" Value="{x:Null}">
-																<ChangePropertyAction PropertyName="IsVisible" TargetObject="{Binding #editButton}" Value="True"/>
-															</DataTriggerBehavior>
-															<DataTriggerBehavior Binding="{Binding TokenName}" ComparisonCondition="NotEqual" Value="{x:Null}">
-																<ChangePropertyAction PropertyName="IsVisible" TargetObject="{Binding #editButton}" Value="False"/>
-															</DataTriggerBehavior>
-														</Interaction.Behaviors>
-													</Button>
-												</StackPanel>
-
-
-												<StackPanel Orientation="Horizontal" DockPanel.Dock="Top">
-													<TextBlock Text="Amount: " Classes="Body2"/>
-													<TextBlock Text="{Binding Amount}" Classes="Body2"/>
-
-												</StackPanel>
-												<StackPanel Name="valuePanel" Orientation="Horizontal" DockPanel.Dock="Top">
-													<TextBlock Text="Value: $" Classes="Body2"/>
-													<TextBlock Text="{Binding TotalValue} " Classes="Body2"/>
-													<Interaction.Behaviors>
-														<DataTriggerBehavior Binding="{Binding HasTotalValue}" ComparisonCondition="Equal" Value="False">
-															<ChangePropertyAction PropertyName="IsVisible" TargetObject="{Binding #valuePanel}" Value="False"/>
-														</DataTriggerBehavior>
-														<DataTriggerBehavior Binding="{Binding HasTotalValue}" ComparisonCondition="Equal" Value="True">
-															<ChangePropertyAction PropertyName="IsVisible" TargetObject="{Binding #valuePanel}" Value="True"/>
-														</DataTriggerBehavior>
-													</Interaction.Behaviors>
-												</StackPanel>
-											</StackPanel>
-
-
-										</DockPanel>
-									</styles:Card>
-								</DataTemplate>
-							</ItemsControl.ItemTemplate>
-
-						</ItemsControl>
-					</ScrollViewer>
-
-				</StackPanel>
+						IsVisible="{Binding !NoConnection}">
+						<ProgressBar
+							VerticalAlignment="Center"
+							HorizontalAlignment="Center"
+							Classes="Circle"
+							IsIndeterminate="True"
+							IsVisible="{Binding FetchingBalance}"
+							Width="20"
+							Height="20"
+							MinWidth="20"/>
+						<TextBlock
+							Classes="Body1"
+							VerticalAlignment="Center"
+							HorizontalAlignment="Center"
+							TextAlignment="Center"
+							Margin="5"
+							IsVisible="{Binding !FetchingBalance}"
+							Foreground="{DynamicResource MainTextAccent}"
+							Text="{Binding CurrentBalance}"/>
+						<TextBlock
+							Classes="Body1"
+							VerticalAlignment="Center"
+							HorizontalAlignment="Center"
+							TextAlignment="Center"
+							Margin="5"
+							IsVisible="{Binding !FetchingBalance}"
+							Foreground="{DynamicResource MainTextAccent}"
+							Text="SOL"/>
+						<Button
+							Command="{Binding SendSolana}"
+							VerticalAlignment="Center"
+							HorizontalAlignment="Center"
+							IsEnabled="{Binding CanSubmitTransaction}"
+							IsVisible="{Binding !FetchingBalance}"
+							Margin="5"
+							ToolTip.Tip="Send Solana">
+							<StackPanel
+								Orientation="Horizontal">
+								<avalonia:MaterialIcon Kind="Send" VerticalAlignment="Center"/>
+							</StackPanel>
+						</Button>
+					</StackPanel>
+					<common:TransactionSubmissionView
+						DockPanel.Dock="Top"
+						IsVisible="{Binding !CanSubmitTransaction}"
+						DataContext="{Binding TransactionSubmission}"/>
+				</DockPanel>
 			</DockPanel>
 		</styles:Card>
+		<styles:Card
+			Margin="5,5,0,5"
+			DockPanel.Dock="Top"
+			IsVisible="{Binding NoConnection}">
+			<DockPanel
+				Margin="5"
+				HorizontalAlignment="Stretch"
+				VerticalAlignment="Stretch">
+				<TextBlock
+					DockPanel.Dock="Top"
+					VerticalAlignment="Center"
+					HorizontalAlignment="Center"
+					Classes="Subtitle2"
+					Foreground="{DynamicResource ErrorAccent}"
+					Text="Cannot fetch token accounts without a network connection."/>
+			</DockPanel>
+		</styles:Card>
+		<DockPanel
+			DockPanel.Dock="Top"
+			IsVisible="{Binding !NoConnection}">
+			<common:TokenBalancesView
+				DockPanel.Dock="Top"/>
+		</DockPanel>
 	</DockPanel>
 
 </UserControl>

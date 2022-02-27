@@ -1,0 +1,78 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="Anvil.Views.Common.TransactionSubmissionView">
+	<DockPanel
+		LastChildFill="True">
+		<TextBlock
+			DockPanel.Dock="Top"
+			Classes="Subtitle2"
+			Text="{Binding Progress}"
+			TextAlignment="Center"
+			HorizontalAlignment="Center"
+			VerticalAlignment="Center"
+			Margin="5"
+			IsVisible="{Binding SubmittingTransaction}"
+			Foreground="{DynamicResource MainTextAccent}"/>
+		<ProgressBar
+			DockPanel.Dock="Top"
+			VerticalAlignment="Center"
+			HorizontalAlignment="Center"
+			Classes="Circle"
+			IsIndeterminate="True"
+			IsVisible="{Binding SubmittingTransaction}"
+			Width="20"
+			Height="20"
+			MinWidth="20"/>
+		<TextBlock
+			DockPanel.Dock="Top"
+			Classes="Subtitle2"
+			Text="Transaction Error"
+			TextAlignment="Center"
+			HorizontalAlignment="Center"
+			VerticalAlignment="Center"
+			Margin="5"
+			IsVisible="{Binding TransactionError}"
+			Foreground="{DynamicResource MainTextAccent}"/>
+		<TextBlock
+			DockPanel.Dock="Top"
+			Classes="Body1"
+			Text="{Binding TransactionErrorMessage}"
+			TextAlignment="Center"
+			HorizontalAlignment="Center"
+			VerticalAlignment="Center"
+			Margin="5"
+			IsVisible="{Binding TransactionError}"
+			Foreground="{DynamicResource ErrorAccent}"/>
+		<StackPanel
+			DockPanel.Dock="Top"
+			Orientation="Horizontal"
+			HorizontalAlignment="Center"
+			VerticalAlignment="Center">
+			<TextBlock
+				Classes="Subtitle2"
+				Text="Transaction Confirmed"
+				TextAlignment="Center"
+				HorizontalAlignment="Center"
+				VerticalAlignment="Center"
+				Margin="5"
+				IsVisible="{Binding TransactionConfirmed}"
+				Foreground="{DynamicResource ValidatedAccent}"/>
+			<Button
+				Classes="Flat"
+				ToolTip.Tip="Copy transaction hash to clipboard."
+				VerticalAlignment="Center"
+				HorizontalAlignment="Center"
+				Height="32"
+				Width="32"
+				Margin="5"
+				Command="{Binding CopyTransactionHashToClipboard}"
+				IsVisible="{Binding TransactionConfirmed}">
+				<avalonia:MaterialIcon Kind="ContentCopy" />
+			</Button>
+		</StackPanel>
+	</DockPanel>
+</UserControl>

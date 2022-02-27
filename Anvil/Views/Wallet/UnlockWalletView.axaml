@@ -3,6 +3,8 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:styles="clr-namespace:Material.Styles;assembly=Material.Styles"
+             xmlns:assists="clr-namespace:Material.Styles.Assists;assembly=Material.Styles"
+             xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Anvil.Views.Wallet.UnlockWalletView">
 
@@ -18,9 +20,10 @@
 
 	<styles:Card
 		Margin="75">
-		<DockPanel LastChildFill="True"
-				   HorizontalAlignment="Center"
-				   VerticalAlignment="Center">
+		<DockPanel
+			LastChildFill="True"
+			HorizontalAlignment="Center"
+			VerticalAlignment="Center">
 			<Button
 				DockPanel.Dock="Bottom"
 				Classes="Filled"
@@ -50,7 +53,7 @@
 						Height="20"
 						MinWidth="20"/>
 				</Grid>
-			</Button>			
+			</Button>
 			<TextBlock
 				Classes="Headline5"
 				DockPanel.Dock="Top"
@@ -60,15 +63,47 @@
 				TextAlignment="Center"
 				Text="Unlock Wallet"
 				Foreground="{DynamicResource MainTextAccent}"/>
-			<TextBlock
-				Classes="Subtitle2"
+			<ContentPresenter
 				DockPanel.Dock="Bottom"
 				VerticalAlignment="Center"
 				HorizontalAlignment="Center"
 				Margin="20"
-				TextAlignment="Center"
-				Text="{Binding ProgressStatus}"
-				Foreground="{DynamicResource MainTextAccent}"/>
+				Name="ProgressStatusContentPresenter">
+				<Interaction.Behaviors>
+					<DataTriggerBehavior
+						Binding="{Binding WrongPassword, Mode=OneWay}"
+						ComparisonCondition="Equal"
+						Value="False">
+						<ChangePropertyAction
+							TargetObject="{Binding #ProgressStatusContentPresenter}"
+							PropertyName="Content">
+							<ChangePropertyAction.Value>
+								<TextBlock
+									Classes="Subtitle2"
+									TextAlignment="Center"
+									Text="{Binding ProgressStatus}"
+									Foreground="{DynamicResource MainTextAccent}"/>
+							</ChangePropertyAction.Value>
+						</ChangePropertyAction>
+					</DataTriggerBehavior>
+					<DataTriggerBehavior
+						Binding="{Binding WrongPassword, Mode=OneWay}"
+						ComparisonCondition="Equal"
+						Value="True">
+						<ChangePropertyAction
+							TargetObject="{Binding #ProgressStatusContentPresenter}"
+							PropertyName="Content">
+							<ChangePropertyAction.Value>
+								<TextBlock
+									Classes="Subtitle2"
+									TextAlignment="Center"
+									Text="{Binding ProgressStatus}"
+									Foreground="{DynamicResource ErrorAccent}"/>
+							</ChangePropertyAction.Value>
+						</ChangePropertyAction>
+					</DataTriggerBehavior>
+				</Interaction.Behaviors>
+			</ContentPresenter>
 			<DockPanel DockPanel.Dock="Bottom">
 				<StackPanel Orientation="Vertical">
 					<TextBlock
@@ -80,14 +115,57 @@
 						Margin="5"
 						Width="150"
 						Foreground="{DynamicResource MainTextAccent}"/>
-					<TextBox
-						Classes="Filled"
-						Text="{Binding Password}"
-						VerticalAlignment="Center"
-						HorizontalAlignment="Left"
-						Margin="5"
-						Height="50"
-						Width="750"/>
+					<StackPanel Orientation="Horizontal">
+						<TextBox
+							Classes="Filled"
+							Text="{Binding Password}"
+							RevealPassword="{Binding ShowPassword}"
+							PasswordChar="*"
+							VerticalAlignment="Center"
+							HorizontalAlignment="Left"
+							Margin="5"
+							Height="50"
+							Width="750">
+						</TextBox>
+						<Button 
+							Height="32"
+							Width="32"
+							Command="{Binding TriggerShowPassword}">
+							<ContentPresenter
+								Name="RevealPasswordButtonContentPresenter">
+								<Interaction.Behaviors>
+									<DataTriggerBehavior
+										Binding="{Binding ShowPassword, Mode=OneWay}"
+										ComparisonCondition="Equal"
+										Value="False">
+										<ChangePropertyAction
+											TargetObject="{Binding #RevealPasswordButtonContentPresenter}"
+											PropertyName="Content">
+											<ChangePropertyAction.Value>
+												<avalonia:MaterialIcon
+													DockPanel.Dock="Right"
+													Kind="ShowOutline"/>
+											</ChangePropertyAction.Value>
+										</ChangePropertyAction>
+									</DataTriggerBehavior>
+									<DataTriggerBehavior
+										Binding="{Binding ShowPassword, Mode=OneWay}"
+										ComparisonCondition="Equal"
+										Value="True">
+										<ChangePropertyAction
+											TargetObject="{Binding #RevealPasswordButtonContentPresenter}"
+											PropertyName="Content">
+											<ChangePropertyAction.Value>
+												<avalonia:MaterialIcon
+													DockPanel.Dock="Right"
+													Kind="HideOutline"/>
+											</ChangePropertyAction.Value>
+										</ChangePropertyAction>
+									</DataTriggerBehavior>
+								</Interaction.Behaviors>
+							</ContentPresenter>
+						</Button>
+					</StackPanel>
 				</StackPanel>
 			</DockPanel>
 

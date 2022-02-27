@@ -7,23 +7,86 @@
              x:Class="Anvil.Views.SideBarView">
 
 	<DockPanel
-		Width="150">
+		Width="200">
 		<styles:Card
 			DockPanel.Dock="Bottom"
 			Margin="5,5,0,5">
-			<TextBlock
-				Classes="Subheadline2"
-				FontSize="15"
-				Text="{Binding NetworkConnectionStatus}"
-				HorizontalAlignment="Center"
-				VerticalAlignment="Center"/>
+			<DockPanel
+				Margin="5"
+				HorizontalAlignment="Stretch"
+				VerticalAlignment="Stretch">
+				<DockPanel
+					DockPanel.Dock="Top"
+					Margin="5"
+					HorizontalAlignment="Stretch"
+					VerticalAlignment="Stretch">
+					<TextBlock
+						DockPanel.Dock="Top"
+						Classes="Subtitle2"
+						Margin="5"
+						Text="Current Wallet"
+						HorizontalAlignment="Center"
+						VerticalAlignment="Center"/>
+					<ComboBox
+						DockPanel.Dock="Top"
+						Items="{Binding Wallets}"
+						SelectedItem="{Binding CurrentWallet}"
+						Padding="0"
+						Margin="5"
+						HorizontalAlignment="Stretch"
+						VerticalAlignment="Stretch">
+						<ComboBox.ItemTemplate>
+							<DataTemplate>
+								<DockPanel
+									HorizontalAlignment="Stretch"
+									VerticalAlignment="Stretch">
+									<TextBlock
+										DockPanel.Dock="Top"
+										Classes="Subtitle1"
+										Margin="5"
+										Text="{Binding Alias}"
+										HorizontalAlignment="Center"
+										VerticalAlignment="Center"/>
+									<TextBlock
+										DockPanel.Dock="Top"
+										Classes="Body2"
+										Margin="5"
+										Text="{Binding ShortenedAddress}"
+										HorizontalAlignment="Center"
+										VerticalAlignment="Center"/>
+								</DockPanel>
+							</DataTemplate>			
+						</ComboBox.ItemTemplate>
+					</ComboBox>
+				</DockPanel>
+				<DockPanel
+					DockPanel.Dock="Top"
+					Margin="5"
+					HorizontalAlignment="Stretch"
+					VerticalAlignment="Stretch">
+					<TextBlock
+						DockPanel.Dock="Top"
+						Classes="Subtitle2"
+						Margin="5"
+						Text="Internet Access"
+						HorizontalAlignment="Center"
+						VerticalAlignment="Center"/>
+					<TextBlock
+						DockPanel.Dock="Top"
+						Classes="Subheadline2"
+						Margin="5"
+						Text="{Binding NetworkConnectionStatus}"
+						HorizontalAlignment="Center"
+						VerticalAlignment="Center"/>
+				</DockPanel>
+			</DockPanel>
 		</styles:Card>
 
 		<styles:Card
 			DockPanel.Dock="Top"
 			Margin="5,5,0,0">
 			<DockPanel
-				Width="150">
+				Width="200">
 				<StackPanel
 					DockPanel.Dock="Bottom"
 					Classes="SideBarPanel"
@@ -31,7 +94,7 @@
 					<Button
 						Margin="0,10,0,10"
 						Content="Settings"
-						Width="125"
+						Width="175"
 						Background="Transparent"
 						BorderBrush="Transparent"
 						VerticalAlignment="Center"
@@ -48,7 +111,7 @@
 					Classes="SideBarPanel"
 					Orientation="Vertical">
 
-					<Image 
+					<Image
 						Source="/Assets/anvil.png"
 						Margin="0,10,0,10"
 						Height="50"
@@ -59,7 +122,7 @@
 					<Button
 						Margin="0,10,0,10"
 						Content="Wallet"
-						Width="125"
+						Width="175"
 						Background="Transparent"
 						BorderBrush="Transparent"
 						VerticalAlignment="Center"
@@ -69,11 +132,24 @@
 						Command="{Binding ChangeView}"
 						CommandParameter="Wallet"
 						ToolTip.Tip="View and Manage Wallets"/>
+					<Button
+						Margin="0,10,0,10"
+						Content="Watch Only"
+						Width="175"
+						Background="Transparent"
+						BorderBrush="Transparent"
+						VerticalAlignment="Center"
+						HorizontalAlignment="Center"
+						HorizontalContentAlignment="Center"
+						VerticalContentAlignment="Center"
+						Command="{Binding ChangeView}"
+						CommandParameter="WatchOnly"
+						ToolTip.Tip="View and Manage Watch Only Wallets"/>
 
 					<Button
 						Margin="0,10,0,10"
 						Content="Crafter"
-						Width="125"
+						Width="175"
 						Background="Transparent"
 						BorderBrush="Transparent"
 						VerticalAlignment="Center"
@@ -86,8 +162,22 @@
 
 					<Button
 						Margin="0,10,0,10"
-						Content="MultiSigs"
-						Width="125"
+						Content="Nonce Accounts"
+						Width="175"
+						Background="Transparent"
+						BorderBrush="Transparent"
+						VerticalAlignment="Center"
+						HorizontalAlignment="Center"
+						HorizontalContentAlignment="Center"
+						VerticalContentAlignment="Center"
+						Command="{Binding ChangeView}"
+						CommandParameter="NonceAccounts"
+						ToolTip.Tip="View and Manage Nonce Accounts"/>
+
+					<Button
+						Margin="0,10,0,10"
+						Content="Multisig Accounts"
+						Width="175"
 						Background="Transparent"
 						BorderBrush="Transparent"
 						VerticalAlignment="Center"
