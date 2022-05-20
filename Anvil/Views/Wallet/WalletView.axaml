@@ -5,7 +5,7 @@
 			 xmlns:styles="clr-namespace:Material.Styles;assembly=Material.Styles"
              xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
 			 xmlns:common="clr-namespace:Anvil.Views.Common"
-			 mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+			 mc:Ignorable="d" d:DesignWidth="1280" d:DesignHeight="720"
              x:Class="Anvil.Views.Wallet.WalletView">
 
 	<DockPanel LastChildFill="True">

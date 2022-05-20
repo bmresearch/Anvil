@@ -313,14 +313,21 @@ namespace Anvil.Services
             var unloaded = new List<string>();
             foreach (var store in _keyStore.Wallet.PrivateKeyWallets)
             {
-                if (File.Exists(store.Path))
+                if (store.Path != null)
                 {
-                    _walletService.AddWallet(store);
+                    if (File.Exists(store.Path))
+                    {
+                        _walletService.AddWallet(store);
+                    }
+                    else
+                    {
+                        tmp.Add(store);
+                        unloaded.Add(store.Path);
+                    }
                 }
                 else
                 {
-                    tmp.Add(store);
-                    unloaded.Add(store.Path);
+                    _walletService.AddWallet(store);
                 }
             }
             if (unloaded.Count > 0)
