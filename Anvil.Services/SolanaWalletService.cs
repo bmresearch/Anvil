@@ -43,7 +43,14 @@ namespace Anvil.Services
         /// <param name="privateKeyWallet">The private key file based wallet.</param>
         public SolanaWalletService(IPrivateKeyWallet privateKeyWallet)
         {
-            _wallet = SolanaPrivateKeyLoader.Load(privateKeyWallet.Path);
+            if (privateKeyWallet.Path != null)
+            {
+                _wallet = SolanaPrivateKeyLoader.Load(privateKeyWallet.Path);
+            }
+            else if (privateKeyWallet.PrivateKey != null)
+            {
+                _wallet = SolanaPrivateKeyLoader.LoadPrivateKey(privateKeyWallet.PrivateKey);
+            }
             AliasedWallet = privateKeyWallet;
             SubWalletType = SubWalletType.PrivateKey;
 

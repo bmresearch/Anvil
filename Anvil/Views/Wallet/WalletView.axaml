@@ -46,6 +46,13 @@
 						VerticalAlignment="Center"
 						HorizontalAlignment="Center"
 						Background="{DynamicResource ButtonBackgroundColor}"
+						Command="{Binding ImportPrivateKeyFile}"
+						Content="Import Private Key File"/>
+					<Button
+						Margin="5"
+						VerticalAlignment="Center"
+						HorizontalAlignment="Center"
+						Background="{DynamicResource ButtonBackgroundColor}"
 						Command="{Binding ImportPrivateKey}"
 						Content="Import Private Key"/>
 				</StackPanel>

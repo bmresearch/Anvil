@@ -64,7 +64,15 @@ namespace Anvil.Services
         public IWallet AddWallet(PrivateKeyWallet pkWallet)
         {
             /// Check if this private key wallet has already been added to the wallet service.
-            if (_privateKeyWallets.Any(x => x.Path == pkWallet.Path)) return null;
+            if (pkWallet.PrivateKey != null)
+            {
+                if (_privateKeyWallets.Any(x => x.PrivateKey == pkWallet.PrivateKey)) return null;
+            }
+            else if (pkWallet.Path != null)
+            {
+                if (_privateKeyWallets.Any(x => x.Path == pkWallet.Path)) return null;
+            }
+            
             _privateKeyWallets.Add(pkWallet);
 
             SolanaWalletService solanaWalletService = new(pkWallet);
@@ -76,7 +84,14 @@ namespace Anvil.Services
             OnWalletServiceStateChanged?.Invoke(this, new(WalletServiceStateChange.Addition, solanaWalletService));
 
             /// Check if this private key wallet has already been added to the key store
-            if (KeyStore.Wallet.PrivateKeyWallets.Any(x => x.Path == pkWallet.Path)) return solanaWalletService;
+            if (pkWallet.PrivateKey != null)
+            {
+                if (KeyStore.Wallet.PrivateKeyWallets.Any(x => x.PrivateKey == pkWallet.PrivateKey)) return solanaWalletService;
+            }
+            else if (pkWallet.Path != null)
+            {
+                if (KeyStore.Wallet.PrivateKeyWallets.Any(x => x.Path == pkWallet.Path)) return solanaWalletService;
+            }
             KeyStore.AddWallet(pkWallet);
 
             return solanaWalletService;

@@ -21,5 +21,14 @@ namespace Anvil.Services
         {
             return SolanaKeyStore.RestoreKeystoreFromFile(path);
         }
+        
+        /// <summary>
+        /// Import wallet from private key.
+        /// </summary>
+        /// <param name="path">The private key.</param>
+        public static Wallet LoadPrivateKey(string privateKey)
+        {
+            return SolanaKeyStore.RestoreKeystore(privateKey);
+        }
     }
 }

@@ -10,5 +10,8 @@
 
         /// <inheritdoc cref="IAliasedWallet.Alias"/>
         public string Alias { get; set; } = string.Empty;
+
+        /// <inheritdoc cref="IPrivateKeyWallet.PrivateKey"/>
+        public string PrivateKey { get; set; } = string.Empty;
     }
 }

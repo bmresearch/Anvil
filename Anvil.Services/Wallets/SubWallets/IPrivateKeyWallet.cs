@@ -9,5 +9,10 @@
         /// The path to the keystore.
         /// </summary>
         string Path { get; }
+
+        /// <summary>
+        /// The actual private key.
+        /// </summary>
+        string PrivateKey { get; }
     }
 }

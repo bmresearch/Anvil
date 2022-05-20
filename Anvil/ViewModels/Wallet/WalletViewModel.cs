@@ -6,7 +6,6 @@ using Anvil.Services.Wallets.Enums;
 using Anvil.Services.Wallets.SubWallets;
 using Anvil.ViewModels.Common;
 using Anvil.ViewModels.Dialogs;
-using Anvil.Views.Dialogs;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
@@ -324,6 +323,32 @@ namespace Anvil.ViewModels.Wallet
 
             return new Tuple<bool, string>(false, "Mnemonic is invalid.");
         }
+        
+        /// <summary>
+        /// Private key validation for the dialog.
+        /// </summary>
+        /// <param name="text">The text.</param>
+        /// <returns>A tuple with a bool that means whether the input mnemonic was validated and a corresponding validation text.</returns>
+        private Tuple<bool, string> ValidatePrivateKeyDelegate(string text)
+        {
+            var emptyOrWhiteSpace = string.IsNullOrWhiteSpace(text);
+            if (emptyOrWhiteSpace)
+                return new Tuple<bool, string>(!emptyOrWhiteSpace, "Empty private key is not valid.");
+
+            Solnet.Wallet.Wallet wallet;
+            try
+            {
+                wallet = SolanaPrivateKeyLoader.LoadPrivateKey(text);
+                if (wallet != null)
+                    return new Tuple<bool, string>(true, "Private key is invalid.");
+            }
+            catch (Exception)
+            {
+                return new Tuple<bool, string>(false, "Private key is invalid.");
+            }
+
+            return new Tuple<bool, string>(false, "Private key is invalid.");
+        }
 
         /// <summary>
         /// Requests the mnemonic from the user.
@@ -416,7 +441,7 @@ namespace Anvil.ViewModels.Wallet
         /// <summary>
         /// Imports a private key from file.
         /// </summary>
-        public async void ImportPrivateKey()
+        public async void ImportPrivateKeyFile()
         {
             var path = await GetPrivateKeyFilePath();
             if (string.IsNullOrWhiteSpace(path)) return;
@@ -429,6 +454,75 @@ namespace Anvil.ViewModels.Wallet
             {
                 Alias = alias,
                 Path = path
+            });
+        }
+
+        /// <summary>
+        /// Gets a private key file's path from user input.
+        /// </summary>
+        /// <returns>The path or null in case the operation is cancelled.</returns>
+        private async Task<Tuple<string, string>> GetPrivateKey()
+        {
+            var dialog = DialogHelper.CreateTextFieldDialog(new TextFieldDialogBuilderParams()
+            {
+                ContentHeader = "Import Private Key",
+                StartupLocation = WindowStartupLocation.CenterOwner,
+                Width = 500,
+                Borderless = true,
+                TextFields = new TextFieldBuilderParams[]
+                {
+                    new TextFieldBuilderParams
+                    {
+                        HelperText = "* Required",
+                        Classes = "Outline",
+                        Label = "Private Key",
+                        Validater = ValidatePrivateKeyDelegate,
+                        DefaultText = "",
+                        FieldKind = Material.Dialog.Enums.TextFieldKind.Normal
+                    },
+                    new TextFieldBuilderParams
+                    {
+                        Classes = "Outline",
+                        Label = "Alias",
+                        DefaultText = "",
+                        FieldKind = Material.Dialog.Enums.TextFieldKind.Normal
+                    }
+                },
+                DialogButtons = new DialogButton[]
+                {
+                    new DialogButton()
+                    {
+                        Content = "Cancel",
+                        IsNegative = true,
+                        Result = "cancel",
+                    }
+                }
+            });
+            var result = await dialog.ShowDialog(_appLifetime.MainWindow);
+            if (result.GetResult == "ok")
+            {
+                var fields = result.GetFieldsResult();
+
+                return new Tuple<string, string>(fields[0].Text, fields[1].Text);
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// Imports a private key from file.
+        /// </summary>
+        public async void ImportPrivateKey()
+        {
+            var pkInfo = await GetPrivateKey();
+            if (pkInfo == null) return;
+
+            var (pk, alias) = pkInfo;
+            if (string.IsNullOrWhiteSpace(pk)) return;
+
+            _walletService.AddWallet(new PrivateKeyWallet
+            {
+                Alias = alias,
+                PrivateKey = pk
             });
         }
 
