@@ -62,6 +62,18 @@ namespace Anvil.Services.Wallets
                 PrivateKeyWallets.Remove(w);
             }
         }
+        
+        /// <inheritdoc cref="IWalletStore.RemoveWallet(PrivateKeyWallet)"/>
+        public void RemoveWallet(PrivateKeyWallet privateKeyWallets)
+        {
+            PrivateKeyWallets.Remove(privateKeyWallets);
+        }
+
+        /// <inheritdoc cref="IWalletStore.RemoveWallet(DerivationIndexWallet)"/>
+        public void RemoveWallet(DerivationIndexWallet derivationIndexWallet)
+        {
+            DerivationIndexWallets.Remove(derivationIndexWallet);
+        }
 
         /// <inheritdoc cref="IWalletStore.AddWallet(string)"/>
         public void AddWallet(string mnemonic)

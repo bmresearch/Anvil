@@ -117,10 +117,24 @@ namespace Anvil.Services.Store.State
             OnStateChanged?.Invoke(this, new(this));
         }
 
-        /// <inheritdoc cref="IWalletStore.RemoveWallet(List{PrivateKeyWallet})"/>
+        /// <inheritdoc cref="IWalletStore.RemoveWallets(List{PrivateKeyWallet})"/>
         public void RemoveWallets(List<PrivateKeyWallet> privateKeyWallets)
         {
             Wallet.RemoveWallets(privateKeyWallets);
+            OnStateChanged?.Invoke(this, new(this));
+        }
+        
+        /// <inheritdoc cref="IWalletStore.RemoveWallet(PrivateKeyWallet)"/>
+        public void RemoveWallet(PrivateKeyWallet privateKeyWallet)
+        {
+            Wallet.RemoveWallet(privateKeyWallet);
+            OnStateChanged?.Invoke(this, new(this));
+        }
+        
+        /// <inheritdoc cref="IWalletStore.RemoveWallet(DerivationIndexWallet)"/>
+        public void RemoveWallet(DerivationIndexWallet derivationIndexWallet)
+        {
+            Wallet.RemoveWallet(derivationIndexWallet);
             OnStateChanged?.Invoke(this, new(this));
         }
 

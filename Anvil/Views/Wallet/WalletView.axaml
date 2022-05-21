@@ -5,7 +5,7 @@
 			 xmlns:styles="clr-namespace:Material.Styles;assembly=Material.Styles"
              xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
 			 xmlns:common="clr-namespace:Anvil.Views.Common"
-			 mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+			 mc:Ignorable="d" d:DesignWidth="1280" d:DesignHeight="720"
              x:Class="Anvil.Views.Wallet.WalletView">
 
 	<DockPanel LastChildFill="True">
@@ -93,12 +93,25 @@
 										Margin="5"
 										HorizontalAlignment="Stretch"
 										VerticalAlignment="Stretch">
+										<Button
+											DockPanel.Dock="Right"
+											Classes="Flat"
+											Padding="0"
+											VerticalAlignment="Center"
+											HorizontalAlignment="Center"
+											Height="15"
+											Width="15"
+											Command="{Binding $parent[ListBox].DataContext.RemoveWallet}"
+											CommandParameter="{Binding }"
+											ToolTip.Tip="Remove this derivation index based wallet.">
+											<avalonia:MaterialIcon Kind="Close"/>
+										</Button>
+										<Separator DockPanel.Dock="Right"/>
 										<TextBlock
 											DockPanel.Dock="Right"
 											Margin="5"
 											Classes="Body2"
 											Text="{Binding ShortenedAddress}"/>
-										<Separator />
 										<TextBlock
 											DockPanel.Dock="Left"
 											Margin="5"
@@ -138,12 +151,25 @@
 										Margin="5"
 										HorizontalAlignment="Stretch"
 										VerticalAlignment="Stretch">
+										<Button
+											DockPanel.Dock="Right"
+											Classes="Flat"
+											Padding="0"
+											VerticalAlignment="Center"
+											HorizontalAlignment="Center"
+											Height="15"
+											Width="15"
+											Command="{Binding $parent[ListBox].DataContext.RemoveWallet}"
+											CommandParameter="{Binding }"
+											ToolTip.Tip="Remove this private key based wallet.">
+											<avalonia:MaterialIcon Kind="Close"  Height="15" Width="15"/>
+										</Button>
+										<Separator DockPanel.Dock="Right"/>
 										<TextBlock
 											DockPanel.Dock="Right"
 											Margin="5"
 											Classes="Body2"
 											Text="{Binding ShortenedAddress}"/>
-										<Separator />
 										<TextBlock
 											DockPanel.Dock="Left"
 											Margin="5"

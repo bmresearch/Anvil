@@ -285,6 +285,13 @@ namespace Anvil.ViewModels.Wallet
             }
         }
 
+        public void RemoveWallet(SolanaWalletService wallet)
+        {
+            if (wallet == null) return;
+
+            _walletService.RemoveWallet(wallet);
+        }
+
         /// <summary>
         /// Adds the current wallet's address to the clipboard.
         /// </summary>

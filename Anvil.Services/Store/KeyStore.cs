@@ -95,6 +95,18 @@ namespace Anvil.Services.Store
             }
         }
 
+        /// <inheritdoc cref="IKeyStore.RemoveWallet(PrivateKeyWallet)"/>
+        public void RemoveWallet(PrivateKeyWallet privateKeyWallet)
+        {
+            _state.RemoveWallet(privateKeyWallet);
+        }
+
+        /// <inheritdoc cref="IKeyStore.RemoveWallet(DerivationIndexWallet)"/>
+        public void RemoveWallet(DerivationIndexWallet derivationWallet)
+        {
+            _state.RemoveWallet(derivationWallet);
+        }
+
         /// <summary>
         /// The wallet store.
         /// </summary>

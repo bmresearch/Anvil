@@ -64,6 +64,18 @@ namespace Anvil.Services.Store
         void RemoveWallets(List<PrivateKeyWallet> privateKeyWallets);
 
         /// <summary>
+        /// Remove a private key based wallet.
+        /// </summary>
+        /// <param name="privateKeyWallet">The private key wallet.</param>
+        void RemoveWallet(PrivateKeyWallet privateKeyWallet);
+
+        /// <summary>
+        /// Remove a derivation index based wallet.
+        /// </summary>
+        /// <param name="derivationWallet">The derivation index wallet.</param>
+        void RemoveWallet(DerivationIndexWallet derivationWallet);
+
+        /// <summary>
         /// Add a wallet by mnemonic. 
         /// </summary>
         /// <param name="mnemonic">The mnemonic.</param>
