@@ -54,6 +54,12 @@ namespace Anvil.Services
         IWallet AddWallet(DerivationIndexWallet derivationWallet);
 
         /// <summary>
+        /// Removes a private key based wallet.
+        /// </summary>
+        /// <param name="pkWallet">The private key based wallet.</param>
+        void RemoveWallet(IWallet pkWallet);
+
+        /// <summary>
         /// Whether a mnemonic has been imported.
         /// </summary>
         public bool MnemonicImported { get; }

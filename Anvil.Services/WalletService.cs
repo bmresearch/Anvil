@@ -60,7 +60,7 @@ namespace Anvil.Services
             KeyStore.AddWallet(_mnemonic);
         }
 
-        /// <inheritdoc cref="IWalletService.AddWallet(IPrivateKeyWallet)"/>
+        /// <inheritdoc cref="IWalletService.AddWallet(PrivateKeyWallet)"/>
         public IWallet AddWallet(PrivateKeyWallet pkWallet)
         {
             /// Check if this private key wallet has already been added to the wallet service.
@@ -72,7 +72,7 @@ namespace Anvil.Services
             {
                 if (_privateKeyWallets.Any(x => x.Path == pkWallet.Path)) return null;
             }
-            
+
             _privateKeyWallets.Add(pkWallet);
 
             SolanaWalletService solanaWalletService = new(pkWallet);
@@ -97,7 +97,7 @@ namespace Anvil.Services
             return solanaWalletService;
         }
 
-        /// <inheritdoc cref="IWalletService.AddWallet(IDerivationIndexWallet)"/>
+        /// <inheritdoc cref="IWalletService.AddWallet(DerivationIndexWallet)"/>
         public IWallet AddWallet(DerivationIndexWallet derivationWallet)
         {
             /// Check if this derivation index wallet has already been added to the wallet service.
@@ -120,7 +120,7 @@ namespace Anvil.Services
             return solanaWalletService;
         }
 
-        /// <inheritdoc cref="IWallet.GenerateNewWallet"/>
+        /// <inheritdoc cref="IWalletService.GenerateNewWallet"/>
         public IWallet GenerateNewWallet()
         {
             int idx = KeyStore.Wallet.DerivationIndexWallets.Select(w => w.DerivationIndex).DefaultIfEmpty(0).Max() + 1;
@@ -135,6 +135,32 @@ namespace Anvil.Services
             return wallet;
         }
 
+        /// <inheritdoc cref="IWalletService.RemoveWallet(IWallet)"/>
+        public void RemoveWallet(IWallet wallet)
+        {
+            if (wallet != null)
+            {
+                if (wallet.AliasedWallet is PrivateKeyWallet pkWallet)
+                {
+                    if (_privateKeyWallets.Any(x => x.PrivateKey == pkWallet.PrivateKey))
+                    {
+                        _privateKeyWallets.Remove(pkWallet);
+                        KeyStore.RemoveWallet(pkWallet);
+                        OnWalletServiceStateChanged?.Invoke(this, new(WalletServiceStateChange.Removal, wallet));
+                    }
+                }
+                else if(wallet.AliasedWallet is DerivationIndexWallet derivationWallet)
+                {
+                    if (_derivationIndexWallets.Any(x => x.DerivationIndex == derivationWallet.DerivationIndex))
+                    {
+                        _derivationIndexWallets.Remove(derivationWallet);
+                        KeyStore.RemoveWallet(derivationWallet);
+                        OnWalletServiceStateChanged?.Invoke(this, new(WalletServiceStateChange.Removal, wallet));
+                    }
+                }
+
+            }
+        }
 
         /// <inheritdoc cref="IWalletService.ChangeWallet(IWallet)"/>
         public void ChangeWallet(IWallet wallet)
