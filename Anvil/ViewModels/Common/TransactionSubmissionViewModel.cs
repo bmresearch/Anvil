@@ -44,9 +44,11 @@ namespace Anvil.ViewModels.Common
         /// Initialize the transaction submission.
         /// </summary>
         /// <param name="rpcClientProvider">The rpc client provider.</param>
-        public TransactionSubmissionViewModel(IRpcClientProvider rpcClientProvider)
+        /// <param name="transactionHash">The transaction hash.</param>
+        public TransactionSubmissionViewModel(IRpcClientProvider rpcClientProvider, string transactionHash = null)
         {
             _rpcClientProvider = rpcClientProvider;
+            TransactionHash = transactionHash;
         }
 
         /// <summary>
@@ -56,6 +58,8 @@ namespace Anvil.ViewModels.Common
         /// <returns>A task that performs the action and may return a boolean which represents whether it was a successful submission or not.</returns>
         public async Task<bool> SubmitTransaction(byte[] transaction)
         {
+            if (TransactionHash != null) return false;
+
             Progress = "Submitting transaction..";
             var txSig = await _rpcClientProvider.Client.SendTransactionAsync(transaction,
                 commitment: Solnet.Rpc.Types.Commitment.Confirmed);

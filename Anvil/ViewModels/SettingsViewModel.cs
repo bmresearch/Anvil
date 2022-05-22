@@ -75,8 +75,29 @@ namespace Anvil.ViewModels
             GetVersionInfo();
         }
 
+        private async void GetNetworkInfo()
+        {
+            var g = await _rpcClientProvider.Client.GetGenesisHashAsync();
+
+            var cluster = GetClusterForBlockhash(g.Result);
+
+            _appState.Network = cluster;
+        }
+
+        private Cluster GetClusterForBlockhash(string blockhash)
+        {
+            return blockhash switch
+            {
+                "5eykt4UsFv8P8NJdTREpY1vzqKqZKvdpKuc147dw2N9d" => Cluster.MainNet,
+                "4uhcVJyU9pJkvQyS88uRDiswHXSCkY3zQawwpjk2NsNY" => Cluster.TestNet,
+                "EtWTRABZaYq6iMfeYKouRu166VU2xqa1wcaWoxPkrZBG" => Cluster.DevNet,
+                _ => Cluster.DevNet,
+            };
+        }
+
         private async void GetVersionInfo()
         {
+
             var v = await _rpcClientProvider.Client.GetVersionAsync();
 
             if (v.WasRequestSuccessfullyHandled)
@@ -136,6 +157,7 @@ namespace Anvil.ViewModels
                 default:
                     break;
             }
+            GetNetworkInfo();
             GetVersionInfo();
         }
 

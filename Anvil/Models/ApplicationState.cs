@@ -28,12 +28,29 @@ namespace Anvil.Models
             set => this.RaiseAndSetIfChanged(ref _rpcUrl, value);
         }
 
+
         [DataMember]
         private Cluster _cluster = Cluster.MainNet;
+        
+        /// <summary>
+        /// A setting used in order to choose which cluster to use as an RPC Client Provider.
+        /// </summary>
         public Cluster Cluster
         {
             get => _cluster;
             set => this.RaiseAndSetIfChanged(ref _cluster, value);
+        }
+        
+        [DataMember]
+        private Cluster _network = Cluster.MainNet;
+
+        /// <summary>
+        /// A flag used in order to tag the current network according to the received genesis hash.
+        /// </summary>
+        public Cluster Network
+        {
+            get => _network;
+            set => this.RaiseAndSetIfChanged(ref _network, value);
         }
 
         [DataMember]
