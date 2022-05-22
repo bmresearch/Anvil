@@ -1,4 +1,5 @@
 ﻿using Anvil.Core.ViewModels;
+using Anvil.Models;
 using Anvil.Services;
 using Anvil.Services.Network;
 using Anvil.Services.Wallets;
@@ -55,10 +56,13 @@ namespace Anvil.ViewModels.Wallet
 
         #endregion
 
+        private ApplicationState _appState;
+
         public WalletViewModel(IClassicDesktopStyleApplicationLifetime appLifetime,
             InternetConnectionService internetConnectionService,
             IWalletService walletService, IRpcClientProvider rpcClientProvider,
-            KeyStoreService keyStoreService, AddressBookService addressBookService)
+            KeyStoreService keyStoreService, AddressBookService addressBookService,
+            ApplicationState applicationState)
         {
             _appLifetime = appLifetime;
             _internetConnectionService = internetConnectionService;
@@ -70,9 +74,13 @@ namespace Anvil.ViewModels.Wallet
             _walletService.OnWalletServiceStateChanged += OnWalletServiceStateChanged;
             _keyStoreService = keyStoreService;
             _addressBookService = addressBookService;
+            _appState = applicationState;
+
+            _appState.PropertyChanged += ApplicationStateChanged;
 
             DerivationWalletsCollection = new();
             PrivateKeyWalletsCollection = new();
+            CanRequestAirdrop = _appState.Network != Cluster.MainNet;
             NoConnection = !_internetConnectionService.IsConnected;
             TransactionSubmission = TransactionSubmissionViewModel.NoShow();
             TransactionSubmission.WhenAnyValue(x => x.SubmittingTransaction)
@@ -84,9 +92,34 @@ namespace Anvil.ViewModels.Wallet
             RestoreFromWalletSnapshot(false);
         }
 
+        private void ApplicationStateChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == "Network")
+            {
+                CanRequestAirdrop = _appState.Network != Cluster.MainNet;
+            }
+        }
+
         private void OnNetworkConnectionChanged(object sender, Services.Network.Events.NetworkConnectionChangedEventArgs e)
         {
             NoConnection = !e.Connected;
+        }
+
+        public async void RequestAirdrop()
+        {
+            var req = await _rpcClient.RequestAirdropAsync(_currentWallet.Address, SolHelper.ConvertToLamports(1m));
+            if (req.WasSuccessful)
+            {
+                if(req.Result != null)
+                {
+                    TransactionSubmission = new TransactionSubmissionViewModel(_rpcClientProvider, req.Result);
+                    TransactionSubmission.Progress = "Successfully requested airdrop.";
+                    await TransactionSubmission.PollConfirmation();
+                    await GetAccountBalance();
+                    await Task.Delay(15000);
+                    TransactionSubmission = TransactionSubmissionViewModel.NoShow();
+                }
+            }
         }
 
         private async Task<SendSolanaDialogViewModel> GetDestinationAddressAndAmount()
@@ -330,7 +363,7 @@ namespace Anvil.ViewModels.Wallet
 
             return new Tuple<bool, string>(false, "Mnemonic is invalid.");
         }
-        
+
         /// <summary>
         /// Private key validation for the dialog.
         /// </summary>
@@ -782,6 +815,13 @@ namespace Anvil.ViewModels.Wallet
                     (x.TokenName?.Contains(SearchText, StringComparison.InvariantCultureIgnoreCase) ?? false) ||
                     x.TokenMint.Contains(SearchText, StringComparison.InvariantCultureIgnoreCase)));
             }
+        }
+
+        private bool _canRequestAirdrop;
+        public bool CanRequestAirdrop
+        {
+            get => _canRequestAirdrop;
+            set => this.RaiseAndSetIfChanged(ref _canRequestAirdrop, value);
         }
 
         private bool _canSubmitTransaction;

@@ -320,7 +320,7 @@ namespace Anvil.ViewModels
             if (!_keyStoreService.IsProcessing && KeyStoreServiceState == KeyStoreServiceState.Done)
             {
                 _walletViewModel ??= new WalletViewModel(_appLifetime, _internetService, _walletService,
-                    _rpcProvider, _keyStoreService, _addressBookService);
+                    _rpcProvider, _keyStoreService, _addressBookService, _appState);
                 CurrentView = _walletViewModel;
                 WalletUnlocked = true;
                 RestoreFromWalletSnapshot();
@@ -358,7 +358,7 @@ namespace Anvil.ViewModels
                 // private key import
                 await _keyStoreService.InitializeWalletWithPrivateKey(walletImport.PrivateKeyFilePath, walletImport.Alias, walletImport.Password);
 
-                _walletViewModel ??= new WalletViewModel(_appLifetime, _internetService, _walletService, _rpcProvider, _keyStoreService, _addressBookService);
+                _walletViewModel ??= new WalletViewModel(_appLifetime, _internetService, _walletService, _rpcProvider, _keyStoreService, _addressBookService, _appState);
                 CurrentView = _walletViewModel;
                 WalletUnlocked = true;
             }
@@ -367,7 +367,7 @@ namespace Anvil.ViewModels
                 // mnemonic import
                 await _keyStoreService.InitializeWallet(walletImport.Mnemonic, walletImport.Password);
 
-                _walletViewModel ??= new WalletViewModel(_appLifetime, _internetService, _walletService, _rpcProvider, _keyStoreService, _addressBookService);
+                _walletViewModel ??= new WalletViewModel(_appLifetime, _internetService, _walletService, _rpcProvider, _keyStoreService, _addressBookService, _appState);
                 CurrentView = _walletViewModel;
                 WalletUnlocked = true;
             }
@@ -393,7 +393,7 @@ namespace Anvil.ViewModels
             switch (view)
             {
                 case "Wallet":
-                    _walletViewModel ??= new WalletViewModel(_appLifetime, _internetService, _walletService, _rpcProvider, _keyStoreService, _addressBookService);
+                    _walletViewModel ??= new WalletViewModel(_appLifetime, _internetService, _walletService, _rpcProvider, _keyStoreService, _addressBookService, _appState);
                     CurrentView = _walletViewModel;
                     break;
                 case "WatchOnly":

@@ -304,6 +304,18 @@
 								<avalonia:MaterialIcon Kind="Send" VerticalAlignment="Center"/>
 							</StackPanel>
 						</Button>
+						<Button
+							Command="{Binding RequestAirdrop}"
+							VerticalAlignment="Center"
+							HorizontalAlignment="Center"
+							IsVisible="{Binding CanRequestAirdrop}"
+							Margin="5"
+							ToolTip.Tip="Request Airdrop">
+							<StackPanel
+								Orientation="Horizontal">
+								<avalonia:MaterialIcon Kind="ArrowDownBold" VerticalAlignment="Center"/>
+							</StackPanel>
+						</Button>
 					</StackPanel>
 					<common:TransactionSubmissionView
 						DockPanel.Dock="Top"
